@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 // Interface
 #include "Button/Button.hpp"
@@ -29,14 +29,14 @@ auto main(int, char**) -> int {
     }
 
     // Menu Buttons
-    const std::vector<std::string> buttonNames{"Add file", "Delete file", "Save file"};
+    const std::vector<std::string> buttonNames{"Add file", "Delete file", "Save file", "Select File"};
     std::vector<sf::Sprite> buttonIcons;
     LoadButtonImages(buttonIcons);
 
     std::vector<Button> buttons;
 
     Button::CreateMenuButtons(buttons, buttonNames, mainFont);
-    ButtonFunction buttonFuntions[]{AddFile, DeleteFile, SaveFile};
+    ButtonFunction buttonFuntions[]{AddFile, DeleteFile, SaveFile, SelectFile};
 
     // Main Loop
     while (mainWindow.isOpen()) {
@@ -59,7 +59,6 @@ auto main(int, char**) -> int {
             mainWindow.clear();
 
             fileField.DrawField(mainWindow);
-            image.DrawImage(mainWindow);
 
             statusBar.DrawStatusBar(mainWindow);
             for (const auto& button : buttons) {
@@ -69,6 +68,8 @@ auto main(int, char**) -> int {
             for (const auto& buttonIcon : buttonIcons) {
                 mainWindow.draw(buttonIcon);
             }
+
+            image.DrawImage(mainWindow);
 
             mainWindow.display();
         }
