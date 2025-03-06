@@ -8,7 +8,8 @@ using ButtonFunction = std::string (*)();
 enum class Buttons {
     AddFile = 0,
     DeleteFile = 1,
-    SaveFile = 2
+    SaveFile = 2,
+    SelectFile = 3
 };
 
 namespace {  // Desktop Size
@@ -57,8 +58,12 @@ const float kBoxHeight{kMainWindowHeight * 0.03f};
 void LoadButtonImages(std::vector<sf::Sprite>& buttonIcons);
 std::string GetFileName(const std::string& fileName);
 
-// needs for ReleaseFunctions
+// Needs for ReleaseFunctions
 class Image;
 class FileField;
 class StatusBar;
 void ReleaseFunctions(const std::string result, size_t buttonNumber, sf::RenderWindow& mainWindow, Image& image, FileField& FileField, StatusBar& StatusBar);
+
+// Delete path
+void DeletePath(std::vector<std::string>& pathToFile, const std::string& fileName);
+std::string FindPath(std::vector<std::string>& pathToFile, const std::string& fileName);
