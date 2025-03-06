@@ -85,7 +85,7 @@ std::string InputField::Input(sf::Event& event, sf::RenderWindow& window) {
         if (symbol == 8 && !inputString.empty()) {  // Backspace
             inputString.pop_back();
             text_.setString(inputString);
-        } else {
+        } else if (symbol != 8) {
             inputString += symbol;
             text_.setString(inputString);
         }
@@ -140,6 +140,7 @@ void InputField::Draw(sf::RenderWindow& window) const {
     window.draw(text_);
 }
 
+// Main buttons functions
 std::string AddFile() {
     return InputField::CreateInputWindow("Add file", "Enter path to file");
 }
@@ -150,4 +151,8 @@ std::string DeleteFile() {
 
 std::string SaveFile() {
     return InputField::CreateInputWindow("Save file", "Enter file name");
+}
+
+std::string SelectFile() {
+    return InputField::CreateInputWindow("Select file", "Enter file name");
 }
