@@ -30,19 +30,19 @@ void LoadButtonImages(std::vector<sf::Sprite>& buttonIcons) {
 
     sf::Sprite addSprite;
     addSprite.setTexture(addIcon);
-    addSprite.setPosition(kIconX + kIconX / 2, kIconY);
+    addSprite.setPosition(3 + kSmallMenuWidth + kIconX + kIconX / 2, kIconY);
 
     sf::Sprite deleteSprite;
     deleteSprite.setTexture(deleteIcon);
-    deleteSprite.setPosition(kButtonWidth + kIconX, kIconY);
+    deleteSprite.setPosition(3 + kSmallMenuWidth + kButtonWidth + kIconX, kIconY);
 
     sf::Sprite saveSprite;
     saveSprite.setTexture(saveIcon);
-    saveSprite.setPosition(2 * (kButtonWidth + kIconX), kIconY);
+    saveSprite.setPosition(3 + kSmallMenuWidth + 2 * (kButtonWidth + kIconX), kIconY);
 
     sf::Sprite selectSprite;
     selectSprite.setTexture(selectIcon);
-    selectSprite.setPosition(3 * (kButtonWidth + kIconX) - kIconX - kIconX / 1.3, kIconY);
+    selectSprite.setPosition(3 + kSmallMenuWidth + 3 * (kButtonWidth + kIconX) - kIconX - kIconX / 1.3, kIconY);
 
     buttonIcons.emplace_back(addSprite);
     buttonIcons.emplace_back(deleteSprite);
@@ -95,7 +95,7 @@ void ReleaseFunctions(const std::string result, size_t buttonNumber, sf::RenderW
             break;
         }
 
-        //Delete file button
+        // Delete file button
         case (Buttons::DeleteFile): {
             if (!result.empty()) {
                 size_t oldLength{fileField.GetFiles().size()};  // Old count of files

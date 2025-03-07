@@ -18,8 +18,8 @@ const uint kDesktopHeight{sf::VideoMode::getDesktopMode().height};
 }  // namespace
 
 namespace {  // Window Size
-const float kMainWindowWidth{kDesktopWidth * 0.8f};
-const float kMainWindowHeight{kDesktopHeight * 0.7f};
+const float kMainWindowWidth{kDesktopWidth * 0.9f};
+const float kMainWindowHeight{kDesktopHeight * 0.8f};
 }  // namespace
 
 namespace {  // File Field Size
@@ -37,10 +37,26 @@ namespace {  // Text Size
 const short kCharacterSize{20};
 }
 
-namespace {  // Button Size
+namespace { // Zoom
+const float kZoomIn{0.9f};
+const float kZoomOut{1.1f};
+}
+
+namespace {  // Button
 const float kButtonWidth{kMainWindowWidth / 10};
 const float kButtonHeight{kMainWindowHeight - kFileFieldHeight};
 
+const sf::Color kButtonColor{99, 139, 199};
+}  // namespace
+
+namespace {  // Small menu
+const float kSmallMenuWidth{kFileFieldWidth / 4.8f};
+const float kSmallMenuHeight{kButtonHeight};
+
+const sf::Color kSmallMenuColor{40, 116, 254};
+}  // namespace
+
+namespace {  // Icon position
 const float kIconX{5};
 const float kIconY{kButtonHeight / 4};
 }  // namespace
