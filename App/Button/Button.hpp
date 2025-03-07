@@ -2,20 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace {  // Button Color
-const short kActiveRed{100};
-const short kActiveGreen{100};
-const short kActiveBlue{100};
-}  // namespace
-
 class Button {
  private:
     sf::RectangleShape shape_;
-    sf::Color oldColor;
-
-    sf::Clock clickTimer;
-    bool isClicked;
-
     sf::Text text_;
 
  public:
@@ -25,16 +14,9 @@ class Button {
     void DrawButton(sf::RenderWindow& window) const;
 
     bool PressButton(const sf::Vector2f& mousePosition) const;
-    void ChangeColor();
-    void ReturnColor();
 };
 
-std::string AddFile();
-std::string DeleteFile();
-std::string SaveFile();
-
 // Input Field
-
 namespace {
 const short kMaxASCII{128};
 }
@@ -44,7 +26,7 @@ class InputField {
     sf::RectangleShape box_;
     sf::Font font_;
     sf::Text text_;
-    std::string inputString;
+    std::string inputString_;
 
  public:
     InputField(const float x, const float y);
