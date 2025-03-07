@@ -10,43 +10,64 @@
 #include "MainWindow/MainWindow.hpp"
 #include "StatusBar/StatusBar.hpp"
 
-// Menu Buttons
+// Menu Buttons, realization in Button.cpp
 std::string AddFile();
 std::string DeleteFile();
 std::string SaveFile();
+std::string SelectFile();
+
+std::string SelectBrush();
+//
 
 auto main(int, char**) -> int {
     sf::RenderWindow mainWindow(sf::VideoMode(kMainWindowWidth, kMainWindowHeight), "Image Editor");
+
+    sf::Font buttonFont;  // Font for Buttons
+    if (!buttonFont.loadFromFile("../WindowFiles/open-sans.ttf")) {
+        throw std::runtime_error("Font could not be uploaded");
+    }
 
     // Interface: current image, field with files names, status bar
     Image image;
     FileField fileField;
     StatusBar statusBar;
 
-    sf::Font mainFont;  // Font for Buttons
-    if (!mainFont.loadFromFile("../WindowFiles/open-sans.ttf")) {
-        throw std::runtime_error("Font could not be uploaded");
-    }
+    // Small menu
+    sf::RectangleShape menuShape;
+    menuShape.setFillColor(kSmallMenuColor);
+    menuShape.setSize(sf::Vector2f(kSmallMenuWidth, kSmallMenuHeight));
+    menuShape.setPosition(0, 0);
+    menuShape.setOutlineColor(sf::Color::Black);
+    menuShape.setOutlineThickness(3);
+
+    Image menuImage;
+    menuImage.LoadImage("../WindowFiles/smallMenu-image.png");
+    menuImage.SetScale(kSmallMenuWidth / menuImage.GetSpriteBound().width, kSmallMenuHeight / menuImage.GetSpriteBound().height);
+    menuImage.SetPosition(kIconX * 1.5f, -kIconY / 2.5f);
+    //
 
     // Menu Buttons
-    const std::vector<std::string> buttonNames{"Add file", "Delete file", "Save file", "Select File"};
+    const std::vector<std::string> buttonNames{"Add file", "Delete file", "Save file", " Select file", "Brush"};
     std::vector<sf::Sprite> buttonIcons;
     LoadButtonImages(buttonIcons);
 
-    std::vector<Button> buttons;
+    std::vector<Button> buttons;  // Vector with buttons
 
-    Button::CreateMenuButtons(buttons, buttonNames, mainFont);
-    ButtonFunction buttonFuntions[]{AddFile, DeleteFile, SaveFile, SelectFile};
+    Button::CreateMenuButtons(buttons, buttonNames, buttonFont);
+    ButtonFunction buttonFuntions[]{AddFile, DeleteFile, SaveFile, SelectFile, SelectBrush};
+
+    float zoom{1.0f};  // Zoom for image
 
     // Main Loop
     while (mainWindow.isOpen()) {
         sf::Event event;
         while (mainWindow.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+            if (event.type == sf::Event::Closed) {  // Close Window
                 mainWindow.close();
                 return 0;
             }
 
+            // Press Buttons
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 for (size_t i = 0; i < buttonNames.size(); ++i) {
                     if (buttons[i].PressButton(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
@@ -56,23 +77,31 @@ auto main(int, char**) -> int {
                 }
             }
 
-            mainWindow.clear();
-
-            fileField.DrawField(mainWindow);
-
-            statusBar.DrawStatusBar(mainWindow);
-            for (const auto& button : buttons) {
-                button.DrawButton(mainWindow);
+            if (event.type == sf::Event::MouseWheelScrolled && event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
+                //
             }
-
-            for (const auto& buttonIcon : buttonIcons) {
-                mainWindow.draw(buttonIcon);
-            }
-
-            image.DrawImage(mainWindow);
-
-            mainWindow.display();
         }
+        mainWindow.clear();
+
+        // Draw elements
+
+        fileField.DrawField(mainWindow);
+        statusBar.DrawStatusBar(mainWindow);  // Status bar
+
+        for (const auto& button : buttons) {  // Buttons
+            button.DrawButton(mainWindow);
+        }
+
+        for (const auto& buttonIcon : buttonIcons) {  // Buttons icons
+            mainWindow.draw(buttonIcon);
+        }
+
+        mainWindow.draw(menuShape);       // Small menu
+        menuImage.DrawImage(mainWindow);  // Small menu image
+
+        image.DrawImage(mainWindow);
+
+        mainWindow.display();
     }
 
     return 0;
