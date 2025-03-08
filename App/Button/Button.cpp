@@ -20,7 +20,7 @@ Button::Button(const float x, const float y, const std::string& name, sf::Font& 
     text_.setPosition(x + kButtonWidth / 2, y + kButtonHeight / 2 - textHeight / 2);
 
     shape_.setSize(sf::Vector2f(kButtonWidth, kButtonHeight));
-    shape_.setFillColor(kButtonColor);
+    shape_.setFillColor(kFileButtonColor);
     shape_.setOutlineColor(sf::Color::Black);
     shape_.setOutlineThickness(3);
     shape_.setPosition(x, y);
@@ -36,6 +36,10 @@ void Button::CreateMenuButtons(std::vector<Button>& buttons, const std::vector<s
 void Button::DrawButton(sf::RenderWindow& window) const {
     window.draw(shape_);
     window.draw(text_);
+}
+
+void Button::SetColor(const sf::Color& newColor) {
+    shape_.setFillColor(newColor);
 }
 
 bool Button::PressButton(const sf::Vector2f& mousePosition) const {
