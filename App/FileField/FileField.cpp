@@ -23,7 +23,7 @@ void FileField::DrawField(sf::RenderWindow& window) {
     filesNames.setCharacterSize(kCharacterSize);
     filesNames.setFillColor(sf::Color::White);
 
-    float distanceBetweenFiles{kMainWindowHeight * 0.1f};
+    float distanceBetweenFiles{kButtonHeight};
     for (const auto& fileName : files_) {
         filesNames.setString(fileName);
 

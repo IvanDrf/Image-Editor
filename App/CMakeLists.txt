@@ -9,6 +9,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 set (SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Brush/Brush.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Button/Button.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FileField/FileField.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Image/Image.cpp
@@ -17,6 +18,7 @@ set (SOURCES
 )
 
 set (HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/Brush/Brush.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Button/Button.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FileField/FileField.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Image/Image.hpp

@@ -2,6 +2,11 @@
 
 #include "../MainWindow/MainWindow.hpp"
 
+namespace {
+const short KEnter{13};
+const short kBackSpace{8};
+}  // namespace
+
 Button::Button(const float x, const float y, const std::string& name, sf::Font& font) {
     text_.setFont(font);
     text_.setCharacterSize(kCharacterSize);
@@ -15,15 +20,16 @@ Button::Button(const float x, const float y, const std::string& name, sf::Font& 
     text_.setPosition(x + kButtonWidth / 2, y + kButtonHeight / 2 - textHeight / 2);
 
     shape_.setSize(sf::Vector2f(kButtonWidth, kButtonHeight));
-    shape_.setFillColor(sf::Color(99, 139, 199));
+    shape_.setFillColor(kFileButtonColor);
     shape_.setOutlineColor(sf::Color::Black);
     shape_.setOutlineThickness(3);
     shape_.setPosition(x, y);
+
 }
 
 void Button::CreateMenuButtons(std::vector<Button>& buttons, const std::vector<std::string>& names, sf::Font& font) {
     for (size_t i = 0; i < names.size(); ++i) {
-        buttons.emplace_back(kButtonWidth * i, 0, names[i], font);
+        buttons.emplace_back(kSmallMenuWidth + kButtonWidth * i, 0, names[i], font);
     }
 }
 
@@ -32,27 +38,12 @@ void Button::DrawButton(sf::RenderWindow& window) const {
     window.draw(text_);
 }
 
+void Button::SetColor(const sf::Color& newColor) {
+    shape_.setFillColor(newColor);
+}
+
 bool Button::PressButton(const sf::Vector2f& mousePosition) const {
     return shape_.getGlobalBounds().contains(mousePosition);
-}
-
-void Button::ChangeColor() {
-    if (isClicked) {
-        return;
-    }
-
-    isClicked = true;
-    clickTimer.restart();
-
-    oldColor = shape_.getFillColor();
-    shape_.setFillColor(sf::Color(kActiveRed, kActiveGreen, kActiveBlue));
-}
-
-void Button::ReturnColor() {
-    if (isClicked && clickTimer.getElapsedTime().asSeconds() > 1.5) {
-        shape_.setFillColor(oldColor);
-        isClicked = false;
-    }
 }
 
 // Input Field after button was pressed
@@ -77,17 +68,17 @@ InputField::InputField(const float x, const float y) {
 std::string InputField::Input(sf::Event& event, sf::RenderWindow& window) {
     if (event.type == sf::Event::TextEntered) {
         char symbol{static_cast<char>(event.text.unicode)};
-        if (symbol == 13) {  // Enter
+        if (symbol == KEnter) {  // Enter
             window.close();
-            return inputString;
+            return inputString_;
         }
 
-        if (symbol == 8 && !inputString.empty()) {  // Backspace
-            inputString.pop_back();
-            text_.setString(inputString);
-        } else if (symbol != 8) {
-            inputString += symbol;
-            text_.setString(inputString);
+        if (symbol == kBackSpace && !inputString_.empty()) {  // Backspace
+            inputString_.pop_back();
+            text_.setString(inputString_);
+        } else if (symbol != kBackSpace) {
+            inputString_ += symbol;
+            text_.setString(inputString_);
         }
     }
 
@@ -131,8 +122,8 @@ std::string InputField::CreateInputWindow(const std::string& heading, const std:
 }
 
 void InputField::Clear() {
-    inputString = "";
-    text_.setString(inputString);
+    inputString_ = "";
+    text_.setString(inputString_);
 }
 
 void InputField::Draw(sf::RenderWindow& window) const {
@@ -155,4 +146,7 @@ std::string SaveFile() {
 
 std::string SelectFile() {
     return InputField::CreateInputWindow("Select file", "Enter file name");
+}
+
+std::string SelectBrush() {
 }

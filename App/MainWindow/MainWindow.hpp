@@ -18,8 +18,8 @@ const uint kDesktopHeight{sf::VideoMode::getDesktopMode().height};
 }  // namespace
 
 namespace {  // Window Size
-const float kMainWindowWidth{kDesktopWidth * 0.8f};
-const float kMainWindowHeight{kDesktopHeight * 0.7f};
+const float kMainWindowWidth{kDesktopWidth * 0.9f};
+const float kMainWindowHeight{kDesktopHeight * 0.8f};
 }  // namespace
 
 namespace {  // File Field Size
@@ -37,12 +37,30 @@ namespace {  // Text Size
 const short kCharacterSize{20};
 }
 
-namespace {  // Button Size
+namespace {  // Zoom
+const float kZoomIn{0.9f};
+const float kZoomOut{1.1f};
+}  // namespace
+
+namespace {  // Button
 const float kButtonWidth{kMainWindowWidth / 10};
 const float kButtonHeight{kMainWindowHeight - kFileFieldHeight};
 
+const sf::Color kFileButtonColor{99, 139, 199};
+const sf::Color kToolsColor{40, 116, 254};
+}  // namespace
+
+namespace {  // Small menu
+const float kSmallMenuWidth{kFileFieldWidth / 4.8f};
+const float kSmallMenuHeight{kButtonHeight};
+
+const float kSmallMenuScale{0.4f};                                         // Icon scale
+const sf::Vector2f kSmallMenuIconPosition{kSmallMenuWidth / 3.6f, 1.5f};  // Icon position
+}  // namespace
+
+namespace {  // Icon position
 const float kIconX{5};
-const float kIconY{kButtonHeight / 4};
+const float kIconY{kButtonHeight / 6.2f};
 }  // namespace
 
 namespace {  // Small Window Size
@@ -55,7 +73,7 @@ const float kBoxWidth{kMainWindowWidth * 0.15f};
 const float kBoxHeight{kMainWindowHeight * 0.03f};
 }  // namespace
 
-void LoadButtonImages(std::vector<sf::Sprite>& buttonIcons);
+std::vector<sf::RectangleShape> LoadButtonImages();
 std::string GetFileName(const std::string& fileName);
 
 // Needs for ReleaseFunctions
