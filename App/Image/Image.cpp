@@ -15,6 +15,30 @@ void Image::ClearImage() {
     sprite_ = sf::Sprite();
 }
 
+void Image::SetScale(const float scaleX, const float scaleY) {
+    sprite_.setScale(scaleX, scaleY);
+}
+
+void Image::SetPosition(const float positionX, const float positionY) {
+    sprite_.setPosition(positionX, positionY);
+}
+
+void Image::SetPosition(const sf::Vector2f& position) {
+    sprite_.setPosition(position);
+}
+
+void Image::SetOrigin(const float centerX, const float centerY) {
+    sprite_.setOrigin(centerX, centerY);
+}
+
+sf::FloatRect Image::GetSpriteBound() const {
+    return sprite_.getGlobalBounds();
+}
+
+void Image::Move(const sf::Vector2f& offset) {
+    sprite_.move(offset);
+}
+
 void Image::LoadImage(const std::string& filePath) {
     if (!texture_.loadFromFile(filePath)) {
         throw std::runtime_error("Image could not be found");
@@ -22,7 +46,9 @@ void Image::LoadImage(const std::string& filePath) {
 
     sprite_.setTexture(texture_);
     hasImage = true;
+}
 
+void Image::SetMainImageScale() {
     sprite_.setScale(1.f, 1.f);
     sprite_.setPosition(0.f, 0.f);
 
