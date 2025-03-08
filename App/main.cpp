@@ -34,7 +34,7 @@ auto main(int, char**) -> int {
 
     // Small menu
     sf::RectangleShape menuShape;
-    menuShape.setFillColor(kSmallMenuColor);
+    menuShape.setFillColor(kToolsColor);
     menuShape.setSize(sf::Vector2f(kSmallMenuWidth, kSmallMenuHeight));
     menuShape.setPosition(0, 0);
     menuShape.setOutlineColor(sf::Color::Black);
@@ -42,21 +42,20 @@ auto main(int, char**) -> int {
 
     Image menuImage;
     menuImage.LoadImage("../WindowFiles/smallMenu-image.png");
-    menuImage.SetScale(kSmallMenuWidth / menuImage.GetSpriteBound().width, kSmallMenuHeight / menuImage.GetSpriteBound().height);
-    menuImage.SetPosition(kIconX * 1.5f, -kIconY / 2.5f);
+    menuImage.SetScale(kSmallMenuScale, kSmallMenuScale);
+    menuImage.SetOrigin(menuImage.GetSpriteBound().width / 2, 0);
+    menuImage.SetPosition(kSmallMenuIconPosition);
     //
 
     // Menu Buttons
     const std::vector<std::string> buttonNames{"Add file", "Delete file", "Save file", " Select file", "Brush"};
-    std::vector<sf::Sprite> buttonIcons;
-    LoadButtonImages(buttonIcons);
+    std::vector<sf::RectangleShape> buttonIcons = LoadButtonImages(); // Button Icons
 
     std::vector<Button> buttons;  // Vector with buttons
-
     Button::CreateMenuButtons(buttons, buttonNames, buttonFont);
-    ButtonFunction buttonFuntions[]{AddFile, DeleteFile, SaveFile, SelectFile, SelectBrush};
+    buttons[4].SetColor(kToolsColor);
 
-    float zoom{1.0f};  // Zoom for image
+    ButtonFunction buttonFuntions[]{AddFile, DeleteFile, SaveFile, SelectFile, SelectBrush};
 
     // Main Loop
     while (mainWindow.isOpen()) {
@@ -85,6 +84,8 @@ auto main(int, char**) -> int {
 
         // Draw elements
 
+        image.DrawImage(mainWindow);
+
         fileField.DrawField(mainWindow);
         statusBar.DrawStatusBar(mainWindow);  // Status bar
 
@@ -92,14 +93,12 @@ auto main(int, char**) -> int {
             button.DrawButton(mainWindow);
         }
 
-        for (const auto& buttonIcon : buttonIcons) {  // Buttons icons
-            mainWindow.draw(buttonIcon);
+        for (const auto& icon : buttonIcons) {
+            mainWindow.draw(icon);
         }
 
         mainWindow.draw(menuShape);       // Small menu
         menuImage.DrawImage(mainWindow);  // Small menu image
-
-        image.DrawImage(mainWindow);
 
         mainWindow.display();
     }
