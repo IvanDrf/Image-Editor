@@ -7,47 +7,41 @@
 #include "../StatusBar/StatusBar.hpp"
 
 // Load Icons for buttons
-void LoadButtonImages(std::vector<sf::Sprite>& buttonIcons) {
-    static sf::Texture addIcon;
+std::vector<sf::RectangleShape> LoadButtonImages() {
+    sf::Texture addIcon;
     if (!addIcon.loadFromFile("../WindowFiles/add-image.png")) {
         throw std::runtime_error("Add Image could not be uploaded");
     }
 
-    static sf::Texture deleteIcon;
+    sf::Texture deleteIcon;
     if (!deleteIcon.loadFromFile("../WindowFiles/delete-image.png")) {
         throw std::runtime_error("Delete image could not be uploaded");
     }
 
-    static sf::Texture saveIcon;
+    sf::Texture saveIcon;
     if (!saveIcon.loadFromFile("../WindowFiles/save-image.png")) {
         throw std::runtime_error("Save image could not be uploaded");
     }
 
-    static sf::Texture selectIcon;
+    sf::Texture selectIcon;
     if (!selectIcon.loadFromFile("../WindowFiles/select-image.png")) {
         throw std::runtime_error("Select image could not be uploaded");
     }
 
-    sf::Sprite addSprite;
-    addSprite.setTexture(addIcon);
-    addSprite.setPosition(3 + kSmallMenuWidth + kIconX + kIconX / 2, kIconY);
+    static const std::vector<sf::Texture> icons = {addIcon, deleteIcon, saveIcon, selectIcon};
+    std::vector<sf::RectangleShape> iconShapes; // Icon shapes and icons
 
-    sf::Sprite deleteSprite;
-    deleteSprite.setTexture(deleteIcon);
-    deleteSprite.setPosition(3 + kSmallMenuWidth + kButtonWidth + kIconX, kIconY);
+    for (size_t i = 0; i < icons.size(); ++i) {
+        iconShapes.emplace_back(sf::Vector2f(kButtonWidth / 5.5f, kButtonWidth / 5.5f));
+        iconShapes.back().setOrigin(0, iconShapes.back().getGlobalBounds().height / 2);
+        iconShapes.back().setPosition(kSmallMenuWidth + kIconX + i * kButtonWidth, kButtonHeight / 2);
 
-    sf::Sprite saveSprite;
-    saveSprite.setTexture(saveIcon);
-    saveSprite.setPosition(3 + kSmallMenuWidth + 2 * (kButtonWidth + kIconX), kIconY);
+        iconShapes.back().setTexture(&icons[i]);
+    }
 
-    sf::Sprite selectSprite;
-    selectSprite.setTexture(selectIcon);
-    selectSprite.setPosition(3 + kSmallMenuWidth + 3 * (kButtonWidth + kIconX) - kIconX - kIconX / 1.3, kIconY);
+    iconShapes[0].setPosition(kSmallMenuWidth + kIconX * 1.5f, kButtonHeight / 2);
 
-    buttonIcons.emplace_back(addSprite);
-    buttonIcons.emplace_back(deleteSprite);
-    buttonIcons.emplace_back(saveSprite);
-    buttonIcons.emplace_back(selectSprite);
+    return iconShapes;
 }
 
 // Get file name from the path smth/dir/name
@@ -67,7 +61,7 @@ std::string GetFileName(const std::string& fileName) {
 
 // Main Methods for working with files
 void ReleaseFunctions(const std::string result, size_t buttonNumber, sf::RenderWindow& mainWindow, Image& image, FileField& fileField, StatusBar& statusBar) {
-    static std::vector<std::string> pathToFile;
+    static std::vector<std::string> pathToFile;  // Paths to images
 
     switch (static_cast<Buttons>(buttonNumber)) {
         // Add file button
@@ -84,6 +78,8 @@ void ReleaseFunctions(const std::string result, size_t buttonNumber, sf::RenderW
 
                     image.ClearImage();       // Clear if there was some image
                     image.LoadImage(result);  // Load new image
+                    image.SetMainImageScale();
+
                     fileField.AddFile(GetFileName(result));
 
                     statusBar.UpdateStatus("Image loaded successfully");
@@ -137,6 +133,7 @@ void ReleaseFunctions(const std::string result, size_t buttonNumber, sf::RenderW
 
                 image.ClearImage();                             // Clear old image
                 image.LoadImage(FindPath(pathToFile, result));  // Load new image
+                image.SetMainImageScale();
 
                 return;
             }
