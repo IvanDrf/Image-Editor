@@ -59,9 +59,16 @@ void Image::SetMainImageScale() {
     sprite_.setScale(scaleX, scaleY);
     sprite_.setPosition(kFileFieldWidth, kButtonHeight);
 }
-
+#include <iostream>
 bool Image::SaveImage(const std::string& fileName) {
+    size_t delimiter{fileName.find('|')}; // find delimeter oldName/newName
     sf::Image image{texture_.copyToImage()};
+    std::cout << fileName << '\n';
+
+    if (delimiter != std::string::npos) {
+        std::string newFileName{fileName.substr(delimiter + 1)};
+        return hasImage && image.saveToFile(newFileName);
+    }
 
     return hasImage && image.saveToFile(fileName);
 }
