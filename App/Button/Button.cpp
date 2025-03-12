@@ -24,7 +24,6 @@ Button::Button(const float x, const float y, const std::string& name, sf::Font& 
     shape_.setOutlineColor(sf::Color::Black);
     shape_.setOutlineThickness(3);
     shape_.setPosition(x, y);
-
 }
 
 void Button::CreateMenuButtons(std::vector<Button>& buttons, const std::vector<std::string>& names, sf::Font& font) {
@@ -87,7 +86,15 @@ std::string InputField::Input(sf::Event& event, sf::RenderWindow& window) {
 
 std::string InputField::CreateInputWindow(const std::string& heading, const std::string& inputText) {
     sf::RenderWindow window(sf::VideoMode(kSmallWindowWidth, kSmallWindowHeight), heading);
-    InputField inputField(0, kSmallWindowHeight / 2);
+    InputField inputField(0, kSmallWindowHeight / 4.7f);
+    InputField saveField(0, kSmallWindowHeight / 1.5f);
+
+    sf::Text saveText;  // If button save file was pressed
+    saveText.setFont(inputField.font_);
+    saveText.setCharacterSize(1.5 * kCharacterSize);
+    saveText.setFillColor(sf::Color::White);
+    saveText.setString("Enter new file name");
+    saveText.setPosition(0, kSmallWindowHeight / 2.2f);
 
     sf::Text text;
     text.setFont(inputField.font_);
@@ -95,6 +102,10 @@ std::string InputField::CreateInputWindow(const std::string& heading, const std:
     text.setFillColor(sf::Color::White);
     text.setString(inputText);
     text.setPosition(0, 0);
+
+    bool isInputFieldActive = true;
+    std::string result;
+    std::string newFileName;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -105,15 +116,35 @@ std::string InputField::CreateInputWindow(const std::string& heading, const std:
                 return "";
             }
 
-            std::string result{inputField.Input(event, window)};
+            if (event.type == sf::Event::MouseButtonPressed) {
+                // Check which box is active
+                if (inputField.box_.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                    isInputFieldActive = true;  // If the old name is being entered now
+                } else if (saveField.box_.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                    isInputFieldActive = false;  // If the new name is being entered now
+                }
+            }
 
-            if (!result.empty()) {
-                return result;
+            if (isInputFieldActive) {
+                result = inputField.Input(event, window);
+            } else if (heading == "Save file") {
+                newFileName = saveField.Input(event, window);
+            }
+
+            // Save with new name or save with old
+            if (!result.empty() || !newFileName.empty()) {
+                window.close();
+                return (newFileName.empty()) ? (result) : (result + '|' + newFileName);
             }
         }
 
         window.clear();
         window.draw(text);
+        if (heading == "Save file") {
+            saveField.Draw(window);
+            window.draw(saveText);
+        }
+
         inputField.Draw(window);
         window.display();
     }
