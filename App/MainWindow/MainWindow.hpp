@@ -9,7 +9,8 @@ enum class Buttons {
     AddFile = 0,
     DeleteFile = 1,
     SaveFile = 2,
-    SelectFile = 3
+    SelectFile = 3,
+    SelectBrush = 4
 };
 
 namespace {  // Desktop Size
@@ -47,14 +48,14 @@ const float kButtonWidth{kMainWindowWidth / 10};
 const float kButtonHeight{kMainWindowHeight - kFileFieldHeight};
 
 const sf::Color kFileButtonColor{99, 139, 199};
-const sf::Color kToolsColor{40, 116, 254};
+const sf::Color kToolsColor{72, 111, 180};
 }  // namespace
 
 namespace {  // Small menu
 const float kSmallMenuWidth{kFileFieldWidth / 4.8f};
 const float kSmallMenuHeight{kButtonHeight};
 
-const float kSmallMenuScale{0.4f};                                         // Icon scale
+const float kSmallMenuScale{0.4f};                                        // Icon scale
 const sf::Vector2f kSmallMenuIconPosition{kSmallMenuWidth / 3.6f, 1.5f};  // Icon position
 }  // namespace
 
@@ -71,7 +72,14 @@ const float kSmallWindowHeight{kMainWindowHeight * 0.2f};
 namespace {  // Box Size
 const float kBoxWidth{kMainWindowWidth * 0.15f};
 const float kBoxHeight{kMainWindowHeight * 0.03f};
+
+const float kBrushBoxWidth{kButtonWidth * 0.2f};
+const float kBrushBoxHeight{kButtonHeight / 2.5f};
 }  // namespace
+
+namespace {
+const float kBrushImageScale{0.45f};
+}
 
 std::vector<sf::RectangleShape> LoadButtonImages();
 std::string GetFileName(const std::string& fileName);
@@ -80,7 +88,8 @@ std::string GetFileName(const std::string& fileName);
 class Image;
 class FileField;
 class StatusBar;
-void ReleaseFunctions(const std::string result, size_t buttonNumber, sf::RenderWindow& mainWindow, Image& image, FileField& FileField, StatusBar& StatusBar);
+class Brush;
+void ReleaseFunctions(const std::string& result, size_t buttonNumber, sf::RenderWindow& mainWindow, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed);
 
 // Delete path
 void DeletePath(std::vector<std::string>& pathToFile, const std::string& fileName);

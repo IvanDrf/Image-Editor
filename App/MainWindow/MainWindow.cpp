@@ -1,7 +1,6 @@
 #include "MainWindow.hpp"
 
-#include <iostream>
-
+#include "../Brush/Brush.hpp"
 #include "../FileField/FileField.hpp"
 #include "../Image/Image.hpp"
 #include "../StatusBar/StatusBar.hpp"
@@ -28,8 +27,13 @@ std::vector<sf::RectangleShape> LoadButtonImages() {
         throw std::runtime_error("Select image could not be uploaded");
     }
 
-    static const std::vector<sf::Texture> icons = {addIcon, deleteIcon, saveIcon, selectIcon};
-    std::vector<sf::RectangleShape> iconShapes; // Icon shapes and icons
+    sf::Texture brushIcon;
+    if (!brushIcon.loadFromFile("../WindowFiles/brush-image.png")) {
+        throw std::runtime_error("Brush image could not be uploaded");
+    }
+
+    static const std::vector<sf::Texture> icons = {addIcon, deleteIcon, saveIcon, selectIcon, brushIcon};
+    std::vector<sf::RectangleShape> iconShapes;  // Icon shapes and icons
 
     for (size_t i = 0; i < icons.size(); ++i) {
         iconShapes.emplace_back(sf::Vector2f(kButtonWidth / 5.5f, kButtonWidth / 5.5f));
@@ -60,9 +64,8 @@ std::string GetFileName(const std::string& fileName) {
 }
 
 // Main Methods for working with files
-void ReleaseFunctions(const std::string result, size_t buttonNumber, sf::RenderWindow& mainWindow, Image& image, FileField& fileField, StatusBar& statusBar) {
+void ReleaseFunctions(const std::string& result, size_t buttonNumber, sf::RenderWindow& mainWindow, Image& image, FileField& fileField, StatusBar& statusBar, bool& brushPressed) {
     static std::vector<std::string> pathToFile;  // Paths to images
-
     switch (static_cast<Buttons>(buttonNumber)) {
         // Add file button
         case (Buttons::AddFile): {
@@ -139,6 +142,12 @@ void ReleaseFunctions(const std::string result, size_t buttonNumber, sf::RenderW
             }
 
             statusBar.UpdateStatus("File " + result + " cannot be selected");
+
+            break;
+        }
+
+        case (Buttons::SelectBrush): {
+            brushPressed = !brushPressed;
 
             break;
         }
