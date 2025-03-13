@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -133,11 +132,10 @@ auto main(int, char**) -> int {
         brush.Image::DrawImage(mainWindow);
         brush.InputField::Draw(mainWindow);
 
-        if (!brushPoints.empty()) {
-            for (const auto& point : brushPoints) {  // Draw the dots that were drawn with a brush
-                mainWindow.draw(point);
-            }
+        for (const auto& point : brushPoints) {  // Draw the dots that were drawn with a brush
+            mainWindow.draw(point);
         }
+
         mainWindow.draw(menuShape);       // Small menu
         menuImage.DrawImage(mainWindow);  // Small menu image
 
