@@ -2,17 +2,44 @@
 
 #include "../MainWindow/MainWindow.hpp"
 
+Image::Image() : hasImage_(false), previousStatus() {
+}
+
 void Image::DrawImage(sf::RenderWindow& window) const {
-    if (hasImage) {
+    if (hasImage_) {
         window.draw(sprite_);
     }
 }
 
 void Image::ClearImage() {
-    hasImage = false;
-
+    hasImage_ = false;
     texture_ = sf::Texture();
     sprite_ = sf::Sprite();
+    image_ = sf::Image();
+
+    while (!previousStatus.empty()) {
+        previousStatus.pop();
+    }
+}
+
+void Image::UpdateTexture() {
+    texture_.loadFromImage(image_);
+    sprite_.setTexture(texture_);
+}
+
+void Image::SaveState() {
+    previousStatus.push(image_);
+}
+
+void Image::BackState() {
+    if (previousStatus.empty()) {
+        return;
+    }
+
+    image_ = previousStatus.top();
+    previousStatus.pop();
+
+    UpdateTexture();
 }
 
 void Image::SetScale(const float scaleX, const float scaleY) {
@@ -31,21 +58,47 @@ void Image::SetOrigin(const float centerX, const float centerY) {
     sprite_.setOrigin(centerX, centerY);
 }
 
+void Image::SetTexture(const sf::Texture& texture) {
+    texture_ = texture;
+    sprite_.setTexture(texture_);
+    hasImage_ = true;
+}
+
 sf::FloatRect Image::GetSpriteBound() const {
     return sprite_.getGlobalBounds();
 }
 
-void Image::Move(const sf::Vector2f& offset) {
-    sprite_.move(offset);
+const sf::Sprite& Image::GetSprite() const {
+    return sprite_;
+}
+
+const sf::Texture& Image::GetTexture() const {
+    return texture_;
+}
+
+sf::Vector2f Image::GetImagePosition(const sf::Vector2f& mousePosition) const {
+    sf::FloatRect bounds = sprite_.getGlobalBounds();
+
+    float imageX = (mousePosition.x - bounds.left) / sprite_.getScale().x;
+    float imageY = (mousePosition.y - bounds.top) / sprite_.getScale().y;
+
+    return sf::Vector2f(imageX, imageY);
+}
+
+sf::Image& Image::GetImage() {
+    if (!hasImage_) {
+        throw std::runtime_error("No image loaded");
+    }
+    return image_;
 }
 
 void Image::LoadImage(const std::string& filePath) {
-    if (!texture_.loadFromFile(filePath)) {
+    if (!image_.loadFromFile(filePath)) {
         throw std::runtime_error("Image could not be found");
     }
-
+    texture_.loadFromImage(image_);
     sprite_.setTexture(texture_);
-    hasImage = true;
+    hasImage_ = true;
 }
 
 void Image::SetMainImageScale() {
@@ -61,17 +114,20 @@ void Image::SetMainImageScale() {
 }
 
 bool Image::SaveImage(const std::string& fileName) {
-    size_t delimiter{fileName.find('|')}; // find delimeter oldName|newName
-    sf::Image image{texture_.copyToImage()};
+    size_t delimiter{fileName.find('|')};  // find delimiter oldName|newName
 
     if (delimiter != std::string::npos) {
         std::string newFileName{fileName.substr(delimiter + 1)};
-        return hasImage && image.saveToFile(newFileName);
+        return hasImage_ && image_.saveToFile(newFileName);
     }
 
-    return hasImage && image.saveToFile(fileName);
+    return hasImage_ && image_.saveToFile(fileName);
 }
 
 bool Image::HasImage() const {
-    return hasImage;
+    return hasImage_;
+}
+
+Image::operator sf::Image() const {
+    return image_;
 }
