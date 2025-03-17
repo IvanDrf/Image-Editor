@@ -1,11 +1,11 @@
 #pragma once
 
-#include "SFML/Graphics.hpp"
-#include "../InputField/InputField.hpp"
 #include "../Image/Image.hpp"
+#include "../InputField/InputField.hpp"
+#include "SFML/Graphics.hpp"
 
 namespace {
-const float kBrushInitialRadius{10.0f}; // Initial radius for brush
+const float kBrushInitialRadius{10.0f};  // Initial radius for brush
 }
 
 class Brush : public Image, public InputField {
@@ -22,6 +22,5 @@ class Brush : public Image, public InputField {
 
     void SetColor(const sf::Color& newColor);
     sf::Color GetColor() const;
-    void Draw(sf::RenderTexture& texture, const sf::Vector2f& position);
-
+    void Draw(sf::Image& image, const sf::Vector2f& position);
 };
