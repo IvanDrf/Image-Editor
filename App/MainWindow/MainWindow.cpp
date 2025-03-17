@@ -147,7 +147,7 @@ void ReleaseFunctions(const std::string& result, size_t buttonNumber, sf::Render
         }
 
         case (Buttons::SelectBrush): {
-            brushPressed = !brushPressed;
+            brushPressed = !brushPressed && image.HasImage();
 
             break;
         }
