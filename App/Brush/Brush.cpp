@@ -27,7 +27,20 @@ sf::Color Brush::GetColor() const {
     return color_;
 }
 
-void Brush::Draw(sf::RenderTexture& texture, const sf::Vector2f& position) {
-    shape_.setPosition(position);
-    texture.draw(shape_);
+void Brush::Draw(sf::Image& image, const sf::Vector2f& position) {
+    int radius = static_cast<int>(radius_);
+    sf::Vector2u imageSize = image.getSize();
+
+    for (int x = -radius; x <= radius; ++x) {
+        for (int y = -radius; y <= radius; ++y) {
+            if (x * x + y * y <= radius * radius) {
+                int pixelX = static_cast<int>(position.x) + x;
+                int pixelY = static_cast<int>(position.y) + y;
+
+                if (pixelX >= 0 && pixelX < static_cast<int>(imageSize.x) && pixelY >= 0 && pixelY < static_cast<int>(imageSize.y)) {
+                    image.setPixel(pixelX, pixelY, color_);
+                }
+            }
+        }
+    }
 }
