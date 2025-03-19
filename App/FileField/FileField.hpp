@@ -18,5 +18,5 @@ class FileField {
     void AddFile(const std::string& fileName);
     void DeleteFile(const std::string& fileName);
 
-    const std::vector<std::string>& GetFiles() const;
+    [[nodiscard]] const std::vector<std::string>& GetFiles() const;
 };

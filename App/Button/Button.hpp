@@ -14,5 +14,5 @@ class Button {
     void DrawButton(sf::RenderWindow& window) const;
     void SetColor(const sf::Color& newColor);
 
-    bool PressButton(const sf::Vector2f& mousePosition) const;
+    [[nodiscard]] bool PressButton(const sf::Vector2f& mousePosition) const;
 };
