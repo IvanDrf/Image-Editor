@@ -2,7 +2,7 @@
 
 #include "../MainWindow/MainWindow.hpp"
 
-Image::Image() : hasImage_(false), previousStatus() {
+Image::Image() : hasImage_(false) {
 }
 
 void Image::DrawImage(sf::RenderWindow& window) const {
@@ -11,7 +11,7 @@ void Image::DrawImage(sf::RenderWindow& window) const {
     }
 }
 
-void Image::ClearImage() {
+void Image::ClearImage(std::stack<sf::Image>& previousStatus) {
     hasImage_ = false;
     texture_ = sf::Texture();
     sprite_ = sf::Sprite();
@@ -27,11 +27,11 @@ void Image::UpdateTexture() {
     sprite_.setTexture(texture_);
 }
 
-void Image::SaveState() {
+void Image::SaveState(std::stack<sf::Image>& previousStatus) {
     previousStatus.push(image_);
 }
 
-void Image::BackState() {
+void Image::BackState(std::stack<sf::Image>& previousStatus) {
     if (previousStatus.empty()) {
         return;
     }
@@ -46,11 +46,11 @@ void Image::SetScale(const float scaleX, const float scaleY) {
     sprite_.setScale(scaleX, scaleY);
 }
 
-void Image::SetPosition(const float positionX, const float positionY) {
+void Image::SetPosition(const float positionX, const float positionY) {  // overload
     sprite_.setPosition(positionX, positionY);
 }
 
-void Image::SetPosition(const sf::Vector2f& position) {
+void Image::SetPosition(const sf::Vector2f& position) {  // overload
     sprite_.setPosition(position);
 }
 

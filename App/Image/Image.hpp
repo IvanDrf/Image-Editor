@@ -6,7 +6,6 @@
 class Image {
  private:
     sf::Image image_;
-    std::stack<sf::Image> previousStatus;  // Story for (Ctrl+Z)
 
     sf::Texture texture_;
     sf::Sprite sprite_;
@@ -17,11 +16,11 @@ class Image {
     Image();
 
     void DrawImage(sf::RenderWindow& window) const;
-    void ClearImage();
+    void ClearImage(std::stack<sf::Image>& previousStatus);
     void UpdateTexture();
 
-    void SaveState();  // Adding the modified image to the history
-    void BackState();  // Deleting the modified image to the history
+    void SaveState(std::stack<sf::Image>& previousStatus);  // Adding the modified image to the history
+    void BackState(std::stack<sf::Image>& previousStatus);  // Deleting the modified image to the history
 
     void SetScale(const float scaleX, const float scaleY);
     void SetPosition(const float positionX, const float positionY);
@@ -29,18 +28,18 @@ class Image {
     void SetOrigin(const float centerX, const float centerY);
     void SetTexture(const sf::Texture& texture);
 
-    sf::FloatRect GetSpriteBound() const;
+    [[nodiscard]] sf::FloatRect GetSpriteBound() const;
     const sf::Sprite& GetSprite() const;
     const sf::Texture& GetTexture() const;
 
-    sf::Vector2f GetImagePosition(const sf::Vector2f& mousePosition) const;
-    sf::Image& GetImage();
+    [[nodiscard]] sf::Vector2f GetImagePosition(const sf::Vector2f& mousePosition) const;
+    [[nodiscard]] sf::Image& GetImage();
 
     void LoadImage(const std::string& filePath);
     void SetMainImageScale();
 
-    bool SaveImage(const std::string& fileName);
-    bool HasImage() const;
+    [[nodiscard]] bool SaveImage(const std::string& fileName);
+    [[nodiscard]] bool HasImage() const;
 
     operator sf::Image() const;
 };
