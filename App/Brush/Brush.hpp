@@ -6,6 +6,7 @@
 
 namespace {
 const float kBrushInitialRadius{10.0f};  // Initial radius for brush
+const float kBrushChangeRadius{7.5f};
 }
 
 class Brush : public Image, public InputField {
@@ -22,5 +23,5 @@ class Brush : public Image, public InputField {
 
     void SetColor(const sf::Color& newColor);
     sf::Color GetColor() const;
-    void Draw(sf::Image& image, const sf::Vector2f& position);
+    void Draw(sf::Image& image, const sf::Vector2f& position) const;
 };
