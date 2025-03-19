@@ -1,6 +1,21 @@
 #include "Brush.hpp"
 
+namespace {
+void inline UpdateCursorScale(const sf::Texture texture, sf::Sprite& sprite, float radius) {
+    const sf::Vector2u bounds{texture.getSize()};
+    sprite.setScale(2 * radius / bounds.x, 2 * radius / bounds.y);
+}
+}  // namespace
+
 Brush::Brush(const float radius, const sf::Color& color) : radius_(radius), color_(color) {
+    if (!brushCursorTexture.loadFromFile("../WindowFiles/brush-cursor.png")) {
+        throw std::runtime_error("Brush cursor could not be uploaded");
+    }
+    brushCursorSprite.setTexture(brushCursorTexture);
+    brushCursorSprite.setOrigin(brushCursorTexture.getSize().x / 2, brushCursorTexture.getSize().y / 2);
+
+    UpdateCursorScale();
+
     shape_.setRadius(radius);
     shape_.setFillColor(color);
 
@@ -14,8 +29,17 @@ void Brush::SetRadius(const float newRadius) {
     shape_.setOrigin(newRadius, newRadius);
 }
 
+void Brush::UpdateCursorScale() {
+    static const sf::Vector2u bounds{brushCursorTexture.getSize()};
+    brushCursorSprite.setScale(2 * radius_ / bounds.x, 2 * radius_ / bounds.y);
+}
+
 float Brush::GetRadius() const {
     return radius_;
+}
+
+const sf::Sprite& Brush::GetBrushCursor() const {
+    return brushCursorSprite;
 }
 
 void Brush::SetColor(const sf::Color& newColor) {
@@ -45,4 +69,8 @@ void Brush::Draw(sf::Image& image, const sf::Vector2f& position) const {
             }
         }
     }
+}
+
+void Brush::SetBrushCursor(const sf::Vector2i& mousePosition) {
+    brushCursorSprite.setPosition(mousePosition.x, mousePosition.y);
 }
