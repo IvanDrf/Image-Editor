@@ -100,6 +100,16 @@ auto main(int, char**) -> int {
                 }
             }
 
+            // Change brush size (Increase size)
+            if (brushPressed && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::RBracket) {
+                brush.SetRadius(brush.GetRadius() + kBrushChangeRadius);
+            }
+
+            // Change brush size (Decrease size)
+            if (brushPressed && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::LBracket) {
+                brush.SetRadius(std::max(kBrushInitialRadius, brush.GetRadius() - kBrushChangeRadius));
+            }
+
             // Return previous image (Ctrl+Z)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Z && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 image.BackState();
@@ -107,7 +117,8 @@ auto main(int, char**) -> int {
 
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-                //
+                std::string result = buttonFunctions[2]();
+                ReleaseFunctions(result, 2, mainWindow, image, fileField, statusBar, brushPressed);
             }
         }
 
