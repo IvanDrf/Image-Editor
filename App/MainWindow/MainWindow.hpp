@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <stack>
+
 using uint = unsigned int;
 using ButtonFunction = std::string (*)();
 
@@ -89,8 +91,8 @@ class Image;
 class FileField;
 class StatusBar;
 class Brush;
-void ReleaseFunctions(const std::string& result, size_t buttonNumber, sf::RenderWindow& mainWindow, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed);
+void ReleaseFunctions(const std::string& result, size_t buttonNumber, sf::RenderWindow& mainWindow, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed, std::stack<sf::Image>& previousStatus);
 
 // Delete path
 void DeletePath(std::vector<std::string>& pathToFile, const std::string& fileName);
-std::string FindPath(std::vector<std::string>& pathToFile, const std::string& fileName);
+[[nodiscard]] std::string FindPath(std::vector<std::string>& pathToFile, const std::string& fileName);
