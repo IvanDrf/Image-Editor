@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include <string>
 #include <vector>
 
@@ -27,6 +28,8 @@ auto main(int, char**) -> int {
 
     // Interface: current image, field with files names, status bar
     Image image;
+    std::stack<sf::Image> previousStatus;  // Image modification history
+
     FileField fileField;
     StatusBar statusBar;
 
@@ -85,7 +88,7 @@ auto main(int, char**) -> int {
                 for (size_t i = 0; i < buttonNames.size(); ++i) {
                     if (buttons[i].PressButton(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
                         std::string result = buttonFunctions[i]();
-                        ReleaseFunctions(result, i, mainWindow, image, fileField, statusBar, brushPressed);
+                        ReleaseFunctions(result, i, mainWindow, image, fileField, statusBar, brushPressed, previousStatus);
                     }
                 }
             }
@@ -93,21 +96,34 @@ auto main(int, char**) -> int {
             // Brush drawing
             if (brushPressed && event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 if (event.mouseMove.x >= kFileFieldWidth && event.mouseMove.y >= kButtonHeight && event.mouseMove.y <= kMainWindowHeight - kStatusBarHeight) {
-                    image.SaveState();
+                    image.SaveState(previousStatus);
                     brush.Draw(image.GetImage(), image.GetImagePosition(sf::Vector2f(event.mouseMove.x, event.mouseMove.y)));
 
                     image.UpdateTexture();
                 }
             }
 
+            // Change brush size (Increase size)
+            if (brushPressed && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::RBracket) {
+                brush.SetRadius(brush.GetRadius() + kBrushChangeRadius);
+                brush.UpdateCursorScale();
+            }
+
+            // Change brush size (Decrease size)
+            if (brushPressed && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::LBracket) {
+                brush.SetRadius(std::max(kBrushInitialRadius / kBrushInitialRadius, brush.GetRadius() - kBrushChangeRadius));
+                brush.UpdateCursorScale();
+            }
+
             // Return previous image (Ctrl+Z)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Z && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-                image.BackState();
+                image.BackState(previousStatus);
             }
 
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-                //
+                std::string result = buttonFunctions[2]();
+                ReleaseFunctions(result, 2, mainWindow, image, fileField, statusBar, brushPressed, previousStatus);
             }
         }
 
@@ -123,15 +139,20 @@ auto main(int, char**) -> int {
             button.DrawButton(mainWindow);
         }
 
-        for (const auto& icon : buttonIcons) {
+        for (const auto& icon : buttonIcons) {  // Button icons
             mainWindow.draw(icon);
         }
 
-        brush.Image::DrawImage(mainWindow);
-        brush.InputField::Draw(mainWindow);
+        brush.Image::DrawImage(mainWindow);  // Brush Icon
+        brush.InputField::Draw(mainWindow);  // Brush size input field
 
         mainWindow.draw(menuShape);       // Small menu
         menuImage.DrawImage(mainWindow);  // Small menu image
+
+        if (brushPressed) {
+            brush.SetBrushCursor(sf::Mouse::getPosition(mainWindow));
+            mainWindow.draw(brush.GetBrushCursor());
+        }
 
         mainWindow.display();
     }

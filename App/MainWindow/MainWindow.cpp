@@ -64,7 +64,8 @@ std::string GetFileName(const std::string& fileName) {
 }
 
 // Main Methods for working with files
-void ReleaseFunctions(const std::string& result, size_t buttonNumber, sf::RenderWindow& mainWindow, Image& image, FileField& fileField, StatusBar& statusBar, bool& brushPressed) {
+void ReleaseFunctions(const std::string& result, size_t buttonNumber, sf::RenderWindow& mainWindow, Image& image, FileField& fileField, StatusBar& statusBar, bool& brushPressed,
+                      std::stack<sf::Image>& previousStatus) {
     static std::vector<std::string> pathToFile;  // Paths to images
     switch (static_cast<Buttons>(buttonNumber)) {
         // Add file button
@@ -79,8 +80,8 @@ void ReleaseFunctions(const std::string& result, size_t buttonNumber, sf::Render
 
                     pathToFile.push_back(result);  // Add new path to the new file
 
-                    image.ClearImage();       // Clear if there was some image
-                    image.LoadImage(result);  // Load new image
+                    image.ClearImage(previousStatus);  // Clear if there was some image
+                    image.LoadImage(result);           // Load new image
                     image.SetMainImageScale();
 
                     fileField.AddFile(GetFileName(result));
@@ -109,7 +110,7 @@ void ReleaseFunctions(const std::string& result, size_t buttonNumber, sf::Render
 
                 statusBar.UpdateStatus("File was deleted successfully");
 
-                image.ClearImage();
+                image.ClearImage(previousStatus);
                 DeletePath(pathToFile, result);  // Delete path to deleting file
             }
 
@@ -134,7 +135,7 @@ void ReleaseFunctions(const std::string& result, size_t buttonNumber, sf::Render
             if (!result.empty() && std::find(fileField.GetFiles().begin(), fileField.GetFiles().end(), result) != fileField.GetFiles().end()) {
                 statusBar.UpdateStatus("File " + result + " selected");
 
-                image.ClearImage();                             // Clear old image
+                image.ClearImage(previousStatus);               // Clear old image
                 image.LoadImage(FindPath(pathToFile, result));  // Load new image
                 image.SetMainImageScale();
 
