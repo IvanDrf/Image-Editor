@@ -75,8 +75,8 @@ namespace {  // Box Size
 const float kBoxWidth{kMainWindowWidth * 0.15f};
 const float kBoxHeight{kMainWindowHeight * 0.03f};
 
-const float kBrushBoxWidth{kButtonWidth * 0.2f};
-const float kBrushBoxHeight{kButtonHeight / 2.5f};
+const float kBrushBoxWidth{kButtonWidth * 0.22f};
+const float kBrushBoxHeight{kButtonHeight / 2.1f};
 }  // namespace
 
 namespace {
