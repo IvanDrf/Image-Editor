@@ -19,11 +19,14 @@ class InputField {
     void SetTextPosition(const float x, const float y);
     void SetFont(const sf::Font& font);
     void SetText(const std::string& text);
+    void SetTextColor(const sf::Color& color);
+    void SetTextSize(const int textSize);
 
     void SetInputText(const std::string& inputString);
 
     void SetBoxPosition(const float x, const float y);
     void SetBoxSize(const sf::Vector2f& size);
+    void SetBoxColor(const sf::Color& color);
 
     std::string Input(sf::Event& event, sf::RenderWindow& window);
     static std::string CreateInputWindow(const std::string& heading, const std::string& inputText);
