@@ -67,12 +67,29 @@ auto main(int, char**) -> int {
     Brush brush(kBrushInitialRadius, sf::Color::White);
     bool brushPressed{false};
 
-    brush.Image::LoadImage("../WindowFiles/brush-size.png");
-    brush.Image::SetScale(kBrushImageScale, kBrushImageScale);
-    brush.Image::SetPosition(kSmallMenuWidth + 5 * kButtonWidth + kButtonWidth / 10, 0);
+    // Small menu for brush: Size, Color
+    // Size
+    Image brushSizeImage;
+    brushSizeImage.LoadImage("../WindowFiles/brush-size.png");
+    brushSizeImage.SetScale(kBrushImageScale, kBrushImageScale);
+    brushSizeImage.SetPosition(kSmallMenuWidth + 5 * kButtonWidth + kButtonWidth / 10, 0);
 
-    brush.InputField::SetBoxSize(sf::Vector2f(kBrushBoxWidth, kBrushBoxHeight));
-    brush.InputField::SetBoxPosition(kSmallMenuWidth + 5 * kButtonWidth + 0.9f * brush.Image::GetSpriteBound().width + kButtonWidth / 5, (kButtonHeight - kBrushBoxHeight) / 2);
+    const float kBrushInputFieldPosX{kSmallMenuWidth + 5 * kButtonWidth + 0.9f * brushSizeImage.GetSpriteBound().width + kButtonWidth / 5};
+    const float kBrushInputFieldPoxY{(kButtonHeight - kBrushBoxHeight) / 2};
+
+    InputField brushSizeField(kBrushInputFieldPosX, kBrushInputFieldPoxY, sf::Vector2f(kBrushBoxWidth, kBrushBoxHeight));
+    brushSizeField.SetBoxColor(kBrushInputSizeColor);
+
+    brushSizeField.SetText(std::to_string(static_cast<int>(kBrushInitialRadius)));
+    brushSizeField.SetTextColor(sf::Color::White);
+    brushSizeField.SetTextSize(kCharacterSize / 1.1f);
+
+    Image brushCarriageImage;
+    brushCarriageImage.LoadImage("../WindowFiles/carriage-image.png");
+    brushCarriageImage.SetScale(kBrushBoxWidth / brushCarriageImage.GetSpriteBound().width, kBrushBoxHeight / brushCarriageImage.GetSpriteBound().height);
+    brushCarriageImage.SetOrigin(brushCarriageImage.GetSpriteBound().width / 2, brushCarriageImage.GetSpriteBound().height / 2);
+    brushCarriageImage.SetPosition(kBrushInputFieldPosX, kBrushInputFieldPoxY);
+    // Create small menu for brush color and brush size
 
     // Main Loop
     while (mainWindow.isOpen()) {
@@ -143,16 +160,17 @@ auto main(int, char**) -> int {
             mainWindow.draw(icon);
         }
 
-        brush.Image::DrawImage(mainWindow);  // Brush Icon
-        brush.InputField::Draw(mainWindow);  // Brush size input field
-
         mainWindow.draw(menuShape);       // Small menu
         menuImage.DrawImage(mainWindow);  // Small menu image
 
-        if (brushPressed) {
+        if (brushPressed) {  // Brush cursor
             brush.SetBrushCursor(sf::Mouse::getPosition(mainWindow));
             mainWindow.draw(brush.GetBrushCursor());
         }
+
+        brushSizeImage.DrawImage(mainWindow);  // Brush size circles
+        brushSizeField.Draw(mainWindow);       // Brush Size field
+        brushCarriageImage.DrawImage(mainWindow);
 
         mainWindow.display();
     }
