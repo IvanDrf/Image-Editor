@@ -80,7 +80,7 @@ auto main(int, char**) -> int {
     InputField brushSizeField(kBrushInputFieldPosX, kBrushInputFieldPoxY, sf::Vector2f(kBrushBoxWidth, kBrushBoxHeight));
     brushSizeField.SetBoxColor(kBrushInputSizeColor);
 
-    brushSizeField.SetText(std::to_string(static_cast<int>(kBrushInitialRadius)));
+    brushSizeField.SetText(std::to_string(kBrushInitialRadius));
     brushSizeField.SetTextColor(sf::Color::White);
     brushSizeField.SetTextSize(kCharacterSize / 1.1f);
 
@@ -123,7 +123,7 @@ auto main(int, char**) -> int {
             // Change brush size (Increase size)
             if (brushPressed && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::RBracket) {
                 brush.SetRadius(brush.GetRadius() + kBrushChangeRadius);
-                brushSizeField.SetText(std::to_string(static_cast<int>(brush.GetRadius())));
+                brushSizeField.SetText(std::to_string(brush.GetRadius()));
 
                 brush.UpdateCursorScale();
             }
@@ -131,7 +131,7 @@ auto main(int, char**) -> int {
             // Change brush size (Decrease size)
             if (brushPressed && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::LBracket) {
                 brush.SetRadius(std::max(kBrushInitialRadius / kBrushInitialRadius, brush.GetRadius() - kBrushChangeRadius));
-                brushSizeField.SetText(std::to_string(static_cast<int>(brush.GetRadius())));
+                brushSizeField.SetText(std::to_string(brush.GetRadius()));
 
                 brush.UpdateCursorScale();
             }

@@ -1,13 +1,13 @@
 #include "Brush.hpp"
 
 namespace {
-void inline UpdateCursorScale(const sf::Texture texture, sf::Sprite& sprite, float radius) {
+void inline UpdateCursorScale(const sf::Texture texture, sf::Sprite& sprite, int radius) {
     const sf::Vector2u bounds{texture.getSize()};
     sprite.setScale(2 * radius / bounds.x, 2 * radius / bounds.y);
 }
 }  // namespace
 
-Brush::Brush(const float radius, const sf::Color& color) : radius_(radius), color_(color) {
+Brush::Brush(const int radius, const sf::Color& color) : radius_(radius), color_(color) {
     if (!brushCursorTexture.loadFromFile("../WindowFiles/brush-cursor.png")) {
         throw std::runtime_error("Brush cursor could not be uploaded");
     }
@@ -22,7 +22,7 @@ Brush::Brush(const float radius, const sf::Color& color) : radius_(radius), colo
     shape_.setOrigin(radius, radius);
 }
 
-void Brush::SetRadius(const float newRadius) {
+void Brush::SetRadius(const int newRadius) {
     radius_ = newRadius;
 
     shape_.setRadius(newRadius);
@@ -34,7 +34,7 @@ void Brush::UpdateCursorScale() {
     brushCursorSprite.setScale(2 * radius_ / bounds.x, 2 * radius_ / bounds.y);
 }
 
-float Brush::GetRadius() const {
+int Brush::GetRadius() const {
     return radius_;
 }
 
