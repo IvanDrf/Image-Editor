@@ -6,16 +6,16 @@
 
 namespace {
 const int kBrushInitialRadius{10};  // Initial radius for brush
-const int kBrushChangeRadius{5};    // Value of increasing or decreasing radius
+const int kBrushChangeRadius{5};
 
 const sf::Color kBrushInputSizeColor{152, 167, 212};
 }  // namespace
 
-class Brush {
+class Brush{
  private:
     sf::CircleShape shape_;
     sf::Color color_;
-    int radius_;
+    float radius_;
 
     sf::Texture brushCursorTexture;
     sf::Sprite brushCursorSprite;

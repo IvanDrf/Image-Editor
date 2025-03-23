@@ -67,7 +67,7 @@ auto main(int, char**) -> int {
     Brush brush(kBrushInitialRadius, sf::Color::White);
     bool brushPressed{false};
 
-    // Small menu for brush: Size, Color
+// Small menu for brush: Size, Color
     // Size
     Image brushSizeImage;
     brushSizeImage.LoadImage("../WindowFiles/brush-size.png");
@@ -84,11 +84,6 @@ auto main(int, char**) -> int {
     brushSizeField.SetTextColor(sf::Color::White);
     brushSizeField.SetTextSize(kCharacterSize / 1.1f);
 
-    Image brushCarriageImage;
-    brushCarriageImage.LoadImage("../WindowFiles/carriage-image.png");
-    brushCarriageImage.SetScale(kBrushBoxWidth / brushCarriageImage.GetSpriteBound().width, kBrushBoxHeight / brushCarriageImage.GetSpriteBound().height);
-    brushCarriageImage.SetOrigin(brushCarriageImage.GetSpriteBound().width / 2, brushCarriageImage.GetSpriteBound().height / 2);
-    brushCarriageImage.SetPosition(kBrushInputFieldPosX - kBrushInputFieldPosX / 50, kBrushInputFieldPoxY);
     // Create small menu for brush color and brush size
 
     // Main Loop
@@ -102,9 +97,9 @@ auto main(int, char**) -> int {
 
             // Press Buttons
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                for (size_t i = 0; i < buttons.size(); ++i) {
+                for (size_t i = 0; i < buttonNames.size(); ++i) {
                     if (buttons[i].AimButton(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
-                        std::string result{buttonFunctions[i]()};
+                        std::string result = buttonFunctions[i]();
                         ReleaseFunctions(result, i, mainWindow, image, fileField, statusBar, brushPressed, previousStatus);
                     }
                 }
@@ -122,7 +117,7 @@ auto main(int, char**) -> int {
 
             // Change brush size (Increase size)
             if (brushPressed && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::RBracket) {
-                brush.SetRadius(brush.GetRadius() + kBrushChangeRadius);
+                brush.SetRadius(std::min(brush.GetRadius() + kBrushChangeRadius, 1000));
                 brushSizeField.SetText(std::to_string(brush.GetRadius()));
 
                 brush.UpdateCursorScale();
@@ -180,14 +175,13 @@ auto main(int, char**) -> int {
             mainWindow.draw(buttonIcons[activeButton]);
         }
 
-        if (brushPressed) {  // Brush cursor
+        if (brushPressed) {
             brush.SetBrushCursor(sf::Mouse::getPosition(mainWindow));
             mainWindow.draw(brush.GetBrushCursor());
         }
 
-        brushSizeImage.DrawImage(mainWindow);  // Brush size circles
-        brushSizeField.Draw(mainWindow);       // Brush Size field
-        brushCarriageImage.DrawImage(mainWindow);
+        brushSizeImage.DrawImage(mainWindow);
+        brushSizeField.Draw(mainWindow);
 
         mainWindow.display();
     }
