@@ -5,11 +5,13 @@
 #include "SFML/Graphics.hpp"
 
 namespace {
-const float kBrushInitialRadius{10.0f};  // Initial radius for brush
-const float kBrushChangeRadius{7.5f};
+const int kBrushInitialRadius{10};  // Initial radius for brush
+const int kBrushChangeRadius{5};
+
+const sf::Color kBrushInputSizeColor{152, 167, 212};
 }  // namespace
 
-class Brush : public Image, public InputField {
+class Brush{
  private:
     sf::CircleShape shape_;
     sf::Color color_;
@@ -19,12 +21,12 @@ class Brush : public Image, public InputField {
     sf::Sprite brushCursorSprite;
 
  public:
-    Brush(const float radius, const sf::Color& color);
+    Brush(const int radius, const sf::Color& color);
 
-    void SetRadius(const float newRadius);
+    void SetRadius(const int newRadius);
     void UpdateCursorScale();
 
-    [[nodiscard]] float GetRadius() const;
+    [[nodiscard]] int GetRadius() const;
     [[nodiscard]] const sf::Sprite& GetBrushCursor() const;
 
     void SetColor(const sf::Color& newColor);

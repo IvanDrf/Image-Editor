@@ -2,6 +2,8 @@
 
 #include "../MainWindow/MainWindow.hpp"
 
+size_t Button::activeButton = std::numeric_limits<size_t>::max();
+
 Button::Button(const float x, const float y, const std::string& name, const sf::Color& color, const sf::Font& font) {
     text_.setFont(font);
     text_.setCharacterSize(kCharacterSize);
@@ -36,6 +38,40 @@ void Button::SetColor(const sf::Color& newColor) {
     shape_.setFillColor(newColor);
 }
 
-bool Button::PressButton(const sf::Vector2f& mousePosition) const {
+bool Button::AimButton(const sf::Vector2f& mousePosition) const {
     return shape_.getGlobalBounds().contains(mousePosition);
+}
+
+void Button::AnimateButton(const sf::RenderWindow& window, size_t buttonIndex) {
+    sf::Vector2f mousePosition{sf::Mouse::getPosition(window)};
+
+    if (shape_.getGlobalBounds().contains(mousePosition)) {
+        sf::Vector2f newSize{1.1f * kButtonWidth, 1.1f * kButtonHeight};
+        sf::Vector2f oldSize{shape_.getSize()};
+
+        sf::Vector2f move{(oldSize.x - newSize.x) / 2.0f, (oldSize.y - newSize.y) / 2.0f};
+
+        shape_.setSize(newSize);
+        shape_.setPosition(shape_.getPosition() + move);
+
+        activeButton = buttonIndex;
+
+        return;
+    }
+
+    sf::Vector2f oldSize{shape_.getSize()};
+    sf::Vector2f newSize{kButtonWidth, kButtonHeight};
+
+    sf::Vector2f move((oldSize.x - newSize.x) / 2.0f, (oldSize.y - newSize.y) / 2.0f);
+
+    shape_.setSize(newSize);
+    shape_.setPosition(shape_.getPosition() + move);
+
+    if (activeButton == buttonIndex) {
+        activeButton = std::numeric_limits<size_t>::max();
+    }
+}
+
+size_t Button::GetActiveButton() {
+    return activeButton;
 }

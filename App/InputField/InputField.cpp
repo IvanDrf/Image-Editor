@@ -35,6 +35,14 @@ void InputField::SetText(const std::string& text) {
     text_.setString(text);
 }
 
+void InputField::SetTextColor(const sf::Color& color) {
+    text_.setFillColor(color);
+}
+
+void InputField::SetTextSize(const int textSize) {
+    text_.setCharacterSize(textSize);
+}
+
 void InputField::SetInputText(const std::string& inputString) {
     inputString_ = inputString;
 }
@@ -45,6 +53,10 @@ void InputField::SetBoxPosition(const float x, const float y) {
 
 void InputField::SetBoxSize(const sf::Vector2f& size) {
     box_.setSize(size);
+}
+
+void InputField::SetBoxColor(const sf::Color& color) {
+    box_.setFillColor(color);
 }
 
 std::string InputField::Input(sf::Event& event, sf::RenderWindow& window) {
