@@ -43,6 +43,7 @@ auto main(int, char**) -> int {
     menuShape.setFillColor(kToolsColor);
     menuShape.setSize(sf::Vector2f(kSmallMenuWidth, kSmallMenuHeight));
     menuShape.setPosition(0, 0);
+
     menuShape.setOutlineColor(sf::Color::Black);
     menuShape.setOutlineThickness(3);
 
@@ -83,6 +84,16 @@ auto main(int, char**) -> int {
     brushSizeField.SetText(std::to_string(kBrushInitialRadius));
     brushSizeField.SetTextColor(sf::Color::White);
     brushSizeField.SetTextSize(kCharacterSize / 1.1f);
+
+
+    sf::RectangleShape brushCurrentColorShape;
+    brushCurrentColorShape.setFillColor(brush.GetColor());
+    brushCurrentColorShape.setSize(kBrushCurrentColorBoxSize);
+    brushCurrentColorShape.setPosition(brushSizeField.GetPosition().x + 1.35f * kBrushBoxWidth, brushSizeField.GetPosition().y);
+
+    brushCurrentColorShape.setOutlineColor(sf::Color::White);
+    brushCurrentColorShape.setOutlineThickness(3);
+
 
     // Create small menu for brush color and brush size
 
@@ -133,7 +144,7 @@ auto main(int, char**) -> int {
 
             // Set Brush Color
             if (brushPressed && event.type == sf::Event::KeyPressed) {
-                brush.SetColor(event.key.code);
+                brush.SetColor(event.key.code, brushCurrentColorShape);
             }
 
             // Return previous image (Ctrl+Z)
@@ -185,8 +196,10 @@ auto main(int, char**) -> int {
             mainWindow.draw(brush.GetBrushCursor());
         }
 
-        brushSizeImage.DrawImage(mainWindow);
-        brushSizeField.Draw(mainWindow);
+        brushSizeImage.DrawImage(mainWindow); // Brush current size image
+        brushSizeField.Draw(mainWindow); // Brush current size field
+
+        mainWindow.draw(brushCurrentColorShape);
 
         mainWindow.display();
     }
