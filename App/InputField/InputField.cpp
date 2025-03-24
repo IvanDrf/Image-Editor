@@ -59,6 +59,10 @@ void InputField::SetBoxColor(const sf::Color& color) {
     box_.setFillColor(color);
 }
 
+[[nodiscard]] sf::Vector2f InputField::GetPosition() {
+    return box_.getPosition();
+}
+
 bool InputField::Active(const sf::Vector2f& mousePosition) const {
     return box_.getGlobalBounds().contains(mousePosition);
 }
