@@ -30,7 +30,7 @@ class Brush {
     [[nodiscard]] const sf::Sprite& GetBrushCursor() const;
 
     void SetColor(const sf::Color& newColor);
-    void SetColor(const sf::Keyboard::Key& keyboardButton);
+    void SetColor(const sf::Keyboard::Key& keyboardButton, sf::RectangleShape& brushColorShape);
 
     [[nodiscard]] sf::Color GetColor() const;
     void Draw(sf::Image& image, const sf::Vector2f& position) const;

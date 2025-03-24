@@ -28,6 +28,10 @@ class InputField {
     void SetBoxSize(const sf::Vector2f& size);
     void SetBoxColor(const sf::Color& color);
 
+    [[nodiscard]] sf::Vector2f GetPosition();
+
+    bool Active(const sf::Vector2f& mousePosition) const;
+
     std::string Input(sf::Event& event, sf::RenderWindow& window);
     static std::string CreateInputWindow(const std::string& heading, const std::string& inputText);
 

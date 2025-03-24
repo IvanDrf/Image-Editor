@@ -79,8 +79,10 @@ const float kBrushBoxWidth{kButtonWidth * 0.25f};
 const float kBrushBoxHeight{kButtonHeight / 2.1f};
 }  // namespace
 
-namespace {
+namespace { // Brush
 const float kBrushImageScale{0.45f};
+
+const sf::Vector2f kBrushCurrentColorBoxSize(kBrushBoxHeight, kBrushBoxHeight);
 }
 
 std::vector<sf::RectangleShape> LoadButtonImages();

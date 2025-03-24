@@ -40,7 +40,7 @@ void Brush::SetColor(const sf::Color& newColor) {
     shape_.setFillColor(newColor);
 }
 
-void Brush::SetColor(const sf::Keyboard::Key& keyboardButton) {
+void Brush::SetColor(const sf::Keyboard::Key& keyboardButton, sf::RectangleShape& brushColorShape) {
     switch (keyboardButton) {
         case sf::Keyboard::R: {
             color_ = sf::Color::Red;
@@ -66,6 +66,8 @@ void Brush::SetColor(const sf::Keyboard::Key& keyboardButton) {
             return;
         }
     }
+
+    brushColorShape.setFillColor(color_);
 }
 
 sf::Color Brush::GetColor() const {
