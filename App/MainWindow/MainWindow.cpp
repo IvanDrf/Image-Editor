@@ -78,8 +78,12 @@ void ReleaseFunctions(const std::string& result, size_t buttonNumber, sf::Render
                         return;
                     }
 
-                    pathToFile.push_back(result);  // Add new path to the new file
+                    sf::Image temp;
+                    if (!temp.loadFromFile(result)) {
+                        throw std::invalid_argument("Image could not be found");
+                    }
 
+                    pathToFile.push_back(result);      // Add new path to the new file
                     image.ClearImage(previousStatus);  // Clear if there was some image
                     image.LoadImage(result);           // Load new image
                     image.SetMainImageScale();
