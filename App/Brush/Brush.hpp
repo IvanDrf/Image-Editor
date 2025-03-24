@@ -11,7 +11,7 @@ const int kBrushChangeRadius{5};
 const sf::Color kBrushInputSizeColor{152, 167, 212};
 }  // namespace
 
-class Brush{
+class Brush {
  private:
     sf::CircleShape shape_;
     sf::Color color_;
@@ -30,6 +30,8 @@ class Brush{
     [[nodiscard]] const sf::Sprite& GetBrushCursor() const;
 
     void SetColor(const sf::Color& newColor);
+    void SetColor(const sf::Keyboard::Key& keyboardButton);
+
     [[nodiscard]] sf::Color GetColor() const;
     void Draw(sf::Image& image, const sf::Vector2f& position) const;
 

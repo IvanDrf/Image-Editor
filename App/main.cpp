@@ -67,7 +67,7 @@ auto main(int, char**) -> int {
     Brush brush(kBrushInitialRadius, sf::Color::White);
     bool brushPressed{false};
 
-// Small menu for brush: Size, Color
+    // Small menu for brush: Size, Color
     // Size
     Image brushSizeImage;
     brushSizeImage.LoadImage("../WindowFiles/brush-size.png");
@@ -129,6 +129,11 @@ auto main(int, char**) -> int {
                 brushSizeField.SetText(std::to_string(brush.GetRadius()));
 
                 brush.UpdateCursorScale();
+            }
+
+            // Set Brush Color
+            if (brushPressed && event.type == sf::Event::KeyPressed) {
+                brush.SetColor(event.key.code);
             }
 
             // Return previous image (Ctrl+Z)
