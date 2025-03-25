@@ -31,6 +31,10 @@ const float kFileFieldWidth{kMainWindowWidth * 0.17f};
 const float kFileFieldHeight{kMainWindowHeight * 0.955f};
 }  // namespace
 
+namespace {
+const sf::Color KSystemColor{83, 83, 83};
+}
+
 namespace {  // Status Bar Size
 const float kStatusBarWidth{kMainWindowWidth - kFileFieldWidth};
 const float kStatusBarHeight{kMainWindowHeight * 0.045f};
@@ -110,7 +114,7 @@ void DeleteFile(std::vector<std::string>& pathToFile, const std::string& result,
 
 void SaveFile(const std::string& result, Image& image, StatusBar& statusBar);
 void SelectFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus);
-void SelectBrush(bool& brushPressed, const Image& image);
+void SelectBrush(bool& brushPressed, const Image& image, StatusBar& StatusBar);
 
 // Delete path
 void DeletePath(std::vector<std::string>& pathToFile, const std::string& fileName);

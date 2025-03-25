@@ -8,11 +8,11 @@ FileField::FileField() {
     }
 
     shape_.setSize(sf::Vector2f(kFileFieldWidth, kFileFieldHeight));
-    shape_.setFillColor(sf::Color(83, 83, 83));
+    shape_.setFillColor(KSystemColor);
     shape_.setOutlineColor(sf::Color::Black);
-    shape_.setOutlineThickness(3);
+    shape_.setOutlineThickness(kDefaultOutlineThickness);
 
-    shape_.setPosition(0, kMainWindowHeight * 0.045f);
+    shape_.setPosition(0, kMainWindowHeight - kFileFieldHeight);
 }
 
 void FileField::DrawField(sf::RenderWindow& window) {
