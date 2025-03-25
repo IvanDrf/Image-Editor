@@ -171,7 +171,7 @@ void SelectFile(std::vector<std::string>& pathToFile, const std::string& result,
         statusBar.UpdateStatus("File " + result + " selected");
 
         image.ClearImage(previousStatus);                     // Clear old image
-        image.LoadImage(Back::FindPath(pathToFile, result));  // Load new image
+        image.LoadImage(Back::FindPath(pathToFile, result));  // Select image
         image.SetMainImageScale();
 
         return;
