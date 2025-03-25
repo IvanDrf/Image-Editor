@@ -1,37 +1,40 @@
-name: clang-format
+name: Clang-Format Check
 
 on:
+  push:
+    branches: [develop, main]
+
   pull_request:
-    branches:
-      - main
+    branches: [main]
     types: [opened, synchronize, reopened]
 
 jobs:
-  clang-format:
-    name: Verify clang-format compliance
+  check-formatting:
     runs-on: ubuntu-latest
-
-    if: github.base_ref == 'main' && github.head_ref == 'develop'
 
     steps:
     - uses: actions/checkout@v4
       with:
-        ref: ${{ github.head_ref }}
+        ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
     - name: Install clang-format
       run: sudo apt-get update && sudo apt-get install -y clang-format
 
-    - name: Check formatting
+    - name: Check project formatting
       run: |
-        # Ищем все C/C++ файлы (исключаем папки build/ и third_party/)
+        # Ищем все C/C++ файлы (можно изменить под проект)
         FILES=$(find . -type f -regex '.*\.\(cpp\|hpp\|h\|c\|cc\|cxx\)$' \
                 -not -path "./build/*" \
-                -not -path "./third_party/*")
+                -not -path "./third_party/*" \
+                -not -path "./extern/*")
 
         if [ -z "$FILES" ]; then
-          echo "No source files found. Skipping."
+          echo "No C/C++ files found. Skipping."
           exit 0
         fi
 
+        echo "Checking formatting for files:"
+        echo "$FILES"
+
         clang-format --dry-run --Werror --style=file $FILES || \
-          (echo "❌ Code formatting issues found! Run 'clang-format -i' to fix."; exit 1)
+          (echo "❌ Formatting errors found! Run 'clang-format -i YOUR_FILE' to fix."; exit 1)
