@@ -57,6 +57,11 @@ void Brush::SetColor(const sf::Keyboard::Key& keyboardButton, sf::RectangleShape
             break;
         }
 
+        case sf::Keyboard::Y: {
+            color_ = sf::Color::Yellow;
+            break;
+        }
+
         case sf::Keyboard::W: {
             color_ = sf::Color::White;
             break;

@@ -7,13 +7,13 @@ StatusBar::StatusBar() {
 
     text_.setFont(font_);
     text_.setCharacterSize(kCharacterSize);
-    text_.setString("status: ");
+    text_.setString("");
     text_.setFillColor(sf::Color::White);
 
     text_.setPosition(kFileFieldWidth + 10, kMainWindowHeight - kStatusBarHeight + 5);
 
     shape_.setSize(sf::Vector2f(kStatusBarWidth, kStatusBarHeight));
-    shape_.setFillColor(sf::Color(83, 83, 83));
+    shape_.setFillColor(KSystemColor);
     shape_.setOutlineColor(sf::Color::Black);
     shape_.setOutlineThickness(3);
 
@@ -25,6 +25,10 @@ void StatusBar::DrawStatusBar(sf::RenderWindow& window) {
     window.draw(text_);
 }
 
-void StatusBar::UpdateStatus(const std::string& newStatus) {
-    text_.setString("status: " + newStatus);
+void StatusBar::UpdateStatus(const std::string& newStatus, const sf::Color& textColor) {
+    text_.setString(newStatus);
+
+    if (text_.getFillColor() != textColor) {
+        text_.setFillColor(textColor);
+    }
 }

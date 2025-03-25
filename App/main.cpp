@@ -12,14 +12,17 @@
 #include "StatusBar/StatusBar.hpp"
 
 // Menu Buttons, realization in Button.cpp
+namespace Front {
 std::string AddFile();
 std::string DeleteFile();
 std::string SaveFile();
 std::string SelectFile();
 std::string SelectBrush();
+}  // namespace Front
 
 auto main(int, char**) -> int {
     sf::RenderWindow mainWindow(sf::VideoMode(kMainWindowWidth, kMainWindowHeight), "Image Editor");
+    mainWindow.setFramerateLimit(30);
 
     sf::Font buttonFont;  // Font for Buttons
     if (!buttonFont.loadFromFile("../WindowFiles/open-sans.ttf")) {
@@ -62,7 +65,7 @@ auto main(int, char**) -> int {
     Button::CreateMenuButtons(buttons, buttonNames, buttonColors, buttonFont);
 
     // Main Button Functions
-    ButtonFunction buttonFunctions[]{AddFile, DeleteFile, SaveFile, SelectFile, SelectBrush};
+    ButtonFunction buttonFunctions[]{Front::AddFile, Front::DeleteFile, Front::SaveFile, Front::SelectFile, Front::SelectBrush};
 
     // Brush
     Brush brush(kBrushInitialRadius, sf::Color::White);
@@ -73,27 +76,27 @@ auto main(int, char**) -> int {
     Image brushSizeImage;
     brushSizeImage.LoadImage("../WindowFiles/brush-size.png");
     brushSizeImage.SetScale(kBrushImageScale, kBrushImageScale);
-    brushSizeImage.SetPosition(kSmallMenuWidth + 5 * kButtonWidth + kButtonWidth / 10, 0);
+    brushSizeImage.SetPosition(kBrushSizeImagePosition);
 
-    const float kBrushInputFieldPosX{kSmallMenuWidth + 5 * kButtonWidth + 0.9f * brushSizeImage.GetSpriteBound().width + kButtonWidth / 5};
-    const float kBrushInputFieldPoxY{(kButtonHeight - kBrushBoxHeight) / 2};
+    const float kBrushSizeFieldPosX{kSmallMenuWidth + 5 * kButtonWidth + 0.9f * brushSizeImage.GetSpriteBound().width + kButtonWidth / 5};
+    const float kBrushSizeFieldPoxY{(kButtonHeight - kBrushBoxHeight) / 2};
 
-    InputField brushSizeField(kBrushInputFieldPosX, kBrushInputFieldPoxY, sf::Vector2f(kBrushBoxWidth, kBrushBoxHeight));
+    InputField brushSizeField(kBrushSizeFieldPosX, kBrushSizeFieldPoxY, sf::Vector2f(kBrushBoxWidth, kBrushBoxHeight));
     brushSizeField.SetBoxColor(kBrushInputSizeColor);
 
     brushSizeField.SetText(std::to_string(kBrushInitialRadius));
     brushSizeField.SetTextColor(sf::Color::White);
-    brushSizeField.SetTextSize(kCharacterSize / 1.1f);
-
+    brushSizeField.SetTextSize(kBrushSizeFieldCharacterSize);
 
     sf::RectangleShape brushCurrentColorShape;
     brushCurrentColorShape.setFillColor(brush.GetColor());
     brushCurrentColorShape.setSize(kBrushCurrentColorBoxSize);
-    brushCurrentColorShape.setPosition(brushSizeField.GetPosition().x + 1.35f * kBrushBoxWidth, brushSizeField.GetPosition().y);
+
+    const sf::Vector2f kBrushColorShapePosition(brushSizeField.GetPosition().x + 1.35f * kBrushBoxWidth, brushSizeField.GetPosition().y);
+    brushCurrentColorShape.setPosition(kBrushColorShapePosition);
 
     brushCurrentColorShape.setOutlineColor(sf::Color::White);
-    brushCurrentColorShape.setOutlineThickness(3);
-
+    brushCurrentColorShape.setOutlineThickness(kDefaultOutlineThickness);
 
     // Create small menu for brush color and brush size
 
@@ -111,7 +114,13 @@ auto main(int, char**) -> int {
                 for (size_t i = 0; i < buttonNames.size(); ++i) {
                     if (buttons[i].AimButton(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
                         std::string result = buttonFunctions[i]();
-                        ReleaseFunctions(result, i, mainWindow, image, fileField, statusBar, brushPressed, previousStatus);
+                        ReleaseFunctions(result, i, image, fileField, statusBar, brushPressed, previousStatus);
+
+                        if (brushPressed && buttons[Buttons::SelectBrush].GetColor() != kActiveButtonColor) {
+                            buttons[Buttons::SelectBrush].SetColor(kActiveButtonColor);
+                        } else if (!brushPressed && buttons[Buttons::SelectBrush].GetColor() != kToolsColor) {
+                            buttons[Buttons::SelectBrush].SetColor(kToolsColor);
+                        }
                     }
                 }
             }
@@ -155,7 +164,7 @@ auto main(int, char**) -> int {
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 std::string result = buttonFunctions[2]();
-                ReleaseFunctions(result, 2, mainWindow, image, fileField, statusBar, brushPressed, previousStatus);
+                ReleaseFunctions(result, 2, image, fileField, statusBar, brushPressed, previousStatus);
             }
         }
 
@@ -196,8 +205,8 @@ auto main(int, char**) -> int {
             mainWindow.draw(brush.GetBrushCursor());
         }
 
-        brushSizeImage.DrawImage(mainWindow); // Brush current size image
-        brushSizeField.Draw(mainWindow); // Brush current size field
+        brushSizeImage.DrawImage(mainWindow);  // Brush current size image
+        brushSizeField.Draw(mainWindow);       // Brush current size field
 
         mainWindow.draw(brushCurrentColorShape);
 
