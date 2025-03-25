@@ -16,6 +16,7 @@ class Button {
 
     void DrawButton(sf::RenderWindow& window) const;
     void SetColor(const sf::Color& newColor);
+    sf::Color GetColor() const;
 
     [[nodiscard]] bool AimButton(const sf::Vector2f& mousePosition) const;
 

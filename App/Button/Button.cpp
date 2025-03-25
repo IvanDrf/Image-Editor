@@ -38,6 +38,10 @@ void Button::SetColor(const sf::Color& newColor) {
     shape_.setFillColor(newColor);
 }
 
+sf::Color Button::GetColor() const {
+    return shape_.getFillColor();
+}
+
 bool Button::AimButton(const sf::Vector2f& mousePosition) const {
     return shape_.getGlobalBounds().contains(mousePosition);
 }
