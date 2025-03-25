@@ -189,7 +189,6 @@ void SelectBrush(bool& brushPressed, const Image& image, StatusBar& statusBar) {
     }
 
     statusBar.UpdateStatus("Brush is no longer selected");
-
 }
 
 void DeletePath(std::vector<std::string>& pathToFile, const std::string& fileName) {
