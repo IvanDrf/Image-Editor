@@ -29,6 +29,18 @@ void Button::CreateMenuButtons(std::vector<Button>& buttons, const std::vector<s
     }
 }
 
+void Button::SetSize(const sf::Vector2f& size) {
+    shape_.setSize(size);
+}
+
+void Button::SetOutlineThickness(const float thickness) {
+    shape_.setOutlineThickness(thickness);
+}
+
+void Button::SetOutlineColor(const sf::Color& color) {
+    shape_.setOutlineColor(color);
+}
+
 void Button::DrawButton(sf::RenderWindow& window) const {
     window.draw(shape_);
     window.draw(text_);
