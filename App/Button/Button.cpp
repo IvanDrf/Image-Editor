@@ -58,6 +58,10 @@ bool Button::AimButton(const sf::Vector2f& mousePosition) const {
     return shape_.getGlobalBounds().contains(mousePosition);
 }
 
+bool Button::AimButton(const sf::Vector2i& mousePosition) const {
+    return shape_.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition));
+}
+
 void Button::AnimateButton(const sf::RenderWindow& window, size_t buttonIndex) {
     sf::Vector2f mousePosition{sf::Mouse::getPosition(window)};
 
