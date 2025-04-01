@@ -1,9 +1,14 @@
-#include "MainWindow.hpp"
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #include "../Brush/Brush.hpp"
+#include "../Button/Button.hpp"
 #include "../FileField/FileField.hpp"
 #include "../Image/Image.hpp"
+#include "../InputField/InputField.hpp"
 #include "../StatusBar/StatusBar.hpp"
+#include "MainWindow.hpp"
 
 // Load Icons for buttons
 std::vector<sf::RectangleShape> LoadButtonImages() {
@@ -209,3 +214,48 @@ std::string FindPath(std::vector<std::string>& pathToFile, const std::string& fi
     return "";
 }
 }  // namespace Back
+
+namespace Front {
+std::string OpenFileDialog(const std::string& heading, const std::string& inputText) {
+    std::string filePath;
+
+// Windows
+#ifdef _WIN32
+    OPENFILENAME ofn;
+    char szFile[260] = {0};
+
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFilter = "All Files\0*.*\0";
+    ofn.nFilterIndex = 1;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+    if (GetOpenFileName(&ofn) == TRUE) {
+        filePath = ofn.lpstrFile;
+    }
+
+#else
+    // Linux
+    FILE* pipe = popen("zenity --file-selection --title='Select file'", "r");
+    if (!pipe) {
+        throw std::runtime_error("File dialog window could not be opened");
+    }
+
+    char buffer[kMaxFileNameLength];
+
+    if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        filePath = buffer;
+
+        if (!filePath.empty() && filePath[filePath.length() - 1] == '\n') {
+            filePath.erase(filePath.length() - 1);
+        }
+    }
+
+    pclose(pipe);
+#endif
+
+    return filePath;
+}
+}  // namespace Front

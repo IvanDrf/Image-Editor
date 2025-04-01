@@ -26,12 +26,14 @@ const float kMainWindowWidth{kDesktopWidth * 0.9f};
 const float kMainWindowHeight{kDesktopHeight * 0.8f};
 }  // namespace
 
-namespace {  // File Field Size
+namespace {  // File Field
 const float kFileFieldWidth{kMainWindowWidth * 0.17f};
 const float kFileFieldHeight{kMainWindowHeight * 0.955f};
+
+constexpr short kMaxFileNameLength{1024};
 }  // namespace
 
-namespace {
+namespace {  // Main color for Window
 const sf::Color KSystemColor{83, 83, 83};
 }
 
@@ -50,8 +52,10 @@ const float kButtonWidth{kMainWindowWidth / 10};
 const float kButtonHeight{kMainWindowHeight - kFileFieldHeight};
 
 const sf::Color kFileButtonColor{99, 139, 199};
-const sf::Color kToolsColor{72, 111, 180};
+const sf::Color kToolsColor{72, 111, 180};  // Brush and etc
 const sf::Color kActiveButtonColor{117, 167, 217};
+
+constexpr short kDefaultOutlineThickness{3};
 }  // namespace
 
 namespace {  // Small menu
@@ -73,7 +77,7 @@ const float kSmallWindowHeight{kMainWindowHeight * 0.2f};
 }  // namespace
 
 namespace {  // Box Size
-const float kBoxWidth{kMainWindowWidth * 0.15f};
+const float kBoxWidth{kSmallWindowWidth};
 const float kBoxHeight{kMainWindowHeight * 0.03f};
 
 const float kBrushBoxWidth{kButtonWidth * 0.25f};
@@ -85,11 +89,6 @@ constexpr float kBrushImageScale{0.45f};
 constexpr float kBrushSizeFieldCharacterSize{kCharacterSize / 1.1f};
 
 const sf::Vector2f kBrushCurrentColorBoxSize{kBrushBoxHeight, kBrushBoxHeight};
-}  // namespace
-
-namespace {
-constexpr short kDefaultOutlineThickness{3};
-
 const sf::Vector2f kBrushSizeImagePosition{kSmallMenuWidth + 5 * kButtonWidth + kButtonWidth / 10, 0};
 }  // namespace
 
@@ -120,3 +119,7 @@ void SelectBrush(bool& brushPressed, const Image& image, StatusBar& StatusBar);
 void DeletePath(std::vector<std::string>& pathToFile, const std::string& fileName);
 [[nodiscard]] std::string FindPath(std::vector<std::string>& pathToFile, const std::string& fileName);
 }  // namespace Back
+
+namespace Front {
+std::string OpenFileDialog(const std::string& heading, const std::string& inputText);
+}
