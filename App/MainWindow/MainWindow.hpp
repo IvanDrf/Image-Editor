@@ -10,8 +10,7 @@ enum Buttons {
     AddFile = 0,
     DeleteFile = 1,
     SaveFile = 2,
-    SelectFile = 3,
-    SelectBrush = 4
+    SelectBrush = 3
 };
 
 // Constants
@@ -89,7 +88,7 @@ constexpr float kBrushImageScale{0.45f};
 constexpr float kBrushSizeFieldCharacterSize{kCharacterSize / 1.1f};
 
 const sf::Vector2f kBrushCurrentColorBoxSize{kBrushBoxHeight, kBrushBoxHeight};
-const sf::Vector2f kBrushSizeImagePosition{kSmallMenuWidth + 5 * kButtonWidth + kButtonWidth / 10, 0};
+const sf::Vector2f kBrushSizeImagePosition{kSmallMenuWidth + 4 * kButtonWidth + kButtonWidth / 10, 0};
 }  // namespace
 
 // Functions
@@ -104,22 +103,5 @@ class StatusBar;
 class Brush;
 
 // The main function in which button clicks are implemented
-void ReleaseFunctions(const std::string& result, size_t buttonNumber, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed, std::stack<sf::Image>& previousStatus);
-
-// Functions that are responsible for uploading files, etc. backend
-namespace Back {
-void AddFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus);
-void DeleteFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& FileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus);
-
-void SaveFile(const std::string& result, Image& image, StatusBar& statusBar);
-void SelectFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus);
-void SelectBrush(bool& brushPressed, const Image& image, StatusBar& StatusBar);
-
-// Delete path
-void DeletePath(std::vector<std::string>& pathToFile, const std::string& fileName);
-[[nodiscard]] std::string FindPath(std::vector<std::string>& pathToFile, const std::string& fileName);
-}  // namespace Back
-
-namespace Front {
-std::string OpenFileDialog(const std::string& heading, const std::string& inputText);
-}
+void ReleaseFunctions(std::vector<std::string>& pathToFile, const std::string& result, size_t buttonNumber, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed,
+                      std::stack<sf::Image>& previousStatus);

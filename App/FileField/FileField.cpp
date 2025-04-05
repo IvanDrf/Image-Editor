@@ -1,5 +1,7 @@
 #include "FileField.hpp"
 
+#include <limits>
+
 #include "../MainWindow/MainWindow.hpp"
 
 FileField::FileField() {
@@ -18,6 +20,8 @@ FileField::FileField() {
 void FileField::DrawField(sf::RenderWindow& window) {
     window.draw(shape_);
 
+    displayedFiles_.clear();
+
     sf::Text filesNames;
     filesNames.setFont(font_);
     filesNames.setCharacterSize(kCharacterSize);
@@ -30,6 +34,7 @@ void FileField::DrawField(sf::RenderWindow& window) {
         filesNames.setPosition(10, distanceBetweenFiles);
         distanceBetweenFiles += 30;
 
+        displayedFiles_.emplace_back(filesNames);
         window.draw(filesNames);
     }
 }
@@ -44,6 +49,16 @@ void FileField::DeleteFile(const std::string& fileName) {
     }
 
     files_.erase(std::remove(files_.begin(), files_.end(), fileName), files_.end());
+}
+
+size_t FileField::GetActiveFile(const sf::Vector2i& mousePosition) const {
+    for (size_t i = 0; i < displayedFiles_.size(); ++i) {
+        if (displayedFiles_[i].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
+            return i;
+        }
+
+        return std::numeric_limits<size_t>::max();
+    }
 }
 
 const std::vector<std::string>& FileField::GetFiles() const {

@@ -96,26 +96,3 @@ void InputField::Draw(sf::RenderWindow& window) const {
     window.draw(box_);
     window.draw(text_);
 }
-
-// Main buttons functions
-namespace Front {
-std::string AddFile() {
-    return Front::OpenFileDialog("Add", "Enter path to file");
-}
-
-std::string DeleteFile() {
-    return Front::OpenFileDialog("Delete", "Enter file name");
-}
-
-std::string SaveFile() {
-    return Front::OpenFileDialog("Save", "Enter file name");
-}
-
-std::string SelectFile() {
-    return Front::OpenFileDialog("Select", "Enter file name");
-}
-
-std::string SelectBrush() {
-    return "";
-}
-}  // namespace Front

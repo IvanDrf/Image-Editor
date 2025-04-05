@@ -4,19 +4,21 @@
 #include <vector>
 
 // Interface
+#include <gtk/gtk.h>
+
+#include <iostream>
+
 #include "Brush/Brush.hpp"
 #include "Button/Button.hpp"
 #include "FileField/FileField.hpp"
 #include "Image/Image.hpp"
+#include "MainMethods/MainMethods.hpp"
 #include "MainWindow/MainWindow.hpp"
 #include "StatusBar/StatusBar.hpp"
 
-// Menu Buttons, realization in Button.cpp
 namespace Front {
 std::string AddFile();
 std::string DeleteFile();
-std::string SaveFile();
-std::string SelectFile();
 std::string SelectBrush();
 }  // namespace Front
 
@@ -33,16 +35,17 @@ auto main(int, char**) -> int {
     Image image;
     std::stack<sf::Image> previousStatus;  // Image modification history
 
-    FileField fileField;
-    StatusBar statusBar;
+    std::vector<std::string> pathToFile;  // Vector with paths -> files
+    FileField fileField;                  // Field with files names
+    StatusBar statusBar;                  // Displays the current status
 
-    sf::RectangleShape background;
+    sf::RectangleShape background;  // Background behind buttons and brush
     background.setFillColor(kToolsColor);
     background.setSize(sf::Vector2f(kMainWindowWidth, kSmallMenuHeight));
     background.setPosition(0, 0);
 
     // Small menu
-    sf::RectangleShape menuShape;
+    sf::RectangleShape menuShape;  // Small menu (unused) in upper left conner
     menuShape.setFillColor(kToolsColor);
     menuShape.setSize(sf::Vector2f(kSmallMenuWidth, kSmallMenuHeight));
     menuShape.setPosition(0, 0);
@@ -50,22 +53,23 @@ auto main(int, char**) -> int {
     menuShape.setOutlineColor(sf::Color::Black);
     menuShape.setOutlineThickness(3);
 
-    Image menuImage;
+    Image menuImage;  // Image for small menu
     menuImage.LoadImage("../WindowFiles/smallMenu-image.png");
     menuImage.SetScale(kSmallMenuScale, kSmallMenuScale);
     menuImage.SetOrigin(menuImage.GetSpriteBound().width / 2, 0);
     menuImage.SetPosition(kSmallMenuIconPosition);
 
     // Menu Buttons
-    const std::vector<std::string> buttonNames{"Add file", "Delete file", "Save file", "Select file", "Brush"};
+    const std::vector<std::string> buttonNames{"Add file", "Delete file", "Save file", "Brush"};
     std::vector<sf::RectangleShape> buttonIcons = LoadButtonImages();  // Button Icons
 
     std::vector<Button> buttons;
     const std::vector<sf::Color> buttonColors{kFileButtonColor, kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor};
     Button::CreateMenuButtons(buttons, buttonNames, buttonColors, buttonFont);
+    buttons.back().SetColor(kToolsColor);
 
     // Main Button Functions
-    ButtonFunction buttonFunctions[]{Front::AddFile, Front::DeleteFile, Front::SaveFile, Front::SelectFile, Front::SelectBrush};
+    ButtonFunction buttonFunctions[]{Front::AddFile, Front::SaveFile, Front::DeleteFile, Front::SelectBrush};
 
     // Brush
     Brush brush(kBrushInitialRadius, sf::Color::White);
@@ -78,7 +82,7 @@ auto main(int, char**) -> int {
     brushSizeImage.SetScale(kBrushImageScale, kBrushImageScale);
     brushSizeImage.SetPosition(kBrushSizeImagePosition);
 
-    const float kBrushSizeFieldPosX{kSmallMenuWidth + 5 * kButtonWidth + 0.9f * brushSizeImage.GetSpriteBound().width + kButtonWidth / 5};
+    const float kBrushSizeFieldPosX{kSmallMenuWidth + 4 * kButtonWidth + 0.9f * brushSizeImage.GetSpriteBound().width + kButtonWidth / 5};
     const float kBrushSizeFieldPoxY{(kButtonHeight - kBrushBoxHeight) / 2};
 
     InputField brushSizeField(kBrushSizeFieldPosX, kBrushSizeFieldPoxY, sf::Vector2f(kBrushBoxWidth, kBrushBoxHeight));
@@ -100,8 +104,15 @@ auto main(int, char**) -> int {
 
     // Create small menu for brush color and brush size
 
+    size_t activeFile{};    // Current index of active file
+    size_t previousFile{};  // Previous loaded file
+
     // Main Loop
     while (mainWindow.isOpen()) {
+        while (gtk_events_pending()) {
+            gtk_main_iteration();
+        }
+
         sf::Event event;
         while (mainWindow.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {  // Close Window
@@ -112,17 +123,26 @@ auto main(int, char**) -> int {
             // Press Buttons
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 for (size_t i = 0; i < buttonNames.size(); ++i) {
-                    if (buttons[i].AimButton(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+                    if (buttons[i].AimButton(sf::Vector2i(event.mouseButton.x, event.mouseButton.y))) {
                         std::string result = buttonFunctions[i]();
-                        ReleaseFunctions(result, i, image, fileField, statusBar, brushPressed, previousStatus);
-
-                        if (brushPressed && buttons[Buttons::SelectBrush].GetColor() != kActiveButtonColor) {
-                            buttons[Buttons::SelectBrush].SetColor(kActiveButtonColor);
-                        } else if (!brushPressed && buttons[Buttons::SelectBrush].GetColor() != kToolsColor) {
-                            buttons[Buttons::SelectBrush].SetColor(kToolsColor);
-                        }
+                        ReleaseFunctions(pathToFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);
                     }
                 }
+
+                if (brushPressed && buttons[Buttons::SelectBrush].GetColor() != kActiveButtonColor) {
+                    buttons[Buttons::SelectBrush].SetColor(kActiveButtonColor);
+                } else if (!brushPressed && buttons[Buttons::SelectBrush].GetColor() != kToolsColor) {
+                    buttons[Buttons::SelectBrush].SetColor(kToolsColor);
+                }
+
+                activeFile = fileField.GetActiveFile(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+            }
+
+            // Select file
+            if (activeFile != std::numeric_limits<size_t>::max() && !pathToFile.empty() && activeFile != previousFile) {
+                std::cout << "0" << '\n';
+                image.LoadImage(pathToFile[activeFile]);  // Load new active file
+                previousFile = activeFile;
             }
 
             // Brush drawing
@@ -164,7 +184,7 @@ auto main(int, char**) -> int {
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 std::string result = buttonFunctions[2]();
-                ReleaseFunctions(result, 2, image, fileField, statusBar, brushPressed, previousStatus);
+                ReleaseFunctions(pathToFile, result, 2, image, fileField, statusBar, brushPressed, previousStatus);
             }
         }
 
@@ -178,12 +198,13 @@ auto main(int, char**) -> int {
 
         mainWindow.draw(menuShape);       // Small menu
         menuImage.DrawImage(mainWindow);  // Small menu image
+        std::cout << "2" << '\n';
 
         size_t activeButton{Button::GetActiveButton()};
         bool buttonTarget{false};
 
         for (size_t i = 0; i < buttons.size(); ++i) {
-            if (buttons[i].AimButton(static_cast<sf::Vector2f>(sf::Mouse::getPosition(mainWindow)))) {
+            if (buttons[i].AimButton(sf::Mouse::getPosition(mainWindow))) {
                 buttonTarget = true;
             }
 
@@ -209,8 +230,9 @@ auto main(int, char**) -> int {
         brushSizeField.Draw(mainWindow);       // Brush current size field
 
         mainWindow.draw(brushCurrentColorShape);
-
+        std::cout << "3" << '\n';
         mainWindow.display();
+        std::cout << "4" << '\n';
     }
 
     return 0;
