@@ -19,7 +19,7 @@ Button::Button(const float x, const float y, const std::string& name, const sf::
     shape_.setSize(sf::Vector2f(kButtonWidth, kButtonHeight));
     shape_.setFillColor(color);
     shape_.setOutlineColor(sf::Color::Black);
-    shape_.setOutlineThickness(3);
+    shape_.setOutlineThickness(kDefaultOutlineThickness);
     shape_.setPosition(x, y);
 }
 
@@ -27,18 +27,6 @@ void Button::CreateMenuButtons(std::vector<Button>& buttons, const std::vector<s
     for (size_t i = 0; i < names.size(); ++i) {
         buttons.emplace_back(kSmallMenuWidth + kButtonWidth * i, 0, names[i], colors[i], font);
     }
-}
-
-void Button::SetSize(const sf::Vector2f& size) {
-    shape_.setSize(size);
-}
-
-void Button::SetOutlineThickness(const float thickness) {
-    shape_.setOutlineThickness(thickness);
-}
-
-void Button::SetOutlineColor(const sf::Color& color) {
-    shape_.setOutlineColor(color);
 }
 
 void Button::DrawButton(sf::RenderWindow& window) const {
@@ -56,10 +44,6 @@ sf::Color Button::GetColor() const {
 
 bool Button::AimButton(const sf::Vector2f& mousePosition) const {
     return shape_.getGlobalBounds().contains(mousePosition);
-}
-
-bool Button::AimButton(const sf::Vector2i& mousePosition) const {
-    return shape_.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition));
 }
 
 void Button::AnimateButton(const sf::RenderWindow& window, size_t buttonIndex) {
