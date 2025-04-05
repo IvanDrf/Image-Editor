@@ -9,7 +9,11 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  check-formatting:
+<<<<<<< HEAD
+  check-format:
+=======
+  clang-format:
+>>>>>>> main
     runs-on: ubuntu-latest
 
     steps:
