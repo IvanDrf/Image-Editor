@@ -1,8 +1,4 @@
-#pragma once
 #include <SFML/Graphics.hpp>
-
-#include "../Button/Button.hpp"
-#include "../MainWindow/MainWindow.hpp"
 
 namespace {
 const short KEnter{13};
@@ -36,7 +32,8 @@ class InputField {
 
     bool Active(const sf::Vector2f& mousePosition) const;
 
-    std::string Input(sf::Event& event, sf::RenderWindow& window, const Button& actionButton);
+    std::string Input(sf::Event& event, sf::RenderWindow& window);
+    static std::string CreateInputWindow(const std::string& heading, const std::string& inputText);
 
     void Clear();
     void Draw(sf::RenderWindow& window) const;
