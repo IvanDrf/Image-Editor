@@ -1,11 +1,8 @@
 #include "MainWindow.hpp"
 
 #include "../Brush/Brush.hpp"
-#include "../Button/Button.hpp"
 #include "../FileField/FileField.hpp"
 #include "../Image/Image.hpp"
-#include "../InputField/InputField.hpp"
-#include "../MainMethods/MainMethods.hpp"
 #include "../StatusBar/StatusBar.hpp"
 
 // Load Icons for buttons
@@ -74,7 +71,7 @@ void ReleaseFunctions(std::vector<std::string>& pathToFile, const std::string& r
 
         // Delete file button
         case (Buttons::DeleteFile): {
-            Back::DeleteFile(pathToFile, result, image, fileField, statusBar, previousStatus);
+            Back::DeleteFile(pathToFile, result, image, fileField, statusBar, previousStatus, brushPressed);
 
             break;
         }
@@ -93,3 +90,126 @@ void ReleaseFunctions(std::vector<std::string>& pathToFile, const std::string& r
         }
     }
 }
+
+namespace Back {
+void AddFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus) {
+    if (result.empty()) {
+        return;
+    }
+
+    try {
+        if (std::find(fileField.GetFiles().begin(), fileField.GetFiles().end(), GetFileName(result)) != fileField.GetFiles().end()) {
+            statusBar.UpdateStatus("File has already been added");
+
+            return;
+        }
+
+        sf::Image temp;
+        if (!temp.loadFromFile(result)) {
+            throw std::invalid_argument("Image could not be found");
+        }
+
+        pathToFile.push_back(result);      // Add new path to the new file
+        image.ClearImage(previousStatus);  // Clear if there was some image
+        image.LoadImage(result);           // Load new image
+        image.SetMainImageScale();
+
+        fileField.AddFile(GetFileName(result));
+
+        statusBar.UpdateStatus("Image loaded successfully", sf::Color::Green);
+    } catch (std::exception& e) {
+        statusBar.UpdateStatus("Image could not be found", sf::Color::Red);
+    }
+}
+
+void SaveFile(const std::string& result, Image& image, StatusBar& statusBar) {
+    if (!result.empty() && image.SaveImage(result)) {
+        statusBar.UpdateStatus("File was saved successfully", sf::Color::Green);
+
+        return;
+    }
+
+    statusBar.UpdateStatus("Unable to save the file", sf::Color::Red);
+}
+
+void DeleteFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus, bool& brushPressed) {
+    if (result.empty()) {
+        return;
+    }
+
+    size_t oldLength{fileField.GetFiles().size()};  // Old count of files
+    fileField.DeleteFile(GetFileName(result));
+    size_t newLength{fileField.GetFiles().size()};  // New count of files
+
+    if (oldLength == newLength) {
+        statusBar.UpdateStatus("File not found", sf::Color::Red);
+
+        return;
+    }
+
+    statusBar.UpdateStatus("File was deleted successfully", sf::Color::Green);
+    Back::DeletePath(pathToFile, result);  // Delete path to deleting file
+
+    image.ClearImage(previousStatus);  // Reset scale, texture and e.t.c
+    if (!pathToFile.empty()) {
+        image.LoadImage(pathToFile.back());  // Load previous image
+        image.SetMainImageScale();
+    } else {
+        brushPressed = false; // If there no files left
+    }
+}
+
+void SelectFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus) {
+    if (!result.empty() && std::find(fileField.GetFiles().begin(), fileField.GetFiles().end(), result) != fileField.GetFiles().end()) {
+        statusBar.UpdateStatus("File " + result + " selected", sf::Color::Green);
+
+        image.ClearImage(previousStatus);                     // Clear old image
+        image.LoadImage(Back::FindPath(pathToFile, result));  // Select image
+        image.SetMainImageScale();
+
+        return;
+    }
+
+    statusBar.UpdateStatus("File " + result + " cannot be selected", sf::Color::Red);
+}
+
+void SelectBrush(bool& brushPressed, const Image& image, StatusBar& statusBar) {
+    brushPressed = !brushPressed && image.HasImage();
+    if (brushPressed) {
+        statusBar.UpdateStatus("Brush selected", sf::Color::Green);
+        return;
+    }
+
+    statusBar.UpdateStatus("Brush is no longer selected");
+}
+
+void DeletePath(std::vector<std::string>& pathToFile, const std::string& fileName) {
+    for (const auto& file : pathToFile) {
+        if (GetFileName(file) == fileName) {
+            pathToFile.erase(std::remove(pathToFile.begin(), pathToFile.end(), file), pathToFile.end());
+        }
+    }
+}
+
+std::string FindPath(std::vector<std::string>& pathToFile, const std::string& fileName) {
+    for (const auto& file : pathToFile) {
+        if (GetFileName(file) == fileName) {
+            return file;
+        }
+    }
+
+    return "";
+}
+
+void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile) {
+    if (buttonNumber == Buttons::AddFile) {
+        ++activeFile;
+        return;
+    }
+
+    if (buttonNumber == Buttons::DeleteFile) {
+        --activeFile;
+        return;
+    }
+}
+}  // namespace Back

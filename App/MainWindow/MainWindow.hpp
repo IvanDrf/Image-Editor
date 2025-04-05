@@ -29,10 +29,13 @@ namespace {  // File Field
 const float kFileFieldWidth{kMainWindowWidth * 0.17f};
 const float kFileFieldHeight{kMainWindowHeight * 0.955f};
 
-constexpr short kMaxFileNameLength{1024};
+constexpr float kLineHeight{30};
+const sf::Color kFileBackGroundColor{166, 168, 170};
+const sf::Vector2f kFileBackGroundSize{kFileFieldWidth, 24};
+
 }  // namespace
 
-namespace {  // Main color for Window
+namespace {
 const sf::Color KSystemColor{83, 83, 83};
 }
 
@@ -49,12 +52,11 @@ constexpr short kCharacterSize{20};
 namespace {  // Button
 const float kButtonWidth{kMainWindowWidth / 10};
 const float kButtonHeight{kMainWindowHeight - kFileFieldHeight};
+constexpr short kDefaultOutlineThickness{2};
 
 const sf::Color kFileButtonColor{99, 139, 199};
-const sf::Color kToolsColor{72, 111, 180};  // Brush and etc
+const sf::Color kToolsColor{72, 111, 180};
 const sf::Color kActiveButtonColor{117, 167, 217};
-
-constexpr short kDefaultOutlineThickness{3};
 }  // namespace
 
 namespace {  // Small menu
@@ -76,7 +78,7 @@ const float kSmallWindowHeight{kMainWindowHeight * 0.2f};
 }  // namespace
 
 namespace {  // Box Size
-const float kBoxWidth{kSmallWindowWidth};
+const float kBoxWidth{kMainWindowWidth * 0.15f};
 const float kBoxHeight{kMainWindowHeight * 0.03f};
 
 const float kBrushBoxWidth{kButtonWidth * 0.25f};
@@ -105,3 +107,19 @@ class Brush;
 // The main function in which button clicks are implemented
 void ReleaseFunctions(std::vector<std::string>& pathToFile, const std::string& result, size_t buttonNumber, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed,
                       std::stack<sf::Image>& previousStatus);
+
+// Functions that are responsible for uploading files, etc. backend
+namespace Back {
+void AddFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus);
+void DeleteFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& FileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus, bool& brushPressed);
+
+void SaveFile(const std::string& result, Image& image, StatusBar& statusBar);
+void SelectFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus);
+void SelectBrush(bool& brushPressed, const Image& image, StatusBar& StatusBar);
+
+// Delete path
+void DeletePath(std::vector<std::string>& pathToFile, const std::string& fileName);
+[[nodiscard]] std::string FindPath(std::vector<std::string>& pathToFile, const std::string& fileName);
+
+void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile);
+}  // namespace Back
