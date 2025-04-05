@@ -15,9 +15,14 @@ FileField::FileField() {
     shape_.setOutlineThickness(kDefaultOutlineThickness);
 
     shape_.setPosition(0, kMainWindowHeight - kFileFieldHeight);
+
+    activeFileBackGround_.setSize(kFileBackGroundSize);
+    activeFileBackGround_.setFillColor(kFileBackGroundColor);
+    activeFileBackGround_.setPosition(0, kButtonHeight);
+    // activeFileBackGround_.setOrigin(0, kFileBackGroundSize.y / 2);
 }
 
-void FileField::DrawField(sf::RenderWindow& window) {
+void FileField::DrawField(sf::RenderWindow& window, size_t activeFile) {
     window.draw(shape_);
 
     displayedFiles_.clear();
@@ -27,12 +32,18 @@ void FileField::DrawField(sf::RenderWindow& window) {
     filesNames.setCharacterSize(kCharacterSize);
     filesNames.setFillColor(sf::Color::White);
 
-    float distanceBetweenFiles{kButtonHeight};
+    float textPositionY{1.15f * kButtonHeight};
+
+    activeFileBackGround_.setPosition(0, textPositionY + activeFile * kLineHeight);
+    if (!files_.empty()) {
+        window.draw(activeFileBackGround_);
+    }
+
     for (const auto& fileName : files_) {
         filesNames.setString(fileName);
 
-        filesNames.setPosition(10, distanceBetweenFiles);
-        distanceBetweenFiles += 30;
+        filesNames.setPosition(10, textPositionY);
+        textPositionY += kLineHeight;
 
         displayedFiles_.emplace_back(filesNames);
         window.draw(filesNames);
@@ -51,16 +62,16 @@ void FileField::DeleteFile(const std::string& fileName) {
     files_.erase(std::remove(files_.begin(), files_.end(), fileName), files_.end());
 }
 
-size_t FileField::GetActiveFile(const sf::Vector2i& mousePosition) const {
+const std::vector<std::string>& FileField::GetFiles() const {
+    return files_;
+}
+
+size_t FileField::GetActiveFile(const sf::Vector2i& mousePosition, size_t activeFile) const {
     for (size_t i = 0; i < displayedFiles_.size(); ++i) {
         if (displayedFiles_[i].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
             return i;
         }
-
-        return std::numeric_limits<size_t>::max();
     }
-}
 
-const std::vector<std::string>& FileField::GetFiles() const {
-    return files_;
+    return activeFile;
 }
