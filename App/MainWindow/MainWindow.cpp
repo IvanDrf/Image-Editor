@@ -22,17 +22,12 @@ std::vector<sf::RectangleShape> LoadButtonImages() {
         throw std::runtime_error("Save image could not be uploaded");
     }
 
-    sf::Texture selectIcon;
-    if (!selectIcon.loadFromFile("../WindowFiles/select-image.png")) {
-        throw std::runtime_error("Select image could not be uploaded");
-    }
-
     sf::Texture brushIcon;
     if (!brushIcon.loadFromFile("../WindowFiles/brush-image.png")) {
         throw std::runtime_error("Brush image could not be uploaded");
     }
 
-    static const std::vector<sf::Texture> icons = {addIcon, deleteIcon, saveIcon, selectIcon, brushIcon};
+    static const std::vector<sf::Texture> icons = {addIcon, deleteIcon, saveIcon, brushIcon};
     std::vector<sf::RectangleShape> iconShapes;  // Icon shapes and icons
 
     for (size_t i = 0; i < icons.size(); ++i) {
@@ -64,9 +59,8 @@ std::string GetFileName(const std::string& fileName) {
 }
 
 // Main Methods for working with files
-void ReleaseFunctions(const std::string& result, size_t buttonNumber, Image& image, FileField& fileField, StatusBar& statusBar, bool& brushPressed, std::stack<sf::Image>& previousStatus) {
-    static std::vector<std::string> pathToFile;  // Paths to images
-
+void ReleaseFunctions(std::vector<std::string>& pathToFile, const std::string& result, size_t buttonNumber, Image& image, FileField& fileField, StatusBar& statusBar, bool& brushPressed,
+                      std::stack<sf::Image>& previousStatus) {
     switch (static_cast<Buttons>(buttonNumber)) {
         // Add file button
         case (Buttons::AddFile): {
@@ -77,7 +71,7 @@ void ReleaseFunctions(const std::string& result, size_t buttonNumber, Image& ima
 
         // Delete file button
         case (Buttons::DeleteFile): {
-            Back::DeleteFile(pathToFile, result, image, fileField, statusBar, previousStatus);
+            Back::DeleteFile(pathToFile, result, image, fileField, statusBar, previousStatus, brushPressed);
 
             break;
         }
@@ -85,13 +79,6 @@ void ReleaseFunctions(const std::string& result, size_t buttonNumber, Image& ima
         // Save file button
         case (Buttons::SaveFile): {
             Back::SaveFile(result, image, statusBar);
-
-            break;
-        }
-
-        // Select File button
-        case (Buttons::SelectFile): {
-            Back::SelectFile(pathToFile, result, image, fileField, statusBar, previousStatus);
 
             break;
         }
@@ -145,7 +132,7 @@ void SaveFile(const std::string& result, Image& image, StatusBar& statusBar) {
     statusBar.UpdateStatus("Unable to save the file", sf::Color::Red);
 }
 
-void DeleteFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus) {
+void DeleteFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus, bool& brushPressed) {
     if (result.empty()) {
         return;
     }
@@ -161,9 +148,15 @@ void DeleteFile(std::vector<std::string>& pathToFile, const std::string& result,
     }
 
     statusBar.UpdateStatus("File was deleted successfully", sf::Color::Green);
-
-    image.ClearImage(previousStatus);
     Back::DeletePath(pathToFile, result);  // Delete path to deleting file
+
+    image.ClearImage(previousStatus);  // Reset scale, texture and e.t.c
+    if (!pathToFile.empty()) {
+        image.LoadImage(pathToFile.back());  // Load previous image
+        image.SetMainImageScale();
+    } else {
+        brushPressed = false;  // If there no files left
+    }
 }
 
 void SelectFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus) {
@@ -182,7 +175,6 @@ void SelectFile(std::vector<std::string>& pathToFile, const std::string& result,
 
 void SelectBrush(bool& brushPressed, const Image& image, StatusBar& statusBar) {
     brushPressed = !brushPressed && image.HasImage();
-
     if (brushPressed) {
         statusBar.UpdateStatus("Brush selected", sf::Color::Green);
         return;
@@ -207,5 +199,17 @@ std::string FindPath(std::vector<std::string>& pathToFile, const std::string& fi
     }
 
     return "";
+}
+
+void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile) {
+    if (buttonNumber == Buttons::AddFile) {
+        ++activeFile;
+        return;
+    }
+
+    if (buttonNumber == Buttons::DeleteFile) {
+        --activeFile;
+        return;
+    }
 }
 }  // namespace Back

@@ -19,7 +19,7 @@ Button::Button(const float x, const float y, const std::string& name, const sf::
     shape_.setSize(sf::Vector2f(kButtonWidth, kButtonHeight));
     shape_.setFillColor(color);
     shape_.setOutlineColor(sf::Color::Black);
-    shape_.setOutlineThickness(3);
+    shape_.setOutlineThickness(kDefaultOutlineThickness);
     shape_.setPosition(x, y);
 }
 

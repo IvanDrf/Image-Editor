@@ -10,8 +10,7 @@ enum Buttons {
     AddFile = 0,
     DeleteFile = 1,
     SaveFile = 2,
-    SelectFile = 3,
-    SelectBrush = 4
+    SelectBrush = 3
 };
 
 // Constants
@@ -26,9 +25,14 @@ const float kMainWindowWidth{kDesktopWidth * 0.9f};
 const float kMainWindowHeight{kDesktopHeight * 0.8f};
 }  // namespace
 
-namespace {  // File Field Size
+namespace {  // File Field
 const float kFileFieldWidth{kMainWindowWidth * 0.17f};
 const float kFileFieldHeight{kMainWindowHeight * 0.955f};
+
+constexpr float kLineHeight{30};
+const sf::Color kFileBackGroundColor{166, 168, 170};
+const sf::Vector2f kFileBackGroundSize{kFileFieldWidth, 24};
+
 }  // namespace
 
 namespace {
@@ -48,6 +52,7 @@ constexpr short kCharacterSize{20};
 namespace {  // Button
 const float kButtonWidth{kMainWindowWidth / 10};
 const float kButtonHeight{kMainWindowHeight - kFileFieldHeight};
+constexpr short kDefaultOutlineThickness{2};
 
 const sf::Color kFileButtonColor{99, 139, 199};
 const sf::Color kToolsColor{72, 111, 180};
@@ -85,12 +90,7 @@ constexpr float kBrushImageScale{0.45f};
 constexpr float kBrushSizeFieldCharacterSize{kCharacterSize / 1.1f};
 
 const sf::Vector2f kBrushCurrentColorBoxSize{kBrushBoxHeight, kBrushBoxHeight};
-}  // namespace
-
-namespace {
-constexpr short kDefaultOutlineThickness{3};
-
-const sf::Vector2f kBrushSizeImagePosition{kSmallMenuWidth + 5 * kButtonWidth + kButtonWidth / 10, 0};
+const sf::Vector2f kBrushSizeImagePosition{kSmallMenuWidth + 4 * kButtonWidth + kButtonWidth / 10, 0};
 }  // namespace
 
 // Functions
@@ -105,12 +105,13 @@ class StatusBar;
 class Brush;
 
 // The main function in which button clicks are implemented
-void ReleaseFunctions(const std::string& result, size_t buttonNumber, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed, std::stack<sf::Image>& previousStatus);
+void ReleaseFunctions(std::vector<std::string>& pathToFile, const std::string& result, size_t buttonNumber, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed,
+                      std::stack<sf::Image>& previousStatus);
 
 // Functions that are responsible for uploading files, etc. backend
 namespace Back {
 void AddFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus);
-void DeleteFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& FileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus);
+void DeleteFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& FileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus, bool& brushPressed);
 
 void SaveFile(const std::string& result, Image& image, StatusBar& statusBar);
 void SelectFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus);
@@ -119,4 +120,6 @@ void SelectBrush(bool& brushPressed, const Image& image, StatusBar& StatusBar);
 // Delete path
 void DeletePath(std::vector<std::string>& pathToFile, const std::string& fileName);
 [[nodiscard]] std::string FindPath(std::vector<std::string>& pathToFile, const std::string& fileName);
+
+void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile);
 }  // namespace Back
