@@ -155,7 +155,7 @@ void DeleteFile(std::vector<std::string>& pathToFile, const std::string& result,
         image.LoadImage(pathToFile.back());  // Load previous image
         image.SetMainImageScale();
     } else {
-        brushPressed = false; // If there no files left
+        brushPressed = false;  // If there no files left
     }
 }
 
