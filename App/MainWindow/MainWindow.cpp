@@ -117,7 +117,7 @@ void AddFile(std::vector<std::string>& pathToFile, const std::string& result, Im
         fileField.AddFile(GetFileName(result));
 
         statusBar.UpdateStatus("Image loaded successfully", sf::Color::Green);
-    } catch (std::exception& e) {
+    } catch (...) {
         statusBar.UpdateStatus("Image could not be found", sf::Color::Red);
     }
 }

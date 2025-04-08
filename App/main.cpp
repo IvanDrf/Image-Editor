@@ -120,9 +120,12 @@ auto main(int, char**) -> int {
                     if (buttons[i].AimButton(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
                         std::string result = buttonFunctions[i]();  // Path to file
 
-                        Back::SelectNewActiveFile(i, activeFile);
+                        [[maybe_unused]] const size_t oldFilesCount = pathsToFile.size();                                     // Check was file deleted succesfully or not
+                        ReleaseFunctions(pathsToFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);  // Work with main buttons
 
-                        ReleaseFunctions(pathsToFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);
+                        if (image.HasImage() && oldFilesCount != pathsToFile.size()) {
+                            Back::SelectNewActiveFile(i, activeFile);
+                        }
 
                         if (brushPressed && buttons[Buttons::SelectBrush].GetColor() != kActiveButtonColor) {
                             buttons[Buttons::SelectBrush].SetColor(kActiveButtonColor);
@@ -134,7 +137,12 @@ auto main(int, char**) -> int {
 
                 activeFile = fileField.GetActiveFile(sf::Vector2i(event.mouseButton.x, event.mouseButton.y), activeFile);
                 if (activeFile != std::numeric_limits<size_t>::max() && activeFile != previousFile) {
-                    image.LoadImage(pathsToFile[activeFile]);
+                    try {
+                        image.LoadImage(pathsToFile[activeFile]);
+
+                    } catch (std::runtime_error& e) {
+                        statusBar.UpdateStatus(e.what());
+                    }
 
                     previousFile = activeFile;
                 }
