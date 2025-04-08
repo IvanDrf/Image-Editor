@@ -24,7 +24,7 @@ void Brush::SetRadius(const int newRadius) {
 
 void Brush::UpdateCursorScale() {
     const sf::Vector2u bounds{brushCursorTexture.getSize()};
-    brushCursorSprite.setScale(2.5f * radius_ / bounds.x, 2.5f * radius_ / bounds.y);
+    brushCursorSprite.setScale(2.8f * radius_ / bounds.x, 2.8f * radius_ / bounds.y);
 }
 
 int Brush::GetRadius() const {
