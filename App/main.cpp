@@ -138,7 +138,9 @@ auto main(int, char**) -> int {
                 activeFile = fileField.GetActiveFile(sf::Vector2i(event.mouseButton.x, event.mouseButton.y), activeFile);
                 if (activeFile != std::numeric_limits<size_t>::max() && activeFile != previousFile) {
                     try {
+                        image.ClearImage(previousStatus);
                         image.LoadImage(pathsToFile[activeFile]);
+                        image.SetMainImageScale();
 
                     } catch (std::runtime_error& e) {
                         statusBar.UpdateStatus(e.what());
