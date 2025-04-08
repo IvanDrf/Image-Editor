@@ -120,8 +120,8 @@ auto main(int, char**) -> int {
                     if (buttons[i].AimButton(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
                         std::string result = buttonFunctions[i]();  // Path to file
 
-                        [[maybe_unused]] const size_t oldFilesCount = pathsToFile.size(); // Check was file deleted succesfully or not
-                        ReleaseFunctions(pathsToFile, result, i, image, fileField, statusBar, brushPressed, previousStatus); // Work with main buttons
+                        [[maybe_unused]] const size_t oldFilesCount = pathsToFile.size();                                     // Check was file deleted succesfully or not
+                        ReleaseFunctions(pathsToFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);  // Work with main buttons
 
                         if (image.HasImage() && oldFilesCount != pathsToFile.size()) {
                             Back::SelectNewActiveFile(i, activeFile);
