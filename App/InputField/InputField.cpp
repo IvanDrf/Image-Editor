@@ -1,4 +1,5 @@
 #include "InputField.hpp"
+#include "../InputWindow/InputWindow.hpp"
 
 #include "../MainWindow/MainWindow.hpp"
 
@@ -167,7 +168,7 @@ void InputField::Draw(sf::RenderWindow& window) const {
 // Main buttons functions
 namespace Front {
 std::string AddFile() {
-    return InputField::CreateInputWindow("Add file", "Enter path to file");
+    return Window::AddFileWindow();
 }
 
 std::string DeleteFile() {
