@@ -12,8 +12,6 @@
 #include "MainWindow/MainWindow.hpp"
 #include "StatusBar/StatusBar.hpp"
 
-#include <iostream>
-
 // Menu Buttons, realization in InputField.cpp
 namespace Front {
 using Paths = const std::vector<std::string>&;
