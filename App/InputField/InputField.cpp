@@ -189,10 +189,6 @@ std::string SaveFile(Paths pathsToFile, size_t activeFile) {
     return "";
 }
 
-std::string SelectFile([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile) {
-    return InputField::CreateInputWindow("Select file", "Enter file name");
-}
-
 std::string SelectBrush([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile) {
     return "";
 }

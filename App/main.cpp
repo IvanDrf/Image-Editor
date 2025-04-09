@@ -20,7 +20,6 @@ std::string AddFile([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t 
 std::string DeleteFile(Paths pathsToFile, size_t activeFile);
 
 std::string SaveFile(Paths pathsToFile, size_t activeFile);
-std::string SelectFile([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile);
 
 std::string SelectBrush([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile);
 }  // namespace Front
