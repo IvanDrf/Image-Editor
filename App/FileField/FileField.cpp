@@ -67,6 +67,10 @@ const std::vector<std::string>& FileField::GetFiles() const {
 }
 
 size_t FileField::GetActiveFile(const sf::Vector2i& mousePosition, size_t activeFile) const {
+    if (files_.size() == 1) {
+        return 0;
+    }
+
     for (size_t i = 0; i < displayedFiles_.size(); ++i) {
         if (displayedFiles_[i].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
             return i;

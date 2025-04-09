@@ -5,7 +5,7 @@
 #include "../MainWindow/MainWindow.hpp"
 
 class FileField {
- private:
+ public:
     sf::RectangleShape activeFileBackGround_;
     sf::RectangleShape shape_;
     sf::Font font_;

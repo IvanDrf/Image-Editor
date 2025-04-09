@@ -4,6 +4,7 @@
 #include <vector>
 
 // Interface
+
 #include "Brush/Brush.hpp"
 #include "Button/Button.hpp"
 #include "FileField/FileField.hpp"
@@ -11,13 +12,17 @@
 #include "MainWindow/MainWindow.hpp"
 #include "StatusBar/StatusBar.hpp"
 
-// Menu Buttons, realization in Button.cpp
+// Menu Buttons, realization in InputField.cpp
 namespace Front {
-std::string AddFile();
-std::string DeleteFile();
-std::string SaveFile();
-std::string SelectFile();
-std::string SelectBrush();
+using Paths = const std::vector<std::string>&;
+
+std::string AddFile([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile);
+std::string DeleteFile(Paths pathsToFile, size_t activeFile);
+
+std::string SaveFile(Paths pathsToFile, size_t activeFile);
+std::string SelectFile([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile);
+
+std::string SelectBrush([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile);
 }  // namespace Front
 
 auto main(int, char**) -> int {
@@ -118,7 +123,7 @@ auto main(int, char**) -> int {
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 for (size_t i = 0; i < buttonNames.size(); ++i) {
                     if (buttons[i].AimButton(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
-                        std::string result = buttonFunctions[i]();  // Path to file
+                        std::string result = buttonFunctions[i](pathsToFile, activeFile);  // Path to file
 
                         [[maybe_unused]] const size_t oldFilesCount = pathsToFile.size();                                     // Check was file deleted succesfully or not
                         ReleaseFunctions(pathsToFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);  // Work with main buttons
@@ -138,7 +143,9 @@ auto main(int, char**) -> int {
                 activeFile = fileField.GetActiveFile(sf::Vector2i(event.mouseButton.x, event.mouseButton.y), activeFile);
                 if (activeFile != std::numeric_limits<size_t>::max() && activeFile != previousFile) {
                     try {
-                        image.LoadImage(pathsToFile[activeFile]);
+                        image.ClearImage(previousStatus);          // Destroy old image
+                        image.LoadImage(pathsToFile[activeFile]);  // Load selected image
+                        image.SetMainImageScale();                 // Set main properties
 
                     } catch (std::runtime_error& e) {
                         statusBar.UpdateStatus(e.what());
@@ -186,7 +193,7 @@ auto main(int, char**) -> int {
 
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-                std::string result = buttonFunctions[2]();
+                std::string result = buttonFunctions[2](pathsToFile, activeFile);
                 ReleaseFunctions(pathsToFile, result, 2, image, fileField, statusBar, brushPressed, previousStatus);
             }
         }
