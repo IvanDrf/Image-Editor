@@ -174,7 +174,11 @@ std::string AddFile([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t 
 }
 
 std::string DeleteFile(Paths pathsToFile, size_t activeFile) {
-    return InputField::CreateInputWindow("Delete file", "Enter file name");
+    if (activeFile < pathsToFile.size()) {
+        return pathsToFile[activeFile];
+    }
+
+    return "";
 }
 
 std::string SaveFile(Paths pathsToFile, size_t activeFile) {
