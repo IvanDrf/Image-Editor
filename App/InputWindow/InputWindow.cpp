@@ -1,6 +1,7 @@
 #include "InputWindow.hpp"
 
 #include <limits>
+#include <vector>
 
 namespace {
 const short kMaxPathLength{std::numeric_limits<short>::max() - 1};
@@ -75,3 +76,32 @@ std::string SaveFileWindow(const std::string& fileName) {
     return result;
 }
 }  // namespace Window
+
+// Main buttons functions
+namespace Front {
+using Paths = const std::vector<std::string>&;
+
+std::string AddFile([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile) {
+    return Window::AddFileWindow();
+}
+
+std::string DeleteFile(Paths pathsToFile, size_t activeFile) {
+    if (activeFile < pathsToFile.size()) {
+        return pathsToFile[activeFile];
+    }
+
+    return "";
+}
+
+std::string SaveFile(Paths pathsToFile, size_t activeFile) {
+    if (activeFile < pathsToFile.size()) {
+        return Window::SaveFileWindow(pathsToFile[activeFile]);
+    }
+
+    return "";
+}
+
+std::string SelectBrush([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile) {
+    return "";
+}
+}  // namespace Front

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../Image/Image.hpp"
-#include "../InputField/InputField.hpp"
 #include "SFML/Graphics.hpp"
 
 namespace {
@@ -36,4 +34,22 @@ class Brush {
     void Draw(sf::Image& image, const sf::Vector2f& position) const;
 
     void SetBrushCursor(const sf::Vector2i& mousePosition);
+};
+
+class BrushSizeDisplay {
+ private:
+    sf::Text size_; // Current brush size
+    sf::Font font_;
+
+    sf::RectangleShape shape_;
+
+ public:
+    BrushSizeDisplay(const int size, const sf::Font& font);
+
+    void SetText(const int size); // Current brush Size
+
+    void SetShapeSize(const sf::Vector2f& shapeSize);
+    void SetPosition(const float x, const float y);
+
+    void Draw(sf::RenderWindow& window) const;
 };
