@@ -1,6 +1,6 @@
 #include "InputField.hpp"
-#include "../InputWindow/InputWindow.hpp"
 
+#include "../InputWindow/InputWindow.hpp"
 #include "../MainWindow/MainWindow.hpp"
 
 InputField::InputField() {
@@ -167,23 +167,25 @@ void InputField::Draw(sf::RenderWindow& window) const {
 
 // Main buttons functions
 namespace Front {
-std::string AddFile() {
+using Paths = const std::vector<std::string>&;
+
+std::string AddFile([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile) {
     return Window::AddFileWindow();
 }
 
-std::string DeleteFile() {
+std::string DeleteFile(Paths pathsToFile, size_t activeFile) {
     return InputField::CreateInputWindow("Delete file", "Enter file name");
 }
 
-std::string SaveFile() {
+std::string SaveFile(Paths pathsToFile, size_t activeFile) {
     return InputField::CreateInputWindow("Save file", "Enter file name");
 }
 
-std::string SelectFile() {
+std::string SelectFile([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile) {
     return InputField::CreateInputWindow("Select file", "Enter file name");
 }
 
-std::string SelectBrush() {
+std::string SelectBrush([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile) {
     return "";
 }
 }  // namespace Front

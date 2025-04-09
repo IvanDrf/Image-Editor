@@ -4,7 +4,7 @@
 #include <stack>
 
 using uint = unsigned int;
-using ButtonFunction = std::string (*)();
+using ButtonFunction = std::string (*)(const std::vector<std::string>&, size_t);
 
 enum Buttons {
     AddFile = 0,

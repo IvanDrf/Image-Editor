@@ -58,6 +58,8 @@ std::string GetFileName(const std::string& fileName) {
     return result;
 }
 
+#include <iostream>
+
 // Main Methods for working with files
 void ReleaseFunctions(std::vector<std::string>& pathToFile, const std::string& result, size_t buttonNumber, Image& image, FileField& fileField, StatusBar& statusBar, bool& brushPressed,
                       std::stack<sf::Image>& previousStatus) {
