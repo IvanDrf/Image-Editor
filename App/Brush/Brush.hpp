@@ -38,7 +38,7 @@ class Brush {
 
 class BrushSizeDisplay {
  private:
-    sf::Text size_; // Current brush size
+    sf::Text size_;  // Current brush size
     sf::Font font_;
 
     sf::RectangleShape shape_;
@@ -46,7 +46,7 @@ class BrushSizeDisplay {
  public:
     BrushSizeDisplay(const int size, const sf::Font& font);
 
-    void SetText(const int size); // Current brush Size
+    void SetText(const int size);  // Current brush Size
 
     void SetShapeSize(const sf::Vector2f& shapeSize);
     void SetPosition(const float x, const float y);

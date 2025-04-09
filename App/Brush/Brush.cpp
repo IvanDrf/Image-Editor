@@ -128,7 +128,7 @@ void BrushSizeDisplay::SetShapeSize(const sf::Vector2f& shapeSize) {
 
 void BrushSizeDisplay::SetPosition(const float x, const float y) {
     shape_.setPosition(x, y);
-    size_.setPosition(x,y);
+    size_.setPosition(x, y);
 }
 
 void BrushSizeDisplay::Draw(sf::RenderWindow& window) const {
