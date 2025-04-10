@@ -72,7 +72,7 @@ auto main(int, char**) -> int {
     brushCurrentColor.SetColor(brush.GetColor());
 
     // Brush current color shape position
-    auto [brushColorShapePosX, brushColorShapePosY] = Interface::CalculateBrushColorShapePos({brushSizeFieldPosX,brushSizeFieldPosY});
+    auto [brushColorShapePosX, brushColorShapePosY] = Interface::CalculateBrushColorShapePos({brushSizeFieldPosX, brushSizeFieldPosY});
     brushCurrentColor.SetPosition(brushColorShapePosX, brushColorShapePosY);
 
     // Create small menu for brush color and brush size
