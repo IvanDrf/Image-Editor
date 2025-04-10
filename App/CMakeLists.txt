@@ -13,8 +13,8 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Button/Button.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FileField/FileField.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Image/Image.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/InputField/InputField.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow/MainWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow/Interface/Interface.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/StatusBar/StatusBar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/InputWindow/InputWindow.cpp
 )
@@ -24,8 +24,8 @@ set(HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Button/Button.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/FileField/FileField.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Image/Image.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/InputField/InputField.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow/MainWindow.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/MainWindow/Interface/Interface.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/StatusBar/StatusBar.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/InputWindow/InputWindow.hpp
 )

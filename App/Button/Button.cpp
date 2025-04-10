@@ -27,6 +27,8 @@ void Button::CreateMenuButtons(std::vector<Button>& buttons, const std::vector<s
     for (size_t i = 0; i < names.size(); ++i) {
         buttons.emplace_back(kSmallMenuWidth + kButtonWidth * i, 0, names[i], colors[i], font);
     }
+
+    buttons.back().SetColor(kToolsColor);  // Set color for Brush button
 }
 
 void Button::DrawButton(sf::RenderWindow& window) const {

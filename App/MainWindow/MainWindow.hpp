@@ -93,33 +93,34 @@ const sf::Vector2f kBrushCurrentColorBoxSize{kBrushBoxHeight, kBrushBoxHeight};
 const sf::Vector2f kBrushSizeImagePosition{kSmallMenuWidth + 4 * kButtonWidth + kButtonWidth / 10, 0};
 }  // namespace
 
-// Functions
+using Paths = std::vector<std::string>&;
+using StackImage = std::stack<sf::Image>&;
 
-std::vector<sf::RectangleShape> LoadButtonImages();
-std::string GetFileName(const std::string& fileName);
-
-// Needs for ReleaseFunctions
 class Image;
 class FileField;
 class StatusBar;
 class Brush;
 
-// The main function in which button clicks are implemented
-void ReleaseFunctions(std::vector<std::string>& pathToFile, const std::string& result, size_t buttonNumber, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed,
-                      std::stack<sf::Image>& previousStatus);
+// The main function that handles pressing each button
+void WorkWithPath(Paths pathToFile, const std::string& result, size_t buttonNumber, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed, StackImage previousStatus);
+//
 
 // Functions that are responsible for uploading files, etc. backend
 namespace Back {
-void AddFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus);
-void DeleteFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& FileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus, bool& brushPressed);
+void AddFile(Paths pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage previousStatus);
+void DeleteFile(Paths pathToFile, const std::string& result, Image& image, FileField& FileField, StatusBar& statusBar, StackImage previousStatus, bool& brushPressed);
 
 void SaveFile(const std::string& result, Image& image, StatusBar& statusBar);
-void SelectFile(std::vector<std::string>& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, std::stack<sf::Image>& previousStatus);
+void SelectFile(Paths pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage previousStatus);
 void SelectBrush(bool& brushPressed, const Image& image, StatusBar& StatusBar);
-
-// Delete path
-void DeletePath(std::vector<std::string>& pathToFile, const std::string& fileName);
-[[nodiscard]] std::string FindPath(std::vector<std::string>& pathToFile, const std::string& fileName);
 
 void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile);
 }  // namespace Back
+
+// Functions that process the path
+namespace Path {
+void DeletePath(Paths pathToFile, const std::string& fileName);
+[[nodiscard]] std::string FindPath(Paths pathToFile, const std::string& fileName);
+[[nodiscard]] std::string GetFileName(const std::string& fileName);
+
+}  // namespace Path
