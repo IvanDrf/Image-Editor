@@ -9,6 +9,7 @@
 #include "Button/Button.hpp"
 #include "FileField/FileField.hpp"
 #include "Image/Image.hpp"
+#include "MainWindow/Interface/Interface.hpp"
 #include "MainWindow/MainWindow.hpp"
 #include "StatusBar/StatusBar.hpp"
 
@@ -40,34 +41,15 @@ auto main(int, char**) -> int {
     FileField fileField;
     StatusBar statusBar;
 
-    sf::RectangleShape background;
-    background.setFillColor(kToolsColor);
-    background.setSize(sf::Vector2f(kMainWindowWidth, kSmallMenuHeight));
-    background.setPosition(0, 0);
-
-    // Small menu
-    sf::RectangleShape menuShape;
-    menuShape.setFillColor(kToolsColor);
-    menuShape.setSize(sf::Vector2f(kSmallMenuWidth, kSmallMenuHeight));
-    menuShape.setPosition(0, 0);
-
-    menuShape.setOutlineColor(sf::Color::Black);
-    menuShape.setOutlineThickness(kDefaultOutlineThickness);
-
-    Image menuImage;
-    menuImage.LoadImage("../WindowFiles/smallMenu-image.png");
-    menuImage.SetScale(kSmallMenuScale, kSmallMenuScale);
-    menuImage.SetOrigin(menuImage.GetSpriteBound().width / 2, 0);
-    menuImage.SetPosition(kSmallMenuIconPosition);
+    auto [backgorund, menuShape, menuImage, brushSizeImage] = Interface::CreateInterface();
 
     // Menu Buttons
-    const std::vector<std::string> buttonNames{"Add file", "Delete file", "Save file", "Brush"};
-    std::vector<sf::RectangleShape> buttonIcons = LoadButtonImages();  // Button Icons
+    const std::vector<std::string> buttonNames = {"Add file", "Delete file", "Save file", "Brush"};
+    std::vector<sf::RectangleShape> buttonIcons = Interface::LoadButtonImages();  // Button Icons
 
     std::vector<Button> buttons;
     const std::vector<sf::Color> buttonColors{kFileButtonColor, kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor};
     Button::CreateMenuButtons(buttons, buttonNames, buttonColors, buttonFont);
-    buttons.back().SetColor(kToolsColor);
 
     // Main Button Functions
     ButtonFunction buttonFunctions[]{Front::AddFile, Front::DeleteFile, Front::SaveFile, Front::SelectBrush};
@@ -76,29 +58,22 @@ auto main(int, char**) -> int {
     Brush brush(kBrushInitialRadius, sf::Color::White);
     bool brushPressed{false};
 
-    // Small menu for brush: Size, Color
-    // Size
-    Image brushSizeImage;
-    brushSizeImage.LoadImage("../WindowFiles/brush-size.png");
-    brushSizeImage.SetScale(kBrushImageScale, kBrushImageScale);
-    brushSizeImage.SetPosition(kBrushSizeImagePosition);
+    // Brush size field, displays current brush size
+    // Brush size field position
 
-    const float kBrushSizeFieldPosX{kSmallMenuWidth + 4 * kButtonWidth + 0.9f * brushSizeImage.GetSpriteBound().width + kButtonWidth / 5};
-    const float kBrushSizeFieldPoxY{(kButtonHeight - kBrushBoxHeight) / 2};
+    auto [brushSizeFieldPosX, brushSizeFieldPosY] = Interface::CalculateBrushSizePos(brushSizeImage);
 
     BrushSizeDisplay brushSizeField(kBrushInitialRadius, buttonFont);
-    brushSizeField.SetPosition(kBrushSizeFieldPosX, kBrushSizeFieldPoxY);
+    brushSizeField.SetPosition(brushSizeFieldPosX, brushSizeFieldPosY);
     brushSizeField.SetShapeSize(sf::Vector2f(kBrushBoxWidth, kBrushBoxHeight));
 
-    sf::RectangleShape brushCurrentColorShape;
-    brushCurrentColorShape.setFillColor(brush.GetColor());
-    brushCurrentColorShape.setSize(kBrushCurrentColorBoxSize);
+    // Brush current color, displays current brush color
+    BrushColorDisplay brushCurrentColor(kBrushCurrentColorBoxSize);
+    brushCurrentColor.SetColor(brush.GetColor());
 
-    const sf::Vector2f kBrushColorShapePosition(kBrushSizeFieldPosX + 1.35f * kBrushBoxWidth, kBrushSizeFieldPoxY);
-    brushCurrentColorShape.setPosition(kBrushColorShapePosition);
-
-    brushCurrentColorShape.setOutlineColor(sf::Color::White);
-    brushCurrentColorShape.setOutlineThickness(kDefaultOutlineThickness);
+    // Brush current color shape position
+    auto [brushColorShapePosX, brushColorShapePosY] = Interface::CalculateBrushColorShapePos({brushSizeFieldPosX,brushSizeFieldPosY});
+    brushCurrentColor.SetPosition(brushColorShapePosX, brushColorShapePosY);
 
     // Create small menu for brush color and brush size
 
@@ -121,8 +96,8 @@ auto main(int, char**) -> int {
                     if (buttons[i].AimButton(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
                         std::string result = buttonFunctions[i](pathsToFile, activeFile);  // Path to file
 
-                        [[maybe_unused]] const size_t oldFilesCount = pathsToFile.size();                                     // Check was file deleted succesfully or not
-                        ReleaseFunctions(pathsToFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);  // Work with main buttons
+                        [[maybe_unused]] const size_t oldFilesCount = pathsToFile.size();                                 // Check was file deleted succesfully or not
+                        WorkWithPath(pathsToFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);  // Work with main buttons
 
                         if (image.HasImage() && oldFilesCount != pathsToFile.size()) {
                             Back::SelectNewActiveFile(i, activeFile);
@@ -177,7 +152,7 @@ auto main(int, char**) -> int {
 
             // Set Brush Color
             if (brushPressed && event.type == sf::Event::KeyPressed) {
-                brush.SetColor(event.key.code, brushCurrentColorShape);
+                brush.SetColor(event.key.code, brushCurrentColor);
             }
 
             // Return previous image (Ctrl+Z)
@@ -188,14 +163,14 @@ auto main(int, char**) -> int {
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 std::string result = buttonFunctions[2](pathsToFile, activeFile);
-                ReleaseFunctions(pathsToFile, result, 2, image, fileField, statusBar, brushPressed, previousStatus);
+                WorkWithPath(pathsToFile, result, 2, image, fileField, statusBar, brushPressed, previousStatus);
             }
         }
 
         mainWindow.clear();
 
         // Draw elements
-        mainWindow.draw(background);                  // Button background
+        mainWindow.draw(backgorund);                  // Button backgorund
         image.DrawImage(mainWindow);                  // Main image
         fileField.DrawField(mainWindow, activeFile);  // Field with added files
         statusBar.DrawStatusBar(mainWindow);          // Status bar
@@ -232,7 +207,7 @@ auto main(int, char**) -> int {
         brushSizeImage.DrawImage(mainWindow);  // Brush current size image
         brushSizeField.Draw(mainWindow);       // Brush current size field
 
-        mainWindow.draw(brushCurrentColorShape);
+        brushCurrentColor.Draw(mainWindow);  // Brush current color field
 
         mainWindow.display();
     }

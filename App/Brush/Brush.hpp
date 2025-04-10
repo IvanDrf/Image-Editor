@@ -9,6 +9,8 @@ const int kBrushChangeRadius{5};
 const sf::Color kBrushInputSizeColor{152, 167, 212};
 }  // namespace
 
+class BrushColorDisplay;
+
 class Brush {
  private:
     sf::CircleShape shape_;
@@ -28,7 +30,7 @@ class Brush {
     [[nodiscard]] const sf::Sprite& GetBrushCursor() const;
 
     void SetColor(const sf::Color& newColor);
-    void SetColor(const sf::Keyboard::Key& keyboardButton, sf::RectangleShape& brushColorShape);
+    void SetColor(const sf::Keyboard::Key& keyboardButton, BrushColorDisplay& brushCurrentColor);
 
     [[nodiscard]] sf::Color GetColor() const;
     void Draw(sf::Image& image, const sf::Vector2f& position) const;
@@ -49,6 +51,20 @@ class BrushSizeDisplay {
     void SetText(const int size);  // Current brush Size
 
     void SetShapeSize(const sf::Vector2f& shapeSize);
+    void SetPosition(const float x, const float y);
+
+    void Draw(sf::RenderWindow& window) const;
+};
+
+class BrushColorDisplay {
+ private:
+    sf::Color currentColor_;
+    sf::RectangleShape shape_;
+
+ public:
+    BrushColorDisplay(const sf::Vector2f& size);
+
+    void SetColor(const sf::Color& color);
     void SetPosition(const float x, const float y);
 
     void Draw(sf::RenderWindow& window) const;

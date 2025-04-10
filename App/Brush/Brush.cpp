@@ -42,7 +42,7 @@ void Brush::SetColor(const sf::Color& newColor) {
     shape_.setFillColor(newColor);
 }
 
-void Brush::SetColor(const sf::Keyboard::Key& keyboardButton, sf::RectangleShape& brushColorShape) {
+void Brush::SetColor(const sf::Keyboard::Key& keyboardButton, BrushColorDisplay& brushCurrentColor) {
     switch (keyboardButton) {
         case sf::Keyboard::R: {
             color_ = sf::Color::Red;
@@ -74,7 +74,7 @@ void Brush::SetColor(const sf::Keyboard::Key& keyboardButton, sf::RectangleShape
         }
     }
 
-    brushColorShape.setFillColor(color_);
+    brushCurrentColor.SetColor(color_);
 }
 
 sf::Color Brush::GetColor() const {
@@ -134,4 +134,26 @@ void BrushSizeDisplay::SetPosition(const float x, const float y) {
 void BrushSizeDisplay::Draw(sf::RenderWindow& window) const {
     window.draw(shape_);
     window.draw(size_);
+}
+
+// Brush color display
+
+BrushColorDisplay::BrushColorDisplay(const sf::Vector2f& size) {
+    shape_.setSize(size);
+
+    shape_.setOutlineColor(sf::Color::White);
+    shape_.setOutlineThickness(kDefaultOutlineThickness);
+}
+
+void BrushColorDisplay::SetColor(const sf::Color& color) {
+    currentColor_ = color;
+    shape_.setFillColor(color);
+}
+
+void BrushColorDisplay::SetPosition(const float x, const float y) {
+    shape_.setPosition(x, y);
+}
+
+void BrushColorDisplay::Draw(sf::RenderWindow& window) const {
+    window.draw(shape_);
 }
