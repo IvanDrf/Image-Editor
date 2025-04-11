@@ -76,7 +76,7 @@ const sf::Texture& Image::GetTexture() const {
     return texture_;
 }
 
-sf::Vector2f Image::GetImagePosition(const sf::Vector2f& mousePosition) const {
+sf::Vector2f Image::GetImagePosition(const sf::Vector2i& mousePosition) const {
     sf::FloatRect bounds = sprite_.getGlobalBounds();
 
     float imageX = (mousePosition.x - bounds.left) / sprite_.getScale().x;

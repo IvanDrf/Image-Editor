@@ -104,7 +104,7 @@ auto main(int, char**) -> int {
                         WorkWithPath(pathsToFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);  // Work with main buttons
 
                         if (image.HasImage() && oldFilesCount != pathsToFile.size()) {
-                            Back::SelectNewActiveFile(i, activeFile);
+                            Back::SelectNewActiveFile(i, activeFile, pathsToFile.size());
                         }
 
                         if (brushPressed && buttons[Buttons::SelectBrush].GetColor() != kActiveButtonColor) {
@@ -154,12 +154,13 @@ auto main(int, char**) -> int {
                 brush.UpdateCursorScale();
             }
 
-            // Set Brush Color
+            // Set Brush Color by hot key
             if (brushPressed && event.type == sf::Event::KeyPressed) {
                 brush.SetColor(event.key.code, brushCurrentColor);
                 brushCurrentColor.SetColor(brush.GetColor());
             }
 
+            // Set Brush Color by Palette
             if (isPaletteOpen && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 if (brushCurrentColor.PaletteClicked({event.mouseButton.x, event.mouseButton.y})) {
                     brush.SetColor(brushCurrentColor.GetPaletteColor({event.mouseButton.x, event.mouseButton.y}));
@@ -201,7 +202,7 @@ auto main(int, char**) -> int {
         bool buttonTarget{false};
 
         for (size_t i = 0; i < buttons.size(); ++i) {
-            if (buttons[i].AimButton(static_cast<sf::Vector2f>(sf::Mouse::getPosition(mainWindow)))) {
+            if (buttons[i].AimButton(sf::Mouse::getPosition(mainWindow))) {
                 buttonTarget = true;
             }
 
