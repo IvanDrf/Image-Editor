@@ -18,7 +18,7 @@ class Button {
     void SetColor(const sf::Color& newColor);
     sf::Color GetColor() const;
 
-    [[nodiscard]] bool AimButton(const sf::Vector2f& mousePosition) const;
+    [[nodiscard]] bool AimButton(const sf::Vector2i& mousePosition) const;
 
     static size_t GetActiveButton();
     void AnimateButton(const sf::RenderWindow& window, size_t buttonIndex);

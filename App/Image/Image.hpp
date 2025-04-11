@@ -32,7 +32,7 @@ class Image {
     const sf::Sprite& GetSprite() const;
     const sf::Texture& GetTexture() const;
 
-    [[nodiscard]] sf::Vector2f GetImagePosition(const sf::Vector2f& mousePosition) const;
+    [[nodiscard]] sf::Vector2f GetImagePosition(const sf::Vector2i& mousePosition) const;
     [[nodiscard]] sf::Image& GetImage();
 
     void LoadImage(const std::string& filePath);

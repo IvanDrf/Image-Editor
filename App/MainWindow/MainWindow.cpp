@@ -129,9 +129,9 @@ void SelectBrush(bool& brushPressed, const Image& image, StatusBar& statusBar) {
     statusBar.UpdateStatus("Brush is no longer selected");
 }
 
-void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile) {
+void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile, size_t files) {
     if (buttonNumber == Buttons::AddFile) {
-        ++activeFile;
+        activeFile = files - 1;
         return;
     }
 

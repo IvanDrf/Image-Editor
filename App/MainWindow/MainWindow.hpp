@@ -116,7 +116,7 @@ void SaveFile(const std::string& result, Image& image, StatusBar& statusBar);
 void SelectFile(Paths pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage previousStatus);
 void SelectBrush(bool& brushPressed, const Image& image, StatusBar& StatusBar);
 
-void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile);
+void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile, size_t files);
 }  // namespace Back
 
 // Functions that process the path
