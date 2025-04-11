@@ -156,6 +156,17 @@ void BrushColorDisplay::SetColor(const sf::Color& color) {
     shape_.setFillColor(color);
 }
 
+sf::Color BrushColorDisplay::GetPaletteColor(const sf::Vector2i& mousePosition) {
+    sf::Vector2f localPos = palette_.GetSprite().getInverseTransform().transformPoint(static_cast<sf::Vector2f>(mousePosition));
+
+    const auto& paletteImage = palette_.GetImage();
+
+    unsigned pixelX = static_cast<unsigned>(std::clamp(localPos.x, 0.f, paletteImage.getSize().x - 1.0f));
+    unsigned pixelY = static_cast<unsigned>(std::clamp(localPos.y, 0.f, paletteImage.getSize().y - 1.0f));
+
+    return paletteImage.getPixel(pixelX, pixelY);
+}
+
 void BrushColorDisplay::SetPosition(const float x, const float y) {
     shape_.setPosition(x, y);
 }
@@ -166,6 +177,10 @@ void BrushColorDisplay::SetPalettePosition(const float x, const float y) {
 
 bool BrushColorDisplay::ShapeClicked(const sf::Vector2i& mousePosition) const {
     return shape_.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition));
+}
+
+bool BrushColorDisplay::PaletteClicked(const sf::Vector2i& mousePosition) const {
+    return palette_.GetSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition));
 }
 
 void BrushColorDisplay::DrawPalette(sf::RenderWindow& window) const {

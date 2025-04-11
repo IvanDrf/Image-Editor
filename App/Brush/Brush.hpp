@@ -68,10 +68,13 @@ class BrushColorDisplay {
     BrushColorDisplay(const sf::Vector2f& size);
 
     void SetColor(const sf::Color& color);
+    sf::Color GetPaletteColor(const sf::Vector2i& mousePosition);
+
     void SetPosition(const float x, const float y);
     void SetPalettePosition(const float x, const float y);
 
     bool ShapeClicked(const sf::Vector2i& mousePosition) const;
+    bool PaletteClicked(const sf::Vector2i& mousePosition) const;
 
     void DrawPalette(sf::RenderWindow& window) const;
     void Draw(sf::RenderWindow& window) const;
