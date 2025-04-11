@@ -57,6 +57,7 @@ auto main(int, char**) -> int {
     // Brush
     Brush brush(kBrushInitialRadius, sf::Color::White);
     bool brushPressed{false};
+    bool isPaletteOpen{false};
 
     // Brush size field, displays current brush size
     // Brush size field position
@@ -65,11 +66,14 @@ auto main(int, char**) -> int {
 
     BrushSizeDisplay brushSizeField(kBrushInitialRadius, buttonFont);
     brushSizeField.SetPosition(brushSizeFieldPosX, brushSizeFieldPosY);
-    brushSizeField.SetShapeSize(sf::Vector2f(kBrushBoxWidth, kBrushBoxHeight));
+    brushSizeField.SetShapeSize({kBrushBoxWidth, kBrushBoxHeight});
 
     // Brush current color, displays current brush color
     BrushColorDisplay brushCurrentColor(kBrushCurrentColorBoxSize);
     brushCurrentColor.SetColor(brush.GetColor());
+
+    auto [palettePosX, palettePosY] = Interface::CalculatePalettePos({brushSizeFieldPosX, kButtonHeight});
+    brushCurrentColor.SetPalettePosition(palettePosX, palettePosY);
 
     // Brush current color shape position
     auto [brushColorShapePosX, brushColorShapePosY] = Interface::CalculateBrushColorShapePos({brushSizeFieldPosX, brushSizeFieldPosY});
@@ -93,7 +97,7 @@ auto main(int, char**) -> int {
             // Press Buttons
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 for (size_t i = 0; i < buttonNames.size(); ++i) {
-                    if (buttons[i].AimButton(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+                    if (buttons[i].AimButton({event.mouseButton.x, event.mouseButton.y})) {
                         std::string result = buttonFunctions[i](pathsToFile, activeFile);  // Path to file
 
                         [[maybe_unused]] const size_t oldFilesCount = pathsToFile.size();                                 // Check was file deleted succesfully or not
@@ -111,7 +115,7 @@ auto main(int, char**) -> int {
                     }
                 }
 
-                activeFile = fileField.GetActiveFile(sf::Vector2i(event.mouseButton.x, event.mouseButton.y), activeFile);
+                activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
                 if (activeFile != std::numeric_limits<size_t>::max() && activeFile != previousFile) {
                     try {
                         image.ClearImage(previousStatus);          // Destroy old image
@@ -127,10 +131,10 @@ auto main(int, char**) -> int {
             }
 
             // Brush drawing
-            if (brushPressed && event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            if (brushPressed && !isPaletteOpen && event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 if (event.mouseMove.x >= kFileFieldWidth && event.mouseMove.y >= kButtonHeight && event.mouseMove.y <= kMainWindowHeight - kStatusBarHeight) {
                     image.SaveState(previousStatus);
-                    brush.Draw(image.GetImage(), image.GetImagePosition(sf::Vector2f(event.mouseMove.x, event.mouseMove.y)));
+                    brush.Draw(image.GetImage(), image.GetImagePosition({event.mouseMove.x, event.mouseMove.y}));
 
                     image.UpdateTexture();
                 }
@@ -153,6 +157,21 @@ auto main(int, char**) -> int {
             // Set Brush Color
             if (brushPressed && event.type == sf::Event::KeyPressed) {
                 brush.SetColor(event.key.code, brushCurrentColor);
+                brushCurrentColor.SetColor(brush.GetColor());
+            }
+
+            if (isPaletteOpen && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                if (brushCurrentColor.PaletteClicked({event.mouseButton.x, event.mouseButton.y})) {
+                    brush.SetColor(brushCurrentColor.GetPaletteColor({event.mouseButton.x, event.mouseButton.y}));
+
+                    brushCurrentColor.SetColor(brush.GetColor());
+                }
+            }
+
+            if (brushPressed && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                if (brushCurrentColor.ShapeClicked({event.mouseButton.x, event.mouseButton.y})) {
+                    isPaletteOpen = !isPaletteOpen;
+                }
             }
 
             // Return previous image (Ctrl+Z)
@@ -163,7 +182,7 @@ auto main(int, char**) -> int {
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 std::string result = buttonFunctions[2](pathsToFile, activeFile);
-                WorkWithPath(pathsToFile, result, 2, image, fileField, statusBar, brushPressed, previousStatus);
+                WorkWithPath(pathsToFile, result, Buttons::SaveFile, image, fileField, statusBar, brushPressed, previousStatus);
             }
         }
 
@@ -199,7 +218,7 @@ auto main(int, char**) -> int {
             mainWindow.draw(buttonIcons[activeButton]);
         }
 
-        if (brushPressed) {
+        if (brushPressed) {  // Draw brush cursor
             brush.SetBrushCursor(sf::Mouse::getPosition(mainWindow));
             mainWindow.draw(brush.GetBrushCursor());
         }
@@ -208,6 +227,10 @@ auto main(int, char**) -> int {
         brushSizeField.Draw(mainWindow);       // Brush current size field
 
         brushCurrentColor.Draw(mainWindow);  // Brush current color field
+
+        if (isPaletteOpen) {
+            brushCurrentColor.DrawPalette(mainWindow);  // Draw palette
+        }
 
         mainWindow.display();
     }

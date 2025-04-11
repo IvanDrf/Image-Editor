@@ -93,4 +93,8 @@ Position CalculateBrushColorShapePos(const Position& position) {
     return {position.x + 1.35f * kBrushBoxWidth, position.y};
 }
 
+Position CalculatePalettePos(const Position& position) {
+    return {position.x, position.y + kDefaultOutlineThickness};
+}
+
 }  // namespace Interface
