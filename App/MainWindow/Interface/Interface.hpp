@@ -26,11 +26,12 @@ struct MenuInterface {
 [[nodiscard]] Image CreateBrushSizeImage();
 
 struct Position {
-    float x;
-    float y;
+    float x = 0;
+    float y = 0;
 };
 
 [[nodiscard]] Position CalculateBrushSizePos(const Image& image);
 [[nodiscard]] Position CalculateBrushColorShapePos(const Position& position);
+[[nodiscard]] Position CalculatePalettePos(const Position& position);
 
 }  // namespace Interface

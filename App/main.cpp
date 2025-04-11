@@ -57,6 +57,7 @@ auto main(int, char**) -> int {
     // Brush
     Brush brush(kBrushInitialRadius, sf::Color::White);
     bool brushPressed{false};
+    bool isPaletteOpen{false};
 
     // Brush size field, displays current brush size
     // Brush size field position
@@ -70,6 +71,9 @@ auto main(int, char**) -> int {
     // Brush current color, displays current brush color
     BrushColorDisplay brushCurrentColor(kBrushCurrentColorBoxSize);
     brushCurrentColor.SetColor(brush.GetColor());
+
+    auto [palettePosX, palettePosY] = Interface::CalculatePalettePos({brushSizeFieldPosX, kButtonHeight});
+    brushCurrentColor.SetPalettePosition(palettePosX, palettePosY);
 
     // Brush current color shape position
     auto [brushColorShapePosX, brushColorShapePosY] = Interface::CalculateBrushColorShapePos({brushSizeFieldPosX, brushSizeFieldPosY});
@@ -155,6 +159,12 @@ auto main(int, char**) -> int {
                 brush.SetColor(event.key.code, brushCurrentColor);
             }
 
+            if (brushPressed && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                if (brushCurrentColor.ShapeClicked({event.mouseButton.x, event.mouseButton.y})) {
+                    isPaletteOpen = !isPaletteOpen;
+                }
+            }
+
             // Return previous image (Ctrl+Z)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Z && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 image.BackState(previousStatus);
@@ -208,6 +218,10 @@ auto main(int, char**) -> int {
         brushSizeField.Draw(mainWindow);       // Brush current size field
 
         brushCurrentColor.Draw(mainWindow);  // Brush current color field
+
+        if (isPaletteOpen) {
+            brushCurrentColor.DrawPalette(mainWindow);  // Draw palette
+        }
 
         mainWindow.display();
     }

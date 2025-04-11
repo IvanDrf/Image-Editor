@@ -143,6 +143,12 @@ BrushColorDisplay::BrushColorDisplay(const sf::Vector2f& size) {
 
     shape_.setOutlineColor(sf::Color::White);
     shape_.setOutlineThickness(kDefaultOutlineThickness);
+
+    palette_.LoadImage("../WindowFiles/palette-image.png");
+    palette_.SetScale(kPaletteScale, kPaletteScale);
+
+    auto bounds = palette_.GetSprite().getGlobalBounds();
+    palette_.SetOrigin(bounds.width / 2, 0);
 }
 
 void BrushColorDisplay::SetColor(const sf::Color& color) {
@@ -152,6 +158,18 @@ void BrushColorDisplay::SetColor(const sf::Color& color) {
 
 void BrushColorDisplay::SetPosition(const float x, const float y) {
     shape_.setPosition(x, y);
+}
+
+void BrushColorDisplay::SetPalettePosition(const float x, const float y) {
+    palette_.SetPosition(x, y);
+}
+
+bool BrushColorDisplay::ShapeClicked(const sf::Vector2i& mousePosition) const {
+    return shape_.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition));
+}
+
+void BrushColorDisplay::DrawPalette(sf::RenderWindow& window) const {
+    palette_.DrawImage(window);
 }
 
 void BrushColorDisplay::Draw(sf::RenderWindow& window) const {

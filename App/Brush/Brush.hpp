@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Image/Image.hpp"
 #include "SFML/Graphics.hpp"
 
 namespace {
@@ -61,11 +62,17 @@ class BrushColorDisplay {
     sf::Color currentColor_;
     sf::RectangleShape shape_;
 
+    Image palette_;
+
  public:
     BrushColorDisplay(const sf::Vector2f& size);
 
     void SetColor(const sf::Color& color);
     void SetPosition(const float x, const float y);
+    void SetPalettePosition(const float x, const float y);
 
+    bool ShapeClicked(const sf::Vector2i& mousePosition) const;
+
+    void DrawPalette(sf::RenderWindow& window) const;
     void Draw(sf::RenderWindow& window) const;
 };
