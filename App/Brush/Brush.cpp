@@ -82,8 +82,12 @@ sf::Color Brush::GetColor() const {
 }
 
 void Brush::Draw(sf::Image& image, const sf::Vector2f& position) const {
-    int radius = static_cast<int>(radius_);
-    sf::Vector2u imageSize = image.getSize();
+    if (radius_ == 0) {
+        return;
+    }
+
+    int radius{static_cast<int>(radius_)};
+    sf::Vector2u imageSize{image.getSize()};
 
     const int radiusSquared{radius * radius};
 
@@ -133,6 +137,26 @@ void BrushSizeDisplay::SetPosition(const float x, const float y) {
 
 bool BrushSizeDisplay::ShapeClicked(const sf::Vector2i& mousePosition) const {
     return shape_.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition));
+}
+
+int BrushSizeDisplay::InputSize(sf::Event& event) {
+    std::string newSize{size_.getString()};
+
+    char symbol{static_cast<char>(event.text.unicode)};
+
+    if (symbol == kBackSpace && !newSize.empty()) {  // Backspace
+        newSize.pop_back();
+    } else if (symbol != kBackSpace && symbol >= kMinInputNumber && symbol <= kMaxInputNumber) {
+        newSize += symbol;
+    }
+
+    size_.setString(newSize);
+
+    try {
+        return std::stoi(newSize);
+    } catch (...) {
+        return 0;
+    }
 }
 
 void BrushSizeDisplay::Draw(sf::RenderWindow& window) const {

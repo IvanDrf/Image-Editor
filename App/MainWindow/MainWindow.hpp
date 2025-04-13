@@ -89,10 +89,12 @@ namespace {  // Brush
 constexpr float kBrushImageScale{0.45f};
 constexpr float kBrushSizeFieldCharacterSize{kCharacterSize / 1.1f};
 
+constexpr char kBackSpace{8};
+
 const sf::Vector2f kBrushCurrentColorBoxSize{kBrushBoxHeight, kBrushBoxHeight};
 const sf::Vector2f kBrushSizeImagePosition{kSmallMenuWidth + 4 * kButtonWidth + kButtonWidth / 10, 0};
 
-const float kPaletteScale{0.45f};
+constexpr float kPaletteScale{0.45f};
 }  // namespace
 
 using Paths = std::vector<std::string>&;
