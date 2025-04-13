@@ -153,7 +153,7 @@ int BrushSizeDisplay::InputSize(sf::Event& event) {
     size_.setString(newSize);
 
     try {
-        return std::stoi(newSize);
+        return (std::stoi(newSize) >= kBrushMaxRadius) ? (0) : (std::stoi(newSize));
     } catch (...) {
         return 0;
     }

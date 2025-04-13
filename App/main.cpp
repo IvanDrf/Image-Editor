@@ -158,14 +158,9 @@ auto main(int, char**) -> int {
 
             // Change brush size
             if (brushSizeFieldPressed && event.type == sf::Event::TextEntered) {
-                int newSize{brushSizeField.InputSize(event)};
+                brush.SetRadius(brushSizeField.InputSize(event));
+                brushSizeField.SetText(brush.GetRadius());
 
-                if (newSize >= kBrushMaxRadius) {
-                    newSize = kBrushInitialRadius;
-                }
-
-                brush.SetRadius(newSize);
-                brushSizeField.SetText(newSize);
                 brush.UpdateCursorScale();
             }
 
@@ -173,6 +168,7 @@ auto main(int, char**) -> int {
             if (brushPressed && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::RBracket) {
                 brush.SetRadius(std::min(brush.GetRadius() + kBrushChangeRadius, 1000));
                 brushSizeField.SetText(brush.GetRadius());
+
                 brush.UpdateCursorScale();
             }
 
@@ -180,6 +176,7 @@ auto main(int, char**) -> int {
             if (brushPressed && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::LBracket) {
                 brush.SetRadius(std::max(kBrushInitialRadius / kBrushInitialRadius, brush.GetRadius() - kBrushChangeRadius));
                 brushSizeField.SetText(brush.GetRadius());
+
                 brush.UpdateCursorScale();
             }
 
