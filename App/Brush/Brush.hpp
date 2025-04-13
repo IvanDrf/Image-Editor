@@ -8,8 +8,8 @@ constexpr int kBrushInitialRadius{10};  // Initial radius for brush
 constexpr int kBrushMaxRadius{1'000};
 constexpr int kBrushChangeRadius{5};
 
-constexpr char kMinInputNumber{48}; // 0 in ASKII
-constexpr char kMaxInputNumber{57}; // 9 in ASKII
+constexpr char kMinInputNumber{48};  // 0 in ASKII
+constexpr char kMaxInputNumber{57};  // 9 in ASKII
 
 const sf::Color kBrushInputSizeColor{152, 167, 212};
 }  // namespace

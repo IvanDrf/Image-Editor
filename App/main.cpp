@@ -156,7 +156,6 @@ auto main(int, char**) -> int {
                 }
             }
 
-
             // Change brush size
             if (brushSizeFieldPressed && event.type == sf::Event::TextEntered) {
                 int newSize{brushSizeField.InputSize(event)};
@@ -168,7 +167,6 @@ auto main(int, char**) -> int {
                 brush.SetRadius(newSize);
                 brushSizeField.SetText(newSize);
                 brush.UpdateCursorScale();
-
             }
 
             // Change brush size (Increase size)
