@@ -25,6 +25,8 @@ std::string SaveFile(Paths pathsToFile, size_t activeFile);
 std::string SelectBrush([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile);
 }  // namespace Front
 
+#include <iostream>
+
 auto main(int, char**) -> int {
     sf::RenderWindow mainWindow(sf::VideoMode(kMainWindowWidth, kMainWindowHeight), "Image Editor");
     mainWindow.setFramerateLimit(30);
@@ -65,6 +67,8 @@ auto main(int, char**) -> int {
     auto [brushSizeFieldPosX, brushSizeFieldPosY] = Interface::CalculateBrushSizePos(brushSizeImage);
 
     BrushSizeDisplay brushSizeField(kBrushInitialRadius, buttonFont);
+    bool brushSizeFieldPressed{false};
+
     brushSizeField.SetPosition(brushSizeFieldPosX, brushSizeFieldPosY);
     brushSizeField.SetShapeSize({kBrushBoxWidth, kBrushBoxHeight});
 
@@ -115,6 +119,18 @@ auto main(int, char**) -> int {
                     }
                 }
 
+                // If brush size field has been pressed -> change brush size
+                if (brushSizeField.ShapeClicked({event.mouseButton.x, event.mouseButton.y})) {
+                    brushSizeFieldPressed = true;
+
+                    brush.SetRadius(0);
+                    brushSizeField.SetText(0);
+
+                    brush.UpdateCursorScale();
+                } else {
+                    brushSizeFieldPressed = false;
+                }
+
                 activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
                 if (activeFile != std::numeric_limits<size_t>::max() && activeFile != previousFile) {
                     try {
@@ -138,6 +154,19 @@ auto main(int, char**) -> int {
 
                     image.UpdateTexture();
                 }
+            }
+
+            // Change brush size
+            if (brushSizeFieldPressed && event.type == sf::Event::TextEntered) {
+                int newSize{brushSizeField.InputSize(event)};
+
+                if (newSize >= kBrushMaxRadius) {
+                    newSize = kBrushInitialRadius;
+                }
+
+                brush.SetRadius(newSize);
+                brushSizeField.SetText(newSize);
+                brush.UpdateCursorScale();
             }
 
             // Change brush size (Increase size)
@@ -169,6 +198,7 @@ auto main(int, char**) -> int {
                 }
             }
 
+            // Open and close Palette
             if (brushPressed && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 if (brushCurrentColor.ShapeClicked({event.mouseButton.x, event.mouseButton.y})) {
                     isPaletteOpen = !isPaletteOpen;

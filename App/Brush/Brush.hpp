@@ -4,8 +4,12 @@
 #include "SFML/Graphics.hpp"
 
 namespace {
-const int kBrushInitialRadius{10};  // Initial radius for brush
-const int kBrushChangeRadius{5};
+constexpr int kBrushInitialRadius{10};  // Initial radius for brush
+constexpr int kBrushMaxRadius{1'000};
+constexpr int kBrushChangeRadius{5};
+
+constexpr char kMinInputNumber{48};  // 0 in ASKII
+constexpr char kMaxInputNumber{57};  // 9 in ASKII
 
 const sf::Color kBrushInputSizeColor{152, 167, 212};
 }  // namespace
@@ -53,6 +57,9 @@ class BrushSizeDisplay {
 
     void SetShapeSize(const sf::Vector2f& shapeSize);
     void SetPosition(const float x, const float y);
+
+    bool ShapeClicked(const sf::Vector2i& mousePosition) const;
+    int InputSize(sf::Event& event);
 
     void Draw(sf::RenderWindow& window) const;
 };
