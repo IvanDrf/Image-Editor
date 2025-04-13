@@ -54,6 +54,8 @@ class BrushSizeDisplay {
     void SetShapeSize(const sf::Vector2f& shapeSize);
     void SetPosition(const float x, const float y);
 
+    bool ShapeClicked(const sf::Vector2i& mousePosition) const;
+
     void Draw(sf::RenderWindow& window) const;
 };
 

@@ -131,6 +131,10 @@ void BrushSizeDisplay::SetPosition(const float x, const float y) {
     size_.setPosition(x, y);
 }
 
+bool BrushSizeDisplay::ShapeClicked(const sf::Vector2i& mousePosition) const {
+    return shape_.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition));
+}
+
 void BrushSizeDisplay::Draw(sf::RenderWindow& window) const {
     window.draw(shape_);
     window.draw(size_);
