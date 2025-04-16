@@ -18,7 +18,7 @@ jobs:
     - name: Install clang-format
       run: sudo apt-get update && sudo apt-get install -y clang-format
 
-    - name: Check project formatting
+    - name: clang-format
       run: |
         FILES=$(find . -type f -regex '.*\.\(cpp\|hpp\|h\)$' \
                 -not -path "./build/*" \
