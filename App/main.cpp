@@ -13,6 +13,8 @@
 #include "MainWindow/MainWindow.hpp"
 #include "StatusBar/StatusBar.hpp"
 
+#define NONE (std::numeric_limits<std::size_t>::max())
+
 // Menu Buttons, realization in InputField.cpp
 namespace Front {
 using Paths = const std::vector<std::string>&;
@@ -24,8 +26,6 @@ std::string SaveFile(Paths pathsToFile, size_t activeFile);
 
 std::string SelectBrush([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile);
 }  // namespace Front
-
-#include <iostream>
 
 auto main(int, char**) -> int {
     sf::RenderWindow mainWindow(sf::VideoMode(kMainWindowWidth, kMainWindowHeight), "Image Editor");
@@ -85,9 +85,9 @@ auto main(int, char**) -> int {
 
     // Create small menu for brush color and brush size
 
-    std::vector<std::string> pathsToFile;                   // Paths to files
-    size_t activeFile{std::numeric_limits<size_t>::max()};  // Current active file
-    size_t previousFile{};                                  // Previous active file
+    std::vector<std::string> pathsToFile;  // Paths to files
+    size_t activeFile{NONE};               // Current active file
+    size_t previousFile{};                 // Previous active file
 
     // Main Loop
     while (mainWindow.isOpen()) {
@@ -132,12 +132,44 @@ auto main(int, char**) -> int {
                 }
 
                 activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
-                if (activeFile != std::numeric_limits<size_t>::max() && activeFile != previousFile) {
+                if (activeFile != NONE && activeFile != previousFile) {
                     try {
                         image.ClearImage(previousStatus);          // Destroy old image
                         image.LoadImage(pathsToFile[activeFile]);  // Load selected image
                         image.SetMainImageScale();                 // Set main properties
 
+                    } catch (std::runtime_error& e) {
+                        statusBar.UpdateStatus(e.what());
+                    }
+
+                    previousFile = activeFile;
+                }
+            }
+
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up && activeFile != NONE) {
+                if (pathsToFile.size() > 1 && activeFile > 0) {
+                    --activeFile;
+
+                    try {
+                        image.ClearImage(previousStatus);
+                        image.LoadImage(pathsToFile[activeFile]);
+                        image.SetMainImageScale();
+                    } catch (std::runtime_error& e) {
+                        statusBar.UpdateStatus(e.what());
+                    }
+
+                    previousFile = activeFile;
+                }
+            }
+
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down) {
+                if (pathsToFile.size() > 1 && activeFile < pathsToFile.size() - 1) {
+                    ++activeFile;
+
+                    try {
+                        image.ClearImage(previousStatus);
+                        image.LoadImage(pathsToFile[activeFile]);
+                        image.SetMainImageScale();
                     } catch (std::runtime_error& e) {
                         statusBar.UpdateStatus(e.what());
                     }
@@ -241,7 +273,7 @@ auto main(int, char**) -> int {
             }
         }
 
-        if (buttonTarget && activeButton != std::numeric_limits<size_t>::max()) {
+        if (buttonTarget && activeButton != NONE) {
             buttons[activeButton].DrawButton(mainWindow);
             mainWindow.draw(buttonIcons[activeButton]);
         }
