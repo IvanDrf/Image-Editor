@@ -7,15 +7,16 @@
 ## Table of Contents
 - [Features](#-features)
 - [Installation](#-installation)
-- [Quick Start](#-quick-start)
 - [User Guide](#-user-guide)
-- [Development](#-development)
-- [Contributing](#-contributing)
-- [License](#-license)
+  - [Add File](#-add-file)
+  - [Delete File](#-delete-file)
+  - [Save File](#-save-file)
+  - [Brush](#-brush)
+- [Shortcut](#-shortcut)
 
 ## ✨ Features
 
-- 🖼️ **Image Loading**: Supports PNG, JPG, BMP formats
+- 🖼️ **Image Loading**: Supports PNG, JPG formats
 - 🎨 **Painting Tools**:
   - Adjustable brush size
   - Custom color selection (RGB)
@@ -38,11 +39,54 @@ cd sfml-image-editor
 
 # Build with CMake
 mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-cmake --build . --config Release
+cmake .. && cmake --build .
+cd .. && ./ImageEditor
+```
 
-# Run application (Linux/Mac)
-./ImageEditor
+## 🖱️ User Guide
 
-# Windows
-.\Release\ImageEditor.exe
+### 🆕 Add File
+https://github.com/user-attachments/assets/665d8c56-911c-4e1f-b6d1-1931e4fcb9a5
+
+<br/><br/>
+
+### 🗑️ Delete File
+https://github.com/user-attachments/assets/5bc3680b-8053-4490-b5d4-f49481d5db10
+
+<br/><br/>
+
+### 💾 Save File
+https://github.com/user-attachments/assets/7618526e-6380-4027-af88-33b5589c4b8a
+
+<br/><br/>
+
+### 🖌️ Brush
+https://github.com/user-attachments/assets/b6bf4a59-6226-4203-839e-261ee8f306b2
+
+<br/><br/>
+
+## ⌨️ Shortcut
+
+### 📄 File
+| Action  | Shortcut    | Description              |
+|---------|-------------|--------------------------|
+| Add     | `Ctrl + N`  | Add new image            |
+| Delete  | `Del`       | Delete selected image    |
+| Save    | `Ctrl + S`  | Save current image       |
+| Up      | `↑`         | Move selection up        |
+| Down    | `↓`         | Move selection down      |
+
+### 🎨 Brush
+| Action       | Shortcut | Description                  |
+|--------------|----------|------------------------------|
+| Red          | `R`      | Set brush color to red       |
+| Green        | `G`      | Set brush color to green     |
+| Blue         | `B`      | Set brush color to blue      |
+| Yellow       | `Y`      | Set brush color to yellow    |
+| White        | `W`      | Set brush color to white     |
+| Size Down    | `[`      | Decrease brush size          |
+| Size Up      | `]`      | Increase brush size          |
+
+
+
+
