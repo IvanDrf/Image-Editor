@@ -1,12 +1,15 @@
 #include "MainWindow.hpp"
 
+#include <limits>
+
 #include "../Brush/Brush.hpp"
 #include "../FileField/FileField.hpp"
 #include "../Image/Image.hpp"
 #include "../StatusBar/StatusBar.hpp"
 
 // Main Methods for working with files
-void WorkWithPath(Paths& pathToFile, const std::string& result, size_t buttonNumber, Image& image, FileField& fileField, StatusBar& statusBar, bool& brushPressed, StackImage& previousStatus) {
+void WorkWithPath(Paths& pathToFile, size_t activeFile, const std::string& result, size_t buttonNumber, Image& image, FileField& fileField, StatusBar& statusBar, bool& brushPressed,
+                  StackImage& previousStatus) {
     switch (static_cast<Buttons>(buttonNumber)) {
         // Add file button
         case (Buttons::AddFile): {
@@ -17,7 +20,7 @@ void WorkWithPath(Paths& pathToFile, const std::string& result, size_t buttonNum
 
         // Delete file button
         case (Buttons::DeleteFile): {
-            Back::DeleteFile(pathToFile, result, image, fileField, statusBar, previousStatus, brushPressed);
+            Back::DeleteFile(pathToFile, activeFile, result, image, fileField, statusBar, previousStatus, brushPressed);
 
             break;
         }
@@ -78,7 +81,7 @@ void SaveFile(const std::string& result, Image& image, StatusBar& statusBar) {
     statusBar.UpdateStatus("Unable to save the file", sf::Color::Red);
 }
 
-void DeleteFile(Paths& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus, bool& brushPressed) {
+void DeleteFile(Paths& pathToFile, size_t activeFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus, bool& brushPressed) {
     if (result.empty()) {
         return;
     }
@@ -98,7 +101,7 @@ void DeleteFile(Paths& pathToFile, const std::string& result, Image& image, File
 
     image.ClearImage(previousStatus);  // Reset scale, texture and e.t.c
     if (!pathToFile.empty()) {
-        image.LoadImage(pathToFile.back());  // Load previous image
+        image.LoadImage(pathToFile[activeFile]);  // Load previous image
         image.SetMainImageScale();
     } else {
         brushPressed = false;  // If there no files left
@@ -129,6 +132,8 @@ void SelectBrush(bool& brushPressed, const Image& image, StatusBar& statusBar) {
     statusBar.UpdateStatus("Brush is no longer selected");
 }
 
+#ifndef NONE
+#define NONE (std::numeric_limits<size_t>::max())
 void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile, size_t files) {
     if (buttonNumber == Buttons::AddFile) {
         activeFile = files - 1;
@@ -137,9 +142,12 @@ void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile, size_t files) 
 
     if (buttonNumber == Buttons::DeleteFile) {
         --activeFile;
-        return;
+        if (activeFile == NONE && files > 0) {
+            activeFile = 0;
+        }
     }
 }
+#endif
 
 }  // namespace Back
 

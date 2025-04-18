@@ -27,6 +27,8 @@ std::string SaveFile(Paths& pathsToFile, size_t activeFile);
 std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
 }  // namespace Front
 
+#include <iostream>
+
 auto main(int, char**) -> int {
     sf::RenderWindow mainWindow(sf::VideoMode(kMainWindowWidth, kMainWindowHeight), "Image Editor");
     mainWindow.setFramerateLimit(30);
@@ -106,8 +108,8 @@ auto main(int, char**) -> int {
                     if (buttons[i].AimButton({event.mouseButton.x, event.mouseButton.y})) {
                         std::string result = buttonFunctions[i](pathsToFile, activeFile);  // Path to file
 
-                        [[maybe_unused]] const size_t oldFilesCount = pathsToFile.size();                                 // Check was file deleted succesfully or not
-                        WorkWithPath(pathsToFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);  // Work with main buttons
+                        [[maybe_unused]] const size_t oldFilesCount = pathsToFile.size();                                             // Check was file deleted succesfully or not
+                        WorkWithPath(pathsToFile, activeFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);  // Work with main buttons
 
                         if (image.HasImage() && oldFilesCount != pathsToFile.size()) {
                             Back::SelectNewActiveFile(i, activeFile, pathsToFile.size());
@@ -212,19 +214,21 @@ auto main(int, char**) -> int {
             // Add new image (Ctrl+N)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::N && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 std::string result = Front::AddFile(pathsToFile, activeFile);
-                WorkWithPath(pathsToFile, result, Buttons::AddFile, image, fileField, statusBar, brushPressed, previousStatus);
+                WorkWithPath(pathsToFile, activeFile, result, Buttons::AddFile, image, fileField, statusBar, brushPressed, previousStatus);
             }
 
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 std::string result = Front::SaveFile(pathsToFile, activeFile);
-                WorkWithPath(pathsToFile, result, Buttons::SaveFile, image, fileField, statusBar, brushPressed, previousStatus);
+                WorkWithPath(pathsToFile, activeFile, result, Buttons::SaveFile, image, fileField, statusBar, brushPressed, previousStatus);
             }
 
             // Delete current file
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Delete) {
                 std::string result = Front::DeleteFile(pathsToFile, activeFile);
-                WorkWithPath(pathsToFile, result, Buttons::DeleteFile, image, fileField, statusBar, brushPressed, previousStatus);
+
+                Back::SelectNewActiveFile(Buttons::DeleteFile, activeFile, pathsToFile.size());
+                WorkWithPath(pathsToFile, activeFile, result, Buttons::DeleteFile, image, fileField, statusBar, brushPressed, previousStatus);
             }
         }
 

@@ -106,13 +106,14 @@ class StatusBar;
 class Brush;
 
 // The main function that handles pressing each button
-void WorkWithPath(Paths& pathToFile, const std::string& result, size_t buttonNumber, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed, StackImage& previousStatus);
+void WorkWithPath(Paths& pathToFile, size_t activeFile, const std::string& result, size_t buttonNumber, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed,
+                  StackImage& previousStatus);
 //
 
 // Functions that are responsible for uploading files, etc. backend
 namespace Back {
 void AddFile(Paths& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus);
-void DeleteFile(Paths& pathToFile, const std::string& result, Image& image, FileField& FileField, StatusBar& statusBar, StackImage& previousStatus, bool& brushPressed);
+void DeleteFile(Paths& pathToFile, size_t activeFile, const std::string& result, Image& image, FileField& FileField, StatusBar& statusBar, StackImage& previousStatus, bool& brushPressed);
 
 void SaveFile(const std::string& result, Image& image, StatusBar& statusBar);
 void SelectFile(Paths& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus);
