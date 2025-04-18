@@ -35,7 +35,7 @@ std::string AddFileWindow() {
 }
 
 std::string SaveFileWindow(const std::string& fileName) {
-    std::string command = "zenity --file-selection --save --title=\"Сохранить файл\"";
+    std::string command = "zenity --file-selection --save --title=\"Save File\" 2>/dev/null";
 
     if (!fileName.empty()) {
         command += " --filename=\"" + fileName + "\"";
@@ -69,13 +69,13 @@ std::string SaveFileWindow(const std::string& fileName) {
 
 // Main buttons functions
 namespace Front {
-using Paths = const std::vector<std::string>&;
+using Paths = const std::vector<std::string>;
 
-std::string AddFile([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile) {
+std::string AddFile([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile) {
     return Window::AddFileWindow();
 }
 
-std::string DeleteFile(Paths pathsToFile, size_t activeFile) {
+std::string DeleteFile(Paths& pathsToFile, size_t activeFile) {
     if (activeFile < pathsToFile.size()) {
         return pathsToFile[activeFile];
     }
@@ -83,7 +83,7 @@ std::string DeleteFile(Paths pathsToFile, size_t activeFile) {
     return "";
 }
 
-std::string SaveFile(Paths pathsToFile, size_t activeFile) {
+std::string SaveFile(Paths& pathsToFile, size_t activeFile) {
     if (activeFile < pathsToFile.size()) {
         return Window::SaveFileWindow(pathsToFile[activeFile]);
     }
@@ -91,7 +91,7 @@ std::string SaveFile(Paths pathsToFile, size_t activeFile) {
     return "";
 }
 
-std::string SelectBrush([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile) {
+std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile) {
     return "";
 }
 }  // namespace Front
