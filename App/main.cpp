@@ -133,14 +133,17 @@ auto main(int, char**) -> int {
                     brushSizeFieldPressed = false;
                 }
 
+                // Select active image by mouse
                 activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
                 ActiveFile::SelectActiveImage(activeContext);
             }
 
+            // Select active image by key 'up'
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up && activeFile != NONE) {
                 ActiveFile::SelectUpperImage(activeContext);
             }
 
+            // Select active image by key 'down'
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down) {
                 ActiveFile::SelectLowerImage(activeContext);
             }
@@ -208,8 +211,13 @@ auto main(int, char**) -> int {
 
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-                std::string result = buttonFunctions[2](pathsToFile, activeFile);
+                std::string result = Front::SaveFile(pathsToFile, activeFile);
                 WorkWithPath(pathsToFile, result, Buttons::SaveFile, image, fileField, statusBar, brushPressed, previousStatus);
+            }
+
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Delete) {
+                std::string result = Front::DeleteFile(pathsToFile, activeFile);
+                WorkWithPath(pathsToFile, result, Buttons::DeleteFile, image, fileField, statusBar, brushPressed, previousStatus);
             }
         }
 

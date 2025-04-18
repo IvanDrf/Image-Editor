@@ -26,6 +26,7 @@ class FileField {
     [[nodiscard]] const std::vector<std::string>& GetFiles() const;
 };
 
+// Active file
 namespace ActiveFile {
 struct ActiveContext {
     size_t& activeFile;
@@ -37,6 +38,7 @@ struct ActiveContext {
 };
 
 void SelectActiveImage(ActiveContext& active);
+
 void SelectUpperImage(ActiveContext& active);
 void SelectLowerImage(ActiveContext& active);
 }  // namespace ActiveFile
