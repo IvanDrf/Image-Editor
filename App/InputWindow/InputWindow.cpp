@@ -35,7 +35,7 @@ std::string AddFileWindow() {
 }
 
 std::string SaveFileWindow(const std::string& fileName) {
-    std::string command = "zenity --file-selection --save --title=\"Сохранить файл\"";
+    std::string command = "zenity --file-selection --save --title=\"Save File\" 2>/dev/null";
 
     if (!fileName.empty()) {
         command += " --filename=\"" + fileName + "\"";
