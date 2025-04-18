@@ -209,12 +209,19 @@ auto main(int, char**) -> int {
                 image.BackState(previousStatus);
             }
 
+            // Add new image (Ctrl+N)
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::N && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+                std::string result = Front::AddFile(pathsToFile, activeFile);
+                WorkWithPath(pathsToFile, result, Buttons::AddFile, image, fileField, statusBar, brushPressed, previousStatus);
+            }
+
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 std::string result = Front::SaveFile(pathsToFile, activeFile);
                 WorkWithPath(pathsToFile, result, Buttons::SaveFile, image, fileField, statusBar, brushPressed, previousStatus);
             }
 
+            // Delete current file
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Delete) {
                 std::string result = Front::DeleteFile(pathsToFile, activeFile);
                 WorkWithPath(pathsToFile, result, Buttons::DeleteFile, image, fileField, statusBar, brushPressed, previousStatus);
