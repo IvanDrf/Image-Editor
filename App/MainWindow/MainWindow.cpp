@@ -6,7 +6,7 @@
 #include "../StatusBar/StatusBar.hpp"
 
 // Main Methods for working with files
-void WorkWithPath(Paths pathToFile, const std::string& result, size_t buttonNumber, Image& image, FileField& fileField, StatusBar& statusBar, bool& brushPressed, StackImage previousStatus) {
+void WorkWithPath(Paths& pathToFile, const std::string& result, size_t buttonNumber, Image& image, FileField& fileField, StatusBar& statusBar, bool& brushPressed, StackImage& previousStatus) {
     switch (static_cast<Buttons>(buttonNumber)) {
         // Add file button
         case (Buttons::AddFile): {
@@ -38,7 +38,7 @@ void WorkWithPath(Paths pathToFile, const std::string& result, size_t buttonNumb
 }
 
 namespace Back {
-void AddFile(Paths pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage previousStatus) {
+void AddFile(Paths& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus) {
     if (result.empty()) {
         return;
     }
@@ -78,7 +78,7 @@ void SaveFile(const std::string& result, Image& image, StatusBar& statusBar) {
     statusBar.UpdateStatus("Unable to save the file", sf::Color::Red);
 }
 
-void DeleteFile(Paths pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage previousStatus, bool& brushPressed) {
+void DeleteFile(Paths& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus, bool& brushPressed) {
     if (result.empty()) {
         return;
     }
@@ -105,7 +105,7 @@ void DeleteFile(Paths pathToFile, const std::string& result, Image& image, FileF
     }
 }
 
-void SelectFile(Paths pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage previousStatus) {
+void SelectFile(Paths& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus) {
     if (!result.empty() && std::find(fileField.GetFiles().begin(), fileField.GetFiles().end(), result) != fileField.GetFiles().end()) {
         statusBar.UpdateStatus("File " + result + " selected", sf::Color::Green);
 
@@ -144,8 +144,7 @@ void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile, size_t files) 
 }  // namespace Back
 
 namespace Path {
-
-void DeletePath(Paths pathToFile, const std::string& fileName) {
+void DeletePath(Paths& pathToFile, const std::string& fileName) {
     for (const auto& file : pathToFile) {
         if (file == fileName) {
             pathToFile.erase(std::remove(pathToFile.begin(), pathToFile.end(), file), pathToFile.end());
@@ -153,7 +152,7 @@ void DeletePath(Paths pathToFile, const std::string& fileName) {
     }
 }
 
-std::string FindPath(Paths pathToFile, const std::string& fileName) {
+std::string FindPath(Paths& pathToFile, const std::string& fileName) {
     for (const auto& file : pathToFile) {
         if (GetFileName(file) == fileName) {
             return file;

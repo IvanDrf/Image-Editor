@@ -2,7 +2,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "../Image/Image.hpp"
 #include "../MainWindow/MainWindow.hpp"
+#include "../StatusBar/StatusBar.hpp"
 
 class FileField {
  public:
@@ -23,3 +25,18 @@ class FileField {
     [[nodiscard]] size_t GetActiveFile(const sf::Vector2i& mousePosition, size_t activeFile) const;
     [[nodiscard]] const std::vector<std::string>& GetFiles() const;
 };
+
+namespace ActiveFile {
+struct ActiveContext {
+    size_t& activeFile;
+    size_t& previousFile;
+    Paths& pathsToFile;
+    Image& image;
+    StackImage& previousStatus;
+    StatusBar& statusBar;
+};
+
+void SelectActiveImage(ActiveContext& active);
+void SelectUpperImage(ActiveContext& active);
+void SelectLowerImage(ActiveContext& active);
+}  // namespace ActiveFile

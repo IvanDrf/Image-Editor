@@ -79,3 +79,51 @@ size_t FileField::GetActiveFile(const sf::Vector2i& mousePosition, size_t active
 
     return activeFile;
 }
+
+namespace {
+void UpdateActiveImage(ActiveFile::ActiveContext& active) {
+    try {
+        active.image.ClearImage(active.previousStatus);                 // Destroy old image
+        active.image.LoadImage(active.pathsToFile[active.activeFile]);  // Load selected image
+        active.image.SetMainImageScale();                               // Set main properties
+
+    } catch (std::runtime_error& e) {
+        active.statusBar.UpdateStatus(e.what());
+    }
+
+    active.previousFile = active.activeFile;
+}
+}  // namespace
+
+namespace ActiveFile {
+using Paths = std::vector<std::string>;
+using StackImage = std::stack<sf::Image>;
+
+#ifndef NONE
+#define NONE (std::numeric_limits<std::size_t>::max())
+
+void SelectActiveImage(ActiveContext& active) {
+    if (active.activeFile != NONE && active.activeFile != active.previousFile) {
+        UpdateActiveImage(active);
+    }
+}
+
+#endif
+
+void SelectUpperImage(ActiveContext& active) {
+    if (active.pathsToFile.size() > 1 && active.activeFile > 0) {
+        --active.activeFile;
+
+        UpdateActiveImage(active);
+    }
+}
+
+void SelectLowerImage(ActiveContext& active) {
+    if (active.pathsToFile.size() > 1 && active.activeFile < active.pathsToFile.size() - 1) {
+        ++active.activeFile;
+
+        UpdateActiveImage(active);
+    }
+}
+
+}  // namespace ActiveFile

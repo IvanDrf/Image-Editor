@@ -17,14 +17,14 @@
 
 // Menu Buttons, realization in InputField.cpp
 namespace Front {
-using Paths = const std::vector<std::string>&;
+using Paths = const std::vector<std::string>;
 
-std::string AddFile([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile);
-std::string DeleteFile(Paths pathsToFile, size_t activeFile);
+std::string AddFile([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
+std::string DeleteFile(Paths& pathsToFile, size_t activeFile);
 
-std::string SaveFile(Paths pathsToFile, size_t activeFile);
+std::string SaveFile(Paths& pathsToFile, size_t activeFile);
 
-std::string SelectBrush([[maybe_unused]] Paths pathsToFile, [[maybe_unused]] size_t activeFile);
+std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
 }  // namespace Front
 
 auto main(int, char**) -> int {
@@ -89,6 +89,8 @@ auto main(int, char**) -> int {
     size_t activeFile{NONE};               // Current active file
     size_t previousFile{};                 // Previous active file
 
+    ActiveFile::ActiveContext activeContext{activeFile, previousFile, pathsToFile, image, previousStatus, statusBar};
+
     // Main Loop
     while (mainWindow.isOpen()) {
         sf::Event event;
@@ -132,50 +134,15 @@ auto main(int, char**) -> int {
                 }
 
                 activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
-                if (activeFile != NONE && activeFile != previousFile) {
-                    try {
-                        image.ClearImage(previousStatus);          // Destroy old image
-                        image.LoadImage(pathsToFile[activeFile]);  // Load selected image
-                        image.SetMainImageScale();                 // Set main properties
-
-                    } catch (std::runtime_error& e) {
-                        statusBar.UpdateStatus(e.what());
-                    }
-
-                    previousFile = activeFile;
-                }
+                ActiveFile::SelectActiveImage(activeContext);
             }
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up && activeFile != NONE) {
-                if (pathsToFile.size() > 1 && activeFile > 0) {
-                    --activeFile;
-
-                    try {
-                        image.ClearImage(previousStatus);
-                        image.LoadImage(pathsToFile[activeFile]);
-                        image.SetMainImageScale();
-                    } catch (std::runtime_error& e) {
-                        statusBar.UpdateStatus(e.what());
-                    }
-
-                    previousFile = activeFile;
-                }
+                ActiveFile::SelectUpperImage(activeContext);
             }
 
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down) {
-                if (pathsToFile.size() > 1 && activeFile < pathsToFile.size() - 1) {
-                    ++activeFile;
-
-                    try {
-                        image.ClearImage(previousStatus);
-                        image.LoadImage(pathsToFile[activeFile]);
-                        image.SetMainImageScale();
-                    } catch (std::runtime_error& e) {
-                        statusBar.UpdateStatus(e.what());
-                    }
-
-                    previousFile = activeFile;
-                }
+                ActiveFile::SelectLowerImage(activeContext);
             }
 
             // Brush drawing
