@@ -11,7 +11,7 @@
   - [Add File](#add-file)
   - [Delete File](#delete-file)
   - [Save File](#save-file)
-  - [Brush](#-brush)
+  - [Brush](#brush)
 - [Shortcut](#shortcut)
 
 ## ✨ Features
