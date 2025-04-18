@@ -7,12 +7,12 @@
 ## Table of Contents
 - [Features](#-features)
 - [Installation](#-installation)
-- [User Guide](#-user-guide)
-  - [Add File](#-add-file)
-  - [Delete File](#-delete-file)
-  - [Save File](#-save-file)
+- [User Guide](#user-guide)
+  - [Add File](#add-file)
+  - [Delete File](#delete-file)
+  - [Save File](#save-file)
   - [Brush](#-brush)
-- [Shortcut](#-shortcut)
+- [Shortcut](#shortcut)
 
 ## ✨ Features
 
@@ -43,29 +43,29 @@ cmake .. && cmake --build .
 cd .. && ./ImageEditor
 ```
 
-## 🖱️ User Guide
+## <a id="user-guide"></a>🖱️ User Guide
 
-### 🆕 Add File
+### <a id="add-file"></a>🆕 Add File
 https://github.com/user-attachments/assets/665d8c56-911c-4e1f-b6d1-1931e4fcb9a5
 
 <br/><br/>
 
-### 🗑️ Delete File
+### <a id="delete-file"></a>🗑️ Delete File
 https://github.com/user-attachments/assets/5bc3680b-8053-4490-b5d4-f49481d5db10
 
 <br/><br/>
 
-### 💾 Save File
+### <a id="save-file"></a>💾 Save File
 https://github.com/user-attachments/assets/7618526e-6380-4027-af88-33b5589c4b8a
 
 <br/><br/>
 
-### 🖌️ Brush
+### <a id="brush"></a>🖌️ Brush
 https://github.com/user-attachments/assets/b6bf4a59-6226-4203-839e-261ee8f306b2
 
 <br/><br/>
 
-## ⌨️ Shortcut
+## <a id="shortcut"></a>⌨️ Shortcut
 
 ### 📄 File
 | Action  | Shortcut    | Description              |
