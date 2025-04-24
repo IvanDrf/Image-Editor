@@ -23,7 +23,7 @@ Button::Button(const float x, const float y, const std::string& name, const sf::
     shape_.setPosition(x, y);
 }
 
-void Button::CreateMenuButtons(std::vector<Button>& buttons, const std::vector<std::string>& names, const std::vector<sf::Color>& colors, const sf::Font& font) {
+void Button::CreateFileButtons(std::vector<Button>& buttons, const std::vector<std::string>& names, const std::vector<sf::Color>& colors, const sf::Font& font) {
     for (size_t i = 0; i < names.size(); ++i) {
         buttons.emplace_back(kSmallMenuWidth + kButtonWidth * i, 0, names[i], colors[i], font);
     }

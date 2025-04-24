@@ -27,8 +27,6 @@ std::string SaveFile(Paths& pathsToFile, size_t activeFile);
 std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
 }  // namespace Front
 
-#include <iostream>
-
 auto main(int, char**) -> int {
     sf::RenderWindow mainWindow(sf::VideoMode(kMainWindowWidth, kMainWindowHeight), "Image Editor");
     mainWindow.setFramerateLimit(30);
@@ -53,7 +51,7 @@ auto main(int, char**) -> int {
 
     std::vector<Button> buttons;
     const std::vector<sf::Color> buttonColors{kFileButtonColor, kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor};
-    Button::CreateMenuButtons(buttons, buttonNames, buttonColors, buttonFont);
+    Button::CreateFileButtons(buttons, buttonNames, buttonColors, buttonFont);
 
     // Main Button Functions
     ButtonFunction buttonFunctions[]{Front::AddFile, Front::DeleteFile, Front::SaveFile, Front::SelectBrush};
@@ -84,6 +82,9 @@ auto main(int, char**) -> int {
     // Brush current color shape position
     auto [brushColorShapePosX, brushColorShapePosY] = Interface::CalculateBrushColorShapePos({brushSizeFieldPosX, brushSizeFieldPosY});
     brushCurrentColor.SetPosition(brushColorShapePosX, brushColorShapePosY);
+
+    // Zoom
+    auto [zoomOut, zoomIn, zoomBackground] = Interface::LoadZoomImages();
 
     // Create small menu for brush color and brush size
 
@@ -138,6 +139,15 @@ auto main(int, char**) -> int {
                 // Select active image by mouse
                 activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
                 ActiveFile::SelectActiveImage(activeContext);
+
+                const sf::Vector2i mousePosition{event.mouseButton.x, event.mouseButton.y};
+                if (image.HasImage() && zoomIn->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                    Zoom::ZoomIn(image);
+                }
+
+                if (image.HasImage() && zoomOut->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                    Zoom::ZoomOut(image);
+                }
             }
 
             // Select active image by key 'up'
@@ -152,7 +162,9 @@ auto main(int, char**) -> int {
 
             // Brush drawing
             if (brushPressed && !isPaletteOpen && event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                if (event.mouseMove.x >= kFileFieldWidth && event.mouseMove.y >= kButtonHeight && event.mouseMove.y <= kMainWindowHeight - kStatusBarHeight) {
+                const sf::Vector2f imageBoundary{kFileFieldWidth + image.GetSpriteBound().width, kButtonWidth + image.GetSpriteBound().height};
+
+                if (event.mouseMove.x >= kFileFieldWidth && event.mouseMove.x <= imageBoundary.x && event.mouseMove.y >= kButtonHeight && event.mouseMove.y <= imageBoundary.y) {
                     image.SaveState(previousStatus);
                     brush.Draw(image.GetImage(), image.GetImagePosition({event.mouseMove.x, event.mouseMove.y}));
 
@@ -276,6 +288,12 @@ auto main(int, char**) -> int {
 
         if (isPaletteOpen) {
             brushCurrentColor.DrawPalette(mainWindow);  // Draw palette
+        }
+
+        if (!brushPressed) {
+            zoomBackground->DrawImage(mainWindow);
+            zoomIn->DrawImage(mainWindow);
+            zoomOut->DrawImage(mainWindow);
         }
 
         mainWindow.display();

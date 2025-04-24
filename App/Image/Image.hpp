@@ -28,6 +28,7 @@ class Image {
     void SetOrigin(const float centerX, const float centerY);
     void SetTexture(const sf::Texture& texture);
 
+    [[nodiscard]] sf::Vector2f GetScale() const;
     [[nodiscard]] sf::FloatRect GetSpriteBound() const;
     const sf::Sprite& GetSprite() const;
     const sf::Texture& GetTexture() const;

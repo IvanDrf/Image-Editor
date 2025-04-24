@@ -43,6 +43,12 @@ void Image::BackState(std::stack<sf::Image>& previousStatus) {
 }
 
 void Image::SetScale(const float scaleX, const float scaleY) {
+    sf::Vector2i position{sprite_.getPosition()};
+
+    sprite_.setScale(1.f, 1.f);
+    sprite_.setPosition(0.f, 0.f);
+
+    sprite_.setPosition(position.x, position.y);
     sprite_.setScale(scaleX, scaleY);
 }
 
@@ -62,6 +68,10 @@ void Image::SetTexture(const sf::Texture& texture) {
     texture_ = texture;
     sprite_.setTexture(texture_);
     hasImage_ = true;
+}
+
+sf::Vector2f Image::GetScale() const {
+    return sprite_.getScale();
 }
 
 sf::FloatRect Image::GetSpriteBound() const {
