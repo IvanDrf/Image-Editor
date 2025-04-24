@@ -185,3 +185,15 @@ std::string GetFileName(const std::string& fileName) {
     return result;
 }
 }  // namespace Path
+
+namespace Zoom {
+void ZoomIn(Image& image) {
+    image.SetScale(image.GetScale().x + kZoomStep, image.GetScale().y + kZoomStep);
+    image.SetPosition(kFileFieldWidth, kButtonHeight);
+}
+
+void ZoomOut(Image& image) {
+    image.SetScale(image.GetScale().x - kZoomStep, image.GetScale().y - kZoomStep);
+    image.SetPosition(kFileFieldWidth, kButtonHeight);
+}
+}  // namespace Zoom

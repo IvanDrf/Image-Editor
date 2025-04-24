@@ -97,15 +97,20 @@ const sf::Vector2f kBrushSizeImagePosition{kSmallMenuWidth + 4 * kButtonWidth + 
 constexpr float kPaletteScale{0.45f};
 }  // namespace
 
-namespace { // Zoom image
+namespace {  // Zoom image
 const float kZoomOutPosX{kFileFieldWidth + kButtonWidth / 10};
 const float kZoomOutPosY{1.25f * kButtonHeight};
 
-constexpr float kZoomScale{0.35f};
+constexpr float kZoomImageScale{0.35f};
+
+constexpr float kMinZoom{1.f};
+constexpr float kMaxZoom{5.f};
+
+constexpr float kZoomStep{0.1f};
 
 constexpr float kZoomBackgroundScaleX{0.4f};
 constexpr float kZoomBackgroundScaleY{0.35f};
-}
+}  // namespace
 
 using Paths = std::vector<std::string>;
 using StackImage = std::stack<sf::Image>;
@@ -139,3 +144,8 @@ void DeletePath(Paths& pathToFile, const std::string& fileName);
 [[nodiscard]] std::string GetFileName(const std::string& fileName);
 
 }  // namespace Path
+
+namespace Zoom {
+void ZoomIn(Image& image);
+void ZoomOut(Image& image);
+}  // namespace Zoom

@@ -26,8 +26,8 @@ struct MenuInterface {
 [[nodiscard]] Image CreateBrushSizeImage();
 
 struct Zoom {
-    std::unique_ptr<Image> zoomIn;
     std::unique_ptr<Image> zoomOut;
+    std::unique_ptr<Image> zoomIn;
 
     std::unique_ptr<Image> zoomBackground;
 };

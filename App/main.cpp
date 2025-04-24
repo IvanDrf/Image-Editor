@@ -140,7 +140,14 @@ auto main(int, char**) -> int {
                 activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
                 ActiveFile::SelectActiveImage(activeContext);
 
+                const sf::Vector2f mousePosition{event.mouseButton.x, event.mouseButton.y};
+                if (image.HasImage() && zoomIn->GetSpriteBound().contains(mousePosition)) {
+                    Zoom::ZoomIn(image);
+                }
 
+                if (image.HasImage() && zoomOut->GetSpriteBound().contains(mousePosition)) {
+                    Zoom::ZoomOut(image);
+                }
             }
 
             // Select active image by key 'up'
@@ -155,7 +162,9 @@ auto main(int, char**) -> int {
 
             // Brush drawing
             if (brushPressed && !isPaletteOpen && event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                if (event.mouseMove.x >= kFileFieldWidth && event.mouseMove.y >= kButtonHeight && event.mouseMove.y <= kMainWindowHeight - kStatusBarHeight) {
+                const sf::Vector2i imageBoundary{kFileFieldWidth + image.GetSpriteBound().width, kButtonWidth + image.GetSpriteBound().height};
+
+                if (event.mouseMove.x >= kFileFieldWidth && event.mouseMove.x <= imageBoundary.x && event.mouseMove.y >= kButtonHeight && event.mouseMove.y <= imageBoundary.y) {
                     image.SaveState(previousStatus);
                     brush.Draw(image.GetImage(), image.GetImagePosition({event.mouseMove.x, event.mouseMove.y}));
 

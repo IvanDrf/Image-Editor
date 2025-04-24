@@ -92,13 +92,13 @@ Image CreateBrushSizeImage() {
 
     images.zoomOut = std::make_unique<Image>();
     images.zoomOut->LoadImage("../WindowFiles/zoomOut-image.png");
-    images.zoomOut->SetScale(kZoomScale, kZoomScale);
+    images.zoomOut->SetScale(kZoomImageScale, kZoomImageScale);
 
     images.zoomOut->SetPosition(kZoomOutPosX, kZoomOutPosY);
 
     images.zoomIn = std::make_unique<Image>();
     images.zoomIn->LoadImage("../WindowFiles/zoomIn-image.png");
-    images.zoomIn->SetScale(kZoomScale, kZoomScale);
+    images.zoomIn->SetScale(kZoomImageScale, kZoomImageScale);
 
     float zoomInPosX{kZoomOutPosX + images.zoomOut->GetSpriteBound().width};
     images.zoomIn->SetPosition(zoomInPosX, kZoomOutPosY);
