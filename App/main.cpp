@@ -212,7 +212,7 @@ auto main(int, char**) -> int {
             }
 
             // Add new image (Ctrl+N)
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::N && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::O && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 std::string result = Front::AddFile(pathsToFile, activeFile);
                 WorkWithPath(pathsToFile, activeFile, result, Buttons::AddFile, image, fileField, statusBar, brushPressed, previousStatus);
             }
