@@ -70,7 +70,7 @@ https://github.com/user-attachments/assets/b6bf4a59-6226-4203-839e-261ee8f306b2
 ### 📄 File
 | Action  | Shortcut    | Description              |
 |---------|-------------|--------------------------|
-| Add     | `Ctrl + N`  | Add new image            |
+| Add     | `Ctrl + O`  | Open new image           |
 | Delete  | `Del`       | Delete selected image    |
 | Save    | `Ctrl + S`  | Save current image       |
 | Up      | `↑`         | Move selection up        |
@@ -86,7 +86,3 @@ https://github.com/user-attachments/assets/b6bf4a59-6226-4203-839e-261ee8f306b2
 | White        | `W`      | Set brush color to white     |
 | Size Down    | `[`      | Decrease brush size          |
 | Size Up      | `]`      | Increase brush size          |
-
-
-
-
