@@ -140,12 +140,12 @@ auto main(int, char**) -> int {
                 activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
                 ActiveFile::SelectActiveImage(activeContext);
 
-                const sf::Vector2f mousePosition{event.mouseButton.x, event.mouseButton.y};
-                if (image.HasImage() && zoomIn->GetSpriteBound().contains(mousePosition)) {
+                const sf::Vector2i mousePosition{event.mouseButton.x, event.mouseButton.y};
+                if (image.HasImage() && zoomIn->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
                     Zoom::ZoomIn(image);
                 }
 
-                if (image.HasImage() && zoomOut->GetSpriteBound().contains(mousePosition)) {
+                if (image.HasImage() && zoomOut->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
                     Zoom::ZoomOut(image);
                 }
             }
@@ -162,7 +162,7 @@ auto main(int, char**) -> int {
 
             // Brush drawing
             if (brushPressed && !isPaletteOpen && event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                const sf::Vector2i imageBoundary{kFileFieldWidth + image.GetSpriteBound().width, kButtonWidth + image.GetSpriteBound().height};
+                const sf::Vector2f imageBoundary{kFileFieldWidth + image.GetSpriteBound().width, kButtonWidth + image.GetSpriteBound().height};
 
                 if (event.mouseMove.x >= kFileFieldWidth && event.mouseMove.x <= imageBoundary.x && event.mouseMove.y >= kButtonHeight && event.mouseMove.y <= imageBoundary.y) {
                     image.SaveState(previousStatus);
