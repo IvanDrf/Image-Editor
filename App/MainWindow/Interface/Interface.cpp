@@ -85,6 +85,34 @@ Image CreateBrushSizeImage() {
     return brushSizeImage;
 }
 
+
+
+[[nodiscard]] Zoom LoadZoomImages() {
+    Zoom images;
+
+    images.zoomOut = std::make_unique<Image>();
+    images.zoomOut->LoadImage("../WindowFiles/zoomOut-image.png");
+    images.zoomOut->SetScale(kZoomScale, kZoomScale);
+
+    images.zoomOut->SetPosition(kZoomOutPosX, kZoomOutPosY);
+
+    images.zoomIn = std::make_unique<Image>();
+    images.zoomIn->LoadImage("../WindowFiles/zoomIn-image.png");
+    images.zoomIn->SetScale(kZoomScale, kZoomScale);
+
+    float zoomInPosX{kZoomOutPosX + images.zoomOut->GetSpriteBound().width};
+    images.zoomIn->SetPosition(zoomInPosX, kZoomOutPosY);
+
+    images.zoomBackground = std::make_unique<Image>();
+    images.zoomBackground->LoadImage("../WindowFiles/zoomBackground-image.png");
+    images.zoomBackground->SetScale(kZoomBackgroundScaleX, kZoomBackgroundScaleY);
+
+    images.zoomBackground->SetPosition(kZoomOutPosX - 2.5f, kZoomOutPosY);
+
+    return images;
+}
+
+
 Position CalculateBrushSizePos(const Image& image) {
     return {kSmallMenuWidth + 4 * kButtonWidth + 0.9f * image.GetSpriteBound().width + kButtonWidth / 5, (kButtonHeight - kBrushBoxHeight) / 2};
 }

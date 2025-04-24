@@ -27,8 +27,6 @@ std::string SaveFile(Paths& pathsToFile, size_t activeFile);
 std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
 }  // namespace Front
 
-#include <iostream>
-
 auto main(int, char**) -> int {
     sf::RenderWindow mainWindow(sf::VideoMode(kMainWindowWidth, kMainWindowHeight), "Image Editor");
     mainWindow.setFramerateLimit(30);
@@ -53,7 +51,7 @@ auto main(int, char**) -> int {
 
     std::vector<Button> buttons;
     const std::vector<sf::Color> buttonColors{kFileButtonColor, kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor};
-    Button::CreateMenuButtons(buttons, buttonNames, buttonColors, buttonFont);
+    Button::CreateFileButtons(buttons, buttonNames, buttonColors, buttonFont);
 
     // Main Button Functions
     ButtonFunction buttonFunctions[]{Front::AddFile, Front::DeleteFile, Front::SaveFile, Front::SelectBrush};
@@ -84,6 +82,9 @@ auto main(int, char**) -> int {
     // Brush current color shape position
     auto [brushColorShapePosX, brushColorShapePosY] = Interface::CalculateBrushColorShapePos({brushSizeFieldPosX, brushSizeFieldPosY});
     brushCurrentColor.SetPosition(brushColorShapePosX, brushColorShapePosY);
+
+    // Zoom
+    auto [zoomOut, zoomIn, zoomBackground] = Interface::LoadZoomImages();
 
     // Create small menu for brush color and brush size
 
@@ -138,6 +139,8 @@ auto main(int, char**) -> int {
                 // Select active image by mouse
                 activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
                 ActiveFile::SelectActiveImage(activeContext);
+
+
             }
 
             // Select active image by key 'up'
@@ -276,6 +279,12 @@ auto main(int, char**) -> int {
 
         if (isPaletteOpen) {
             brushCurrentColor.DrawPalette(mainWindow);  // Draw palette
+        }
+
+        if (!brushPressed) {
+            zoomBackground->DrawImage(mainWindow);
+            zoomIn->DrawImage(mainWindow);
+            zoomOut->DrawImage(mainWindow);
         }
 
         mainWindow.display();

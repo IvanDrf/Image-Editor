@@ -97,6 +97,16 @@ const sf::Vector2f kBrushSizeImagePosition{kSmallMenuWidth + 4 * kButtonWidth + 
 constexpr float kPaletteScale{0.45f};
 }  // namespace
 
+namespace { // Zoom image
+const float kZoomOutPosX{kFileFieldWidth + kButtonWidth / 10};
+const float kZoomOutPosY{1.25f * kButtonHeight};
+
+constexpr float kZoomScale{0.35f};
+
+constexpr float kZoomBackgroundScaleX{0.4f};
+constexpr float kZoomBackgroundScaleY{0.35f};
+}
+
 using Paths = std::vector<std::string>;
 using StackImage = std::stack<sf::Image>;
 
