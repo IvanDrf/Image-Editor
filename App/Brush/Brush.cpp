@@ -9,7 +9,7 @@ Brush::Brush(const int radius, const sf::Color& color) : radius_(radius), color_
     brushCursorSprite.setTexture(brushCursorTexture);
     brushCursorSprite.setOrigin(brushCursorTexture.getSize().x / 2, brushCursorTexture.getSize().y / 2);
 
-    UpdateCursorScale();
+    UpdateCursorScale(1.f);
 
     shape_.setRadius(radius);
     shape_.setFillColor(color);
@@ -24,9 +24,9 @@ void Brush::SetRadius(const int newRadius) {
     shape_.setOrigin(newRadius, newRadius);
 }
 
-void Brush::UpdateCursorScale() {
+void Brush::UpdateCursorScale(float currentScale) {
     const sf::Vector2u bounds{brushCursorTexture.getSize()};
-    brushCursorSprite.setScale(2.8f * radius_ / bounds.x, 2.8f * radius_ / bounds.y);
+    brushCursorSprite.setScale(2.8f * currentScale * radius_ / bounds.x, 2.8f * currentScale * radius_ / bounds.y);
 }
 
 int Brush::GetRadius() const {

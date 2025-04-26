@@ -29,7 +29,7 @@ class Brush {
     Brush(const int radius, const sf::Color& color);
 
     void SetRadius(const int newRadius);
-    void UpdateCursorScale();
+    void UpdateCursorScale(float currentScale);
 
     [[nodiscard]] int GetRadius() const;
     [[nodiscard]] const sf::Sprite& GetBrushCursor() const;
