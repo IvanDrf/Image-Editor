@@ -159,8 +159,14 @@ auto main(int, char**) -> int {
                 lasMousePos = sf::Mouse::getPosition(mainWindow);
             }
 
-            if (event.type == sf::Event::MouseButtonReleased) {
+            // Ending of moving image
+            if (image.HasImage() && event.type == sf::Event::MouseButtonReleased) {
                 isMoved = false;
+            }
+
+            // Reset image postion -> default image position
+            if (image.HasImage() && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
+                image.SetPosition(kFileFieldWidth, kButtonHeight);
             }
 
             // Select active image by key 'up'
