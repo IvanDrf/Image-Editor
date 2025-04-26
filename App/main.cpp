@@ -85,6 +85,8 @@ auto main(int, char**) -> int {
 
     // Zoom
     auto [zoomOut, zoomIn, zoomBackground] = Interface::LoadZoomImages();
+    bool isMoved{false};
+    sf::Vector2i lasMousePos{};
 
     // Create small menu for brush color and brush size
 
@@ -140,6 +142,7 @@ auto main(int, char**) -> int {
                 activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
                 ActiveFile::SelectActiveImage(activeContext);
 
+                // Zoom
                 const sf::Vector2i mousePosition{event.mouseButton.x, event.mouseButton.y};
                 if (image.HasImage() && zoomIn->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
                     Zoom::ZoomIn(image);
@@ -148,6 +151,16 @@ auto main(int, char**) -> int {
                 if (image.HasImage() && zoomOut->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
                     Zoom::ZoomOut(image);
                 }
+            }
+
+            // Beginning of moving image
+            if (image.HasImage() && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                isMoved = true;
+                lasMousePos = sf::Mouse::getPosition(mainWindow);
+            }
+
+            if (event.type == sf::Event::MouseButtonReleased) {
+                isMoved = false;
             }
 
             // Select active image by key 'up'
@@ -244,11 +257,22 @@ auto main(int, char**) -> int {
             }
         }
 
+        // Moving image
+        if (isMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            sf::Vector2i currentMousePos{sf::Mouse::getPosition(mainWindow)};
+
+            const sf::Vector2f delta{currentMousePos - lasMousePos};
+
+            image.SetPosition(image.GetSprite().getPosition() + delta);
+            lasMousePos = currentMousePos;
+        }
+
         mainWindow.clear();
 
         // Draw elements
+        image.DrawImage(mainWindow);  // Main image
+
         mainWindow.draw(backgorund);                  // Button backgorund
-        image.DrawImage(mainWindow);                  // Main image
         fileField.DrawField(mainWindow, activeFile);  // Field with added files
         statusBar.DrawStatusBar(mainWindow);          // Status bar
 
