@@ -14,6 +14,7 @@
 #include "StatusBar/StatusBar.hpp"
 
 #define NONE (std::numeric_limits<std::size_t>::max())
+#define KEY (event.key.code)
 
 // Menu Buttons, realization in InputField.cpp
 namespace Front {
@@ -86,7 +87,7 @@ auto main(int, char**) -> int {
     // Zoom
     auto [zoomOut, zoomIn, zoomBackground] = Interface::LoadZoomImages();
     bool isMoved{false};
-    sf::Vector2i lasMousePos{};
+    sf::Vector2i lastMousePos{};
 
     // Create small menu for brush color and brush size
 
@@ -156,7 +157,7 @@ auto main(int, char**) -> int {
             // Beginning of moving image
             if (image.HasImage() && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
                 isMoved = true;
-                lasMousePos = sf::Mouse::getPosition(mainWindow);
+                lastMousePos = sf::Mouse::getPosition(mainWindow);
             }
 
             // Ending of moving image
@@ -165,17 +166,17 @@ auto main(int, char**) -> int {
             }
 
             // Reset image postion -> default image position
-            if (image.HasImage() && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
+            if (image.HasImage() && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::R) {
                 image.SetPosition(kFileFieldWidth, kButtonHeight);
             }
 
             // Select active image by key 'up'
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up && activeFile != NONE) {
+            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Up && activeFile != NONE) {
                 ActiveFile::SelectUpperImage(activeContext);
             }
 
             // Select active image by key 'down'
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down) {
+            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Down) {
                 ActiveFile::SelectLowerImage(activeContext);
             }
 
@@ -200,7 +201,7 @@ auto main(int, char**) -> int {
             }
 
             // Change brush size (Increase size)
-            if (brushPressed && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::RBracket) {
+            if (brushPressed && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::RBracket) {
                 brush.SetRadius(std::min(brush.GetRadius() + kBrushChangeRadius, 1000));
                 brushSizeField.SetText(brush.GetRadius());
 
@@ -208,7 +209,7 @@ auto main(int, char**) -> int {
             }
 
             // Change brush size (Decrease size)
-            if (brushPressed && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::LBracket) {
+            if (brushPressed && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::LBracket) {
                 brush.SetRadius(std::max(kBrushInitialRadius / kBrushInitialRadius, brush.GetRadius() - kBrushChangeRadius));
                 brushSizeField.SetText(brush.GetRadius());
 
@@ -217,7 +218,7 @@ auto main(int, char**) -> int {
 
             // Set Brush Color by hot key
             if (brushPressed && event.type == sf::Event::KeyPressed) {
-                brush.SetColor(event.key.code, brushCurrentColor);
+                brush.SetColor(KEY, brushCurrentColor);
                 brushCurrentColor.SetColor(brush.GetColor());
             }
 
@@ -238,24 +239,24 @@ auto main(int, char**) -> int {
             }
 
             // Return previous image (Ctrl+Z)
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Z && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Z && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 image.BackState(previousStatus);
             }
 
             // Add new image (Ctrl+N)
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::O && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::O && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 std::string result = Front::AddFile(pathsToFile, activeFile);
                 WorkWithPath(pathsToFile, activeFile, result, Buttons::AddFile, image, fileField, statusBar, brushPressed, previousStatus);
             }
 
             // Save image (Ctrl+S)
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 std::string result = Front::SaveFile(pathsToFile, activeFile);
                 WorkWithPath(pathsToFile, activeFile, result, Buttons::SaveFile, image, fileField, statusBar, brushPressed, previousStatus);
             }
 
             // Delete current file
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Delete) {
+            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Delete) {
                 std::string result = Front::DeleteFile(pathsToFile, activeFile);
 
                 Back::SelectNewActiveFile(Buttons::DeleteFile, activeFile, pathsToFile.size());
@@ -267,10 +268,8 @@ auto main(int, char**) -> int {
         if (isMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             sf::Vector2i currentMousePos{sf::Mouse::getPosition(mainWindow)};
 
-            const sf::Vector2f delta{currentMousePos - lasMousePos};
-
-            image.SetPosition(image.GetSprite().getPosition() + delta);
-            lasMousePos = currentMousePos;
+            image.SetPosition(image.GetSprite().getPosition() + sf::Vector2f(currentMousePos - lastMousePos));
+            lastMousePos = currentMousePos;
         }
 
         mainWindow.clear();
