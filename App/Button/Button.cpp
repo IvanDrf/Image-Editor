@@ -23,12 +23,9 @@ Button::Button(const float x, const float y, const std::string& name, const sf::
     shape_.setPosition(x, y);
 }
 
-void Button::CreateFileButtons(std::vector<Button>& buttons, const std::vector<std::string>& names, const std::vector<sf::Color>& colors, const sf::Font& font) {
-    for (size_t i = 0; i < names.size(); ++i) {
-        buttons.emplace_back(kSmallMenuWidth + kButtonWidth * i, 0, names[i], colors[i], font);
-    }
-
-    buttons.back().SetColor(kToolsColor);  // Set color for Brush button
+void Button::SetPosition(const float x, const float y) {
+    text_.setPosition(x + kButtonWidth / 2, y + kButtonHeight / 2 - text_.getGlobalBounds().height / 2);
+    shape_.setPosition(sf::Vector2f(x, y));
 }
 
 void Button::DrawButton(sf::RenderWindow& window) const {
@@ -46,6 +43,10 @@ sf::Color Button::GetColor() const {
 
 bool Button::AimButton(const sf::Vector2i& mousePosition) const {
     return shape_.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition));
+}
+
+size_t Button::GetActiveButton() {
+    return activeButton;
 }
 
 void Button::AnimateButton(const sf::RenderWindow& window, size_t buttonIndex) {
@@ -78,6 +79,13 @@ void Button::AnimateButton(const sf::RenderWindow& window, size_t buttonIndex) {
     }
 }
 
-size_t Button::GetActiveButton() {
-    return activeButton;
+void Button::CreateMenuButtons(std::vector<Button>& buttons, const std::vector<std::string>& names, const std::vector<sf::Color>& colors, const sf::Font& font) {
+    for (size_t i = 0; i < names.size(); ++i) {
+        buttons.emplace_back(kSmallMenuWidth + kButtonWidth * i, 0, names[i], colors[i], font);
+    }
+
+    buttons[Buttons::SelectBrush].SetColor(kToolsColor);  // Diff color for brush
+
+    buttons[Buttons::Move].SetColor(kToolsColor);  // Diff color for move
+    buttons[Buttons::Move].SetPosition(5.5f * kButtonWidth, 0);
 }

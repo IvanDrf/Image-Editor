@@ -12,7 +12,8 @@ class Button {
 
  public:
     Button(const float x, const float y, const std::string& name, const sf::Color& color, const sf::Font& font);
-    static void CreateFileButtons(std::vector<Button>& buttons, const std::vector<std::string>& names, const std::vector<sf::Color>& colors, const sf::Font& font);
+
+    void SetPosition(const float x, const float y);
 
     void DrawButton(sf::RenderWindow& window) const;
     void SetColor(const sf::Color& newColor);
@@ -22,4 +23,6 @@ class Button {
 
     static size_t GetActiveButton();
     void AnimateButton(const sf::RenderWindow& window, size_t buttonIndex);
+
+    static void CreateMenuButtons(std::vector<Button>& buttons, const std::vector<std::string>& names, const std::vector<sf::Color>& colors, const sf::Font& font);
 };

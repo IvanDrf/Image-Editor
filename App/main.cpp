@@ -21,12 +21,14 @@
 namespace Front {
 using Paths = const std::vector<std::string>;
 
+// File buttons
 std::string AddFile([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
 std::string DeleteFile(Paths& pathsToFile, size_t activeFile);
-
 std::string SaveFile(Paths& pathsToFile, size_t activeFile);
 
+// Tools buttons
 std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
+std::string MoveImage([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
 }  // namespace Front
 
 auto main(int, char**) -> int {
@@ -48,15 +50,15 @@ auto main(int, char**) -> int {
     auto [backgorund, menuShape, menuImage, brushSizeImage] = Interface::CreateInterface();
 
     // Menu Buttons
-    const std::vector<std::string> buttonNames = {"Add file", "Delete file", "Save file", "Brush"};
+    const std::vector<std::string> buttonNames = {"Add file", "Delete file", "Save file", "Brush", "Move"};
     const auto buttonIcons = Interface::LoadButtonImages();  // Button Icons
 
     std::vector<Button> buttons;
     const std::vector<sf::Color> buttonColors{kFileButtonColor, kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor};
-    Button::CreateFileButtons(buttons, buttonNames, buttonColors, buttonFont);
+    Button::CreateMenuButtons(buttons, buttonNames, buttonColors, buttonFont);
 
     // Main Button Functions
-    ButtonFunction buttonFunctions[]{Front::AddFile, Front::DeleteFile, Front::SaveFile, Front::SelectBrush};
+    ButtonFunction buttonFunctions[]{Front::AddFile, Front::DeleteFile, Front::SaveFile, Front::SelectBrush, Front::MoveImage};
 
     // Brush
     Brush brush(kBrushInitialRadius, sf::Color::White);
@@ -90,6 +92,7 @@ auto main(int, char**) -> int {
     float currentScale{kDefaultZoom};
 
     bool isMoved{false};
+    bool isMoveButton{false};
     sf::Vector2i lastMousePos{};
 
     // Create small menu for brush color and brush size
@@ -125,8 +128,30 @@ auto main(int, char**) -> int {
                             brush.UpdateCursorScale(currentScale);
                         }
 
+                        // Move button
+                        if (image.HasImage() && i == Buttons::Move) {
+                            isMoved = !isMoved;
+                            isMoveButton = !isMoveButton;
+                            brushPressed = false;  // Change status after swap brush/move
+
+                            lastMousePos = sf::Mouse::getPosition(mainWindow);
+
+                            buttons[i].SetColor((isMoveButton) ? (kActiveButtonColor) : kToolsColor);  // Set active 'Move' button color
+                            statusBar.UpdateStatus((isMoveButton) ? ("Move selected") : ("Move is no longer selected"), (isMoved) ? (sf::Color::Green) : (sf::Color::Red));
+                        }
+
                         if (brushPressed && buttons[Buttons::SelectBrush].GetColor() != kActiveButtonColor) {
                             buttons[Buttons::SelectBrush].SetColor(kActiveButtonColor);
+
+                            brushPressed = true;  // Change status after swap move/brush
+
+                            isMoveButton = false;  // Change status after swap move/brush
+                            isMoved = false;       // Change status after swap move/brush
+
+                            if (buttons[Buttons::Move].GetColor() != kToolsColor) {
+                                buttons[Buttons::Move].SetColor(kToolsColor);  // Reset color for 'Move' button
+                            }
+
                         } else if (!brushPressed && buttons[Buttons::SelectBrush].GetColor() != kToolsColor) {
                             buttons[Buttons::SelectBrush].SetColor(kToolsColor);
                         }
@@ -174,18 +199,19 @@ auto main(int, char**) -> int {
             }
 
             // Beginning of moving image
-            if (image.HasImage() && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+            if (image.HasImage() && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || isMoved)) {
                 isMoved = true;
+                brushPressed = false;
                 lastMousePos = sf::Mouse::getPosition(mainWindow);
             }
 
             // Ending of moving image
-            if (image.HasImage() && event.type == sf::Event::MouseButtonReleased) {
+            if (image.HasImage() && event.type == sf::Event::MouseButtonReleased && !isMoveButton) {
                 isMoved = false;
             }
 
             // Reset image postion -> default image position and zoom
-            if (image.HasImage() && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::R) {
+            if (!brushPressed && image.HasImage() && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::R) {
                 image.SetPosition(kFileFieldWidth, kButtonHeight);
                 image.SetMainImageScale();
 
@@ -290,7 +316,7 @@ auto main(int, char**) -> int {
         }
 
         // Moving image
-        if (isMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        if (image.HasImage() && isMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             sf::Vector2i currentMousePos{sf::Mouse::getPosition(mainWindow)};
 
             image.SetPosition(image.GetSprite().getPosition() + sf::Vector2f(currentMousePos - lastMousePos));

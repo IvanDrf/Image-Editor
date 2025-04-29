@@ -25,18 +25,24 @@ std::vector<sf::RectangleShape> LoadButtonImages() {
         throw std::runtime_error("Brush image could not be uploaded");
     }
 
-    static const std::vector<sf::Texture> icons = {addIcon, deleteIcon, saveIcon, brushIcon};
+    sf::Texture moveIcon;
+    if (!moveIcon.loadFromFile("../WindowFiles/move-image.png")) {
+        throw std::runtime_error("Move image could not be uploaded");
+    }
+
+    static const std::vector<sf::Texture> icons = {addIcon, deleteIcon, saveIcon, brushIcon, moveIcon};
     std::vector<sf::RectangleShape> iconShapes;  // Icon shapes and icons
 
     for (size_t i = 0; i < icons.size(); ++i) {
         iconShapes.emplace_back(sf::Vector2f(kButtonWidth / 5.5f, kButtonWidth / 5.5f));
-        iconShapes.back().setOrigin(0, iconShapes.back().getGlobalBounds().height / 2);
-        iconShapes.back().setPosition(kSmallMenuWidth + kIconX + i * kButtonWidth, kButtonHeight / 2);
+        iconShapes[i].setOrigin(0, iconShapes[i].getGlobalBounds().height / 2);
+        iconShapes[i].setPosition(kSmallMenuWidth + kIconX + i * kButtonWidth, kButtonHeight / 2);
 
-        iconShapes.back().setTexture(&icons[i]);
+        iconShapes[i].setTexture(&icons[i]);
     }
 
     iconShapes[0].setPosition(kSmallMenuWidth + kIconX * 1.5f, kButtonHeight / 2);
+    iconShapes[Buttons::Move].setPosition(5.55f * kButtonWidth, kButtonHeight / 2);
 
     return iconShapes;
 }
