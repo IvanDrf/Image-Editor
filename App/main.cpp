@@ -185,7 +185,7 @@ auto main(int, char**) -> int {
             }
 
             // Reset image postion -> default image position and zoom
-            if (image.HasImage() && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::R) {
+            if (!brushPressed && image.HasImage() && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::R) {
                 image.SetPosition(kFileFieldWidth, kButtonHeight);
                 image.SetMainImageScale();
 
