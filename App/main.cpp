@@ -157,7 +157,7 @@ auto main(int, char**) -> int {
 
                     brush.UpdateCursorScale(currentScale);
 
-                    statusBar.UpdateStatus("Current zoom: " + std::to_string(currentScale).substr(0,3));
+                    statusBar.UpdateStatus("Current zoom: " + std::to_string(currentScale).substr(0, 3));
                 }
 
                 // Zoom Out
@@ -168,7 +168,7 @@ auto main(int, char**) -> int {
 
                         brush.UpdateCursorScale(currentScale);
 
-                        statusBar.UpdateStatus("Current zoom: " + std::to_string(currentScale).substr(0,3));
+                        statusBar.UpdateStatus("Current zoom: " + std::to_string(currentScale).substr(0, 3));
                     }
                 }
             }
