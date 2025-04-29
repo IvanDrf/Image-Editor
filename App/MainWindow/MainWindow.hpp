@@ -10,7 +10,8 @@ enum Buttons {
     AddFile = 0,
     DeleteFile = 1,
     SaveFile = 2,
-    SelectBrush = 3
+    SelectBrush = 3,
+    Move = 4
 };
 
 // Constants
