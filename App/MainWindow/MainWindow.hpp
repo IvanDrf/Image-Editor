@@ -103,6 +103,8 @@ const float kZoomOutPosY{1.25f * kButtonHeight};
 
 constexpr float kZoomImageScale{0.35f};
 
+constexpr float kDefaultZoom{1.0f};
+
 constexpr float kMinZoom{1.f};
 constexpr float kMaxZoom{5.f};
 
