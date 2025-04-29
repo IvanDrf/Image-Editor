@@ -14,5 +14,6 @@ class StatusBar {
     StatusBar();
 
     void DrawStatusBar(sf::RenderWindow& window);
+
     void UpdateStatus(const std::string& newStatus, const sf::Color& textColor = sf::Color::White);
 };

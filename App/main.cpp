@@ -156,14 +156,20 @@ auto main(int, char**) -> int {
                     currentScale += kZoomStep;
 
                     brush.UpdateCursorScale(currentScale);
+
+                    statusBar.UpdateStatus("Current zoom: " + std::to_string(currentScale).substr(0,3));
                 }
 
                 // Zoom Out
                 if (image.HasImage() && zoomOut->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
-                    Zoom::ZoomOut(image);
-                    currentScale = std::max(currentScale - kZoomStep, 0.f);
+                    if (currentScale - kZoomStep >= 0) {
+                        Zoom::ZoomOut(image);
+                        currentScale = currentScale - kZoomStep;
 
-                    brush.UpdateCursorScale(currentScale);
+                        brush.UpdateCursorScale(currentScale);
+
+                        statusBar.UpdateStatus("Current zoom: " + std::to_string(currentScale).substr(0,3));
+                    }
                 }
             }
 
