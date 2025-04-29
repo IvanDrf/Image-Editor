@@ -184,9 +184,15 @@ auto main(int, char**) -> int {
                 isMoved = false;
             }
 
-            // Reset image postion -> default image position
+            // Reset image postion -> default image position and zoom
             if (image.HasImage() && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::R) {
                 image.SetPosition(kFileFieldWidth, kButtonHeight);
+                image.SetMainImageScale();
+
+                currentScale = kDefaultZoom;
+
+                brush.UpdateCursorScale(currentScale);
+                statusBar.UpdateStatus("Current zoom: " + std::to_string(currentScale).substr(0, 3));
             }
 
             // Select active image by key 'up'
