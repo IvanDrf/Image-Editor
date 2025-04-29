@@ -15,6 +15,7 @@
 
 #define NONE (std::numeric_limits<std::size_t>::max())
 #define KEY (event.key.code)
+#define FPS (30)
 
 // Menu Buttons, realization in InputField.cpp
 namespace Front {
@@ -30,7 +31,7 @@ std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] si
 
 auto main(int, char**) -> int {
     sf::RenderWindow mainWindow(sf::VideoMode(kMainWindowWidth, kMainWindowHeight), "Image Editor");
-    mainWindow.setFramerateLimit(30);
+    mainWindow.setFramerateLimit(FPS);
 
     sf::Font buttonFont;  // Font for Buttons
     if (!buttonFont.loadFromFile("../WindowFiles/open-sans.ttf")) {
@@ -48,7 +49,7 @@ auto main(int, char**) -> int {
 
     // Menu Buttons
     const std::vector<std::string> buttonNames = {"Add file", "Delete file", "Save file", "Brush"};
-    std::vector<sf::RectangleShape> buttonIcons = Interface::LoadButtonImages();  // Button Icons
+    const auto buttonIcons = Interface::LoadButtonImages();  // Button Icons
 
     std::vector<Button> buttons;
     const std::vector<sf::Color> buttonColors{kFileButtonColor, kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor};
@@ -86,7 +87,7 @@ auto main(int, char**) -> int {
 
     // Zoom
     auto [zoomOut, zoomIn, zoomBackground] = Interface::LoadZoomImages();
-    float currentScale{1.0f};
+    float currentScale{kDefaultZoom};
 
     bool isMoved{false};
     sf::Vector2i lastMousePos{};
@@ -120,7 +121,7 @@ auto main(int, char**) -> int {
                         if (image.HasImage() && oldFilesCount != pathsToFile.size()) {
                             Back::SelectNewActiveFile(i, activeFile, pathsToFile.size());
 
-                            currentScale = 1.0f;
+                            currentScale = kDefaultZoom;
                             brush.UpdateCursorScale(currentScale);
                         }
 
