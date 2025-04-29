@@ -24,8 +24,8 @@ Button::Button(const float x, const float y, const std::string& name, const sf::
 }
 
 void Button::SetPosition(const float x, const float y) {
-    text_.setPosition(x + kButtonWidth /2, y + kButtonHeight / 2 - text_.getGlobalBounds().height / 2);
-    shape_.setPosition(sf::Vector2f(x,y));
+    text_.setPosition(x + kButtonWidth / 2, y + kButtonHeight / 2 - text_.getGlobalBounds().height / 2);
+    shape_.setPosition(sf::Vector2f(x, y));
 }
 
 void Button::DrawButton(sf::RenderWindow& window) const {
@@ -86,6 +86,6 @@ void Button::CreateMenuButtons(std::vector<Button>& buttons, const std::vector<s
 
     buttons[Buttons::SelectBrush].SetColor(kToolsColor);  // Diff color for brush
 
-    buttons[Buttons::Move].SetColor(kToolsColor);         // Diff color for move
+    buttons[Buttons::Move].SetColor(kToolsColor);  // Diff color for move
     buttons[Buttons::Move].SetPosition(5.5f * kButtonWidth, 0);
 }

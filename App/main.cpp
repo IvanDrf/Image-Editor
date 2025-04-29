@@ -136,7 +136,8 @@ auto main(int, char**) -> int {
 
                             lastMousePos = sf::Mouse::getPosition(mainWindow);
 
-                            statusBar.UpdateStatus((isMoved) ? ("Move selected") : ("Move is no longer selected"), (isMoved) ? (sf::Color::Green) : (sf::Color::Red));
+                            buttons[i].SetColor((isMoveButton) ? (kActiveButtonColor) : kToolsColor);  // Set active 'Move' button color
+                            statusBar.UpdateStatus((isMoveButton) ? ("Move selected") : ("Move is no longer selected"), (isMoved) ? (sf::Color::Green) : (sf::Color::Red));
                         }
 
                         if (brushPressed && buttons[Buttons::SelectBrush].GetColor() != kActiveButtonColor) {
@@ -146,6 +147,10 @@ auto main(int, char**) -> int {
 
                             isMoveButton = false;  // Change status after swap move/brush
                             isMoved = false;       // Change status after swap move/brush
+
+                            if (buttons[Buttons::Move].GetColor() != kToolsColor) {
+                                buttons[Buttons::Move].SetColor(kToolsColor);  // Reset color for 'Move' button
+                            }
 
                         } else if (!brushPressed && buttons[Buttons::SelectBrush].GetColor() != kToolsColor) {
                             buttons[Buttons::SelectBrush].SetColor(kToolsColor);
