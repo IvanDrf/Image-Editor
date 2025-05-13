@@ -35,7 +35,7 @@
 ```bash
 # Clone repository
 git clone https://github.com/yourusername/sfml-image-editor.git
-cd sfml-image-editor
+cd App
 
 # Build with CMake
 mkdir build && cd build
