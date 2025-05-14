@@ -39,29 +39,25 @@ jobs:
         clang-format --dry-run --Werror --style=file $FILES || \
           (echo "❌ Formatting errors found! Run 'clang-format -i YOUR_FILE' to fix."; exit 1)
           
-  setup-dependencies:
+  build:
     runs-on: ubuntu-22.04
-    outputs:
-      cache-key: ${{ steps.cache-key.outputs.value }}
-    steps:
-    - name: Generate cache key
-      id: cache-key
-      run: echo "value=$(date +%Y-%m-%d)-${{ hashFiles('**/CMakeLists.txt') }}" >> $GITHUB_OUTPUT
-
-  build-template:
-    runs-on: ubuntu-22.04
-    needs: setup-dependencies
+    timeout-minutes: 15
     strategy:
       matrix:
         std: [11, 14, 17, 20]
-    env:
-      CXX_STANDARD: ${{ matrix.std }}
+        include:
+          - std: 11
+            cache-suffix: v1
+          - std: 14
+            cache-suffix: v1
+          - std: 17
+            cache-suffix: v2
+          - std: 20
+            cache-suffix: v2
     steps:
     - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
-    - name: Restore cache
+    - name: Cache dependencies
       uses: actions/cache@v3
       with:
         path: |
@@ -69,36 +65,50 @@ jobs:
           /usr/local
           App/build
           /tmp/ccache
-        key: ${{ runner.os }}-${{ needs.setup-dependencies.outputs.cache-key }}-cpp${{ matrix.std }}
+        key: ${{ runner.os }}-deps-${{ matrix.cache-suffix }}-${{ hashFiles('**/CMakeLists.txt') }}
 
     - name: Setup ccache
       uses: hendrikmuhs/ccache-action@v1
       with:
-        key: ${{ runner.os }}-ccache-${{ needs.setup-dependencies.outputs.cache-key }}
+        key: ccache-${{ matrix.std }}-${{ github.ref }}
 
-    - name: Install minimal dependencies
+    - name: Install dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends cmake libsfml-dev g++-10 ccache
+        sudo apt-get update -qq
+        sudo apt-get install -y --no-install-recommends \
+          cmake \
+          libsfml-dev \
+          g++-10 \
+          ccache \
+          zstd
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
+        echo "CC=/usr/lib/ccache/gcc" >> $GITHUB_ENV
+        echo "CXX=/usr/lib/ccache/g++" >> $GITHUB_ENV
 
-    - name: Configure and build (C++${{ matrix.std }})
+    - name: Configure
       run: |
-        mkdir -p App/build
-        cd App/build
-        cmake .. $CMAKE_ARGS \
+        mkdir -p App/build && cd App/build
+        cmake .. \
           -DCMAKE_CXX_COMPILER=g++-10 \
           -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_CXX_STANDARD=${{ matrix.std }}
-        cmake --build . --config Release -- -j $(nproc)
+          -DCMAKE_CXX_STANDARD=${{ matrix.std }} \
+          $CMAKE_ARGS
 
-    - name: Verify executable
-      working-directory: ./App
+    - name: Build
+      working-directory: ./App/build
       run: |
-        if [ -f "./ImageEditor" ]; then
-          echo "✅ Executable built successfully (C++${{ matrix.std }})"
-          ls -lh ./ImageEditor
-        else
-          echo "❌ Executable not found!"
-          exit 1
-        fi
+        cmake --build . --config Release -- -j $(($(nproc) + 1))
+        ctest --output-on-failure -j $CTEST_PARALLEL_LEVEL
+
+    - name: Store artifacts
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-output-cpp${{ matrix.std }}
+        path: |
+          App/build/
+          App/ImageEditor
+        retention-days: 1
+
+    - name: Show ccache stats
+      run: ccache -s
