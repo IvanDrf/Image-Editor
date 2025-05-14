@@ -17,7 +17,7 @@
 #define KEY (event.key.code)
 #define FPS (30)
 
-// Menu Buttons, realization in InputField.cpp
+// Menu Buttons, realization in InputWindow.cpp
 namespace Front {
 using Paths = const std::vector<std::string>;
 
@@ -29,6 +29,7 @@ std::string SaveFile(Paths& pathsToFile, size_t activeFile);
 // Tools buttons
 std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
 std::string MoveImage([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
+std::string Reset([[maybe_unused]] Paths& pathToFile, [[maybe_unused]] size_t activeFile);
 }  // namespace Front
 
 auto main(int, char**) -> int {
@@ -50,7 +51,7 @@ auto main(int, char**) -> int {
     auto [backgorund, menuShape, menuImage, brushSizeImage]{Interface::CreateInterface()};
 
     // Menu Buttons
-    const std::vector<std::string> buttonNames = {"Add file", "Delete file", "Save file", "Brush", "Move"};
+    const std::vector<std::string> buttonNames = {"Add file", "Delete file", "Save file", "Brush", "Move", "Reset"};
     const auto buttonIcons{Interface::LoadButtonImages()};  // Button Icons
 
     std::vector<Button> buttons;
@@ -58,7 +59,7 @@ auto main(int, char**) -> int {
     Button::CreateMenuButtons(buttons, buttonNames, buttonColors, buttonFont);
 
     // Main Button Functions
-    ButtonFunction buttonFunctions[]{Front::AddFile, Front::DeleteFile, Front::SaveFile, Front::SelectBrush, Front::MoveImage};
+    ButtonFunction buttonFunctions[]{Front::AddFile, Front::DeleteFile, Front::SaveFile, Front::SelectBrush, Front::MoveImage, Front::Reset};
 
     // Brush
     Brush brush(kBrushInitialRadius, sf::Color::White);
@@ -347,13 +348,18 @@ auto main(int, char**) -> int {
 
             if (i != activeButton) {
                 buttons[i].DrawButton(mainWindow);
-                mainWindow.draw(buttonIcons[i]);
+
+                if (i < Buttons::Reset) {
+                    mainWindow.draw(buttonIcons[i]);
+                }
             }
         }
 
         if (buttonTarget && activeButton != NONE) {
             buttons[activeButton].DrawButton(mainWindow);
-            mainWindow.draw(buttonIcons[activeButton]);
+            if (activeButton < Buttons::Reset) {
+                mainWindow.draw(buttonIcons[activeButton]);
+            }
         }
 
         if (brushPressed) {  // Draw brush cursor

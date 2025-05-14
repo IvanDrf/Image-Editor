@@ -11,7 +11,8 @@ enum Buttons {
     DeleteFile = 1,
     SaveFile = 2,
     SelectBrush = 3,
-    Move = 4
+    Move = 4,
+    Reset = 5
 };
 
 // Constants

@@ -98,4 +98,8 @@ std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] si
 std::string MoveImage([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile) {
     return "";
 }
+
+std::string Reset([[maybe_unused]] Paths& pathToFile, [[maybe_unused]] size_t activeFile) {
+    return "";
+}
 }  // namespace Front
