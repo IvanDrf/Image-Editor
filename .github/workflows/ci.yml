@@ -13,16 +13,16 @@ env:
 
 jobs:
   clang-format:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
       with:
         ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
     - name: Install clang-format
-      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends clang-format
+      run: sudo apt-get update && sudo apt-get install -y clang-format
 
-    - name: Check formatting
+    - name: clang-format
       run: |
         FILES=$(find . -type f -regex '.*\.\(cpp\|hpp\|h\)$' \
                 -not -path "./build/*" \
@@ -38,7 +38,7 @@ jobs:
 
         clang-format --dry-run --Werror --style=file $FILES || \
           (echo "❌ Formatting errors found! Run 'clang-format -i YOUR_FILE' to fix."; exit 1)
-
+          
   setup-dependencies:
     runs-on: ubuntu-22.04
     outputs:
