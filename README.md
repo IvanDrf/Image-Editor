@@ -34,7 +34,7 @@
 ### Build Instructions
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/sfml-image-editor.git
+git clone https://github.com/IvanDrf/Image-Editor.git
 cd App
 
 # Build with CMake
