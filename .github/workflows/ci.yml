@@ -69,21 +69,22 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-deps-${{ matrix.cache-suffix }}-
 
-    - name: Setup ccache
-      uses: actions/setup-ccache@v3
+    - name: Install ccache
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y --no-install-recommends ccache
+        echo "CCACHE_DIR=$CCACHE_DIR" >> $GITHUB_ENV
+        echo "CC=/usr/lib/ccache/gcc" >> $GITHUB_ENV
+        echo "CXX=/usr/lib/ccache/g++" >> $GITHUB_ENV
 
     - name: Install dependencies
       run: |
-        sudo apt-get update -qq
-        sudo apt-get install -y --no-install-recommends \
+        sudo apt-get install -y \
           cmake \
           libsfml-dev \
           g++-10 \
-          ccache \
           zstd
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
-        echo "CC=/usr/lib/ccache/gcc" >> $GITHUB_ENV
-        echo "CXX=/usr/lib/ccache/g++" >> $GITHUB_ENV
 
     - name: Configure
       run: |
@@ -97,8 +98,10 @@ jobs:
     - name: Build
       working-directory: ./App/build
       run: |
+        ccache --zero-stats
         cmake --build . --config Release -- -j $(($(nproc) + 1))
         ctest --output-on-failure -j $CTEST_PARALLEL_LEVEL
+        ccache --show-stats
 
     - name: Store artifacts
       if: ${{ always() }}
@@ -110,6 +113,3 @@ jobs:
           App/ImageEditor
         retention-days: 1
         compression-level: 1
-
-    - name: Show ccache stats
-      run: ccache -s
