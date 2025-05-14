@@ -35,9 +35,8 @@ jobs:
         clang-format --dry-run --Werror --style=file $FILES || \
           (echo "❌ Formatting errors found! Run 'clang-format -i YOUR_FILE' to fix."; exit 1)
 
-  build:
+  build-cpp14:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
       with:
@@ -49,13 +48,13 @@ jobs:
         sudo apt-get install -y cmake libsfml-dev g++-10
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
 
-    - name: Configure CMake
+    - name: Configure CMake (C++14)
       run: |
         mkdir -p App/build
         cd App/build
-        cmake .. -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_BUILD_TYPE=Release
+        cmake .. -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=14
 
-    - name: Build project
+    - name: Build project (C++14)
       working-directory: ./App/build
       run: cmake --build . --config Release -- -j $(nproc)
 
@@ -63,7 +62,75 @@ jobs:
       working-directory: ./App
       run: |
         if [ -f "./ImageEditor" ]; then
-          echo "✅ Executable built successfully"
+          echo "✅ Executable built successfully (C++14)"
+          ls -lh ./ImageEditor
+        else
+          echo "❌ Executable not found!"
+          exit 1
+        fi
+
+  build-cpp17:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.ref || github.ref }}
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake libsfml-dev g++-10
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
+
+    - name: Configure CMake (C++17)
+      run: |
+        mkdir -p App/build
+        cd App/build
+        cmake .. -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17
+
+    - name: Build project (C++17)
+      working-directory: ./App/build
+      run: cmake --build . --config Release -- -j $(nproc)
+
+    - name: Verify executable
+      working-directory: ./App
+      run: |
+        if [ -f "./ImageEditor" ]; then
+          echo "✅ Executable built successfully (C++17)"
+          ls -lh ./ImageEditor
+        else
+          echo "❌ Executable not found!"
+          exit 1
+        fi
+
+  build-cpp20:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.ref || github.ref }}
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake libsfml-dev g++-10
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
+
+    - name: Configure CMake (C++20)
+      run: |
+        mkdir -p App/build
+        cd App/build
+        cmake .. -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20
+
+    - name: Build project (C++20)
+      working-directory: ./App/build
+      run: cmake --build . --config Release -- -j $(nproc)
+
+    - name: Verify executable
+      working-directory: ./App
+      run: |
+        if [ -f "./ImageEditor" ]; then
+          echo "✅ Executable built successfully (C++20)"
           ls -lh ./ImageEditor
         else
           echo "❌ Executable not found!"
