@@ -10,8 +10,8 @@ Button::Button(const float x, const float y, const std::string& name, const sf::
     text_.setFillColor(sf::Color::White);
     text_.setString(name);
 
-    float textWidth = text_.getGlobalBounds().width;
-    float textHeight = text_.getGlobalBounds().height;
+    float textWidth{text_.getGlobalBounds().width};
+    float textHeight{text_.getGlobalBounds().height};
 
     text_.setOrigin(textWidth / 2, textHeight / 2);
     text_.setPosition(x + kButtonWidth / 2, y + kButtonHeight / 2 - textHeight / 2);

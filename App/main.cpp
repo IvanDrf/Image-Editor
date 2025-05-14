@@ -47,11 +47,11 @@ auto main(int, char**) -> int {
     FileField fileField;
     StatusBar statusBar;
 
-    auto [backgorund, menuShape, menuImage, brushSizeImage] = Interface::CreateInterface();
+    auto [backgorund, menuShape, menuImage, brushSizeImage]{Interface::CreateInterface()};
 
     // Menu Buttons
     const std::vector<std::string> buttonNames = {"Add file", "Delete file", "Save file", "Brush", "Move"};
-    const auto buttonIcons = Interface::LoadButtonImages();  // Button Icons
+    const auto buttonIcons{Interface::LoadButtonImages()};  // Button Icons
 
     std::vector<Button> buttons;
     const std::vector<sf::Color> buttonColors{kFileButtonColor, kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor};
@@ -68,7 +68,7 @@ auto main(int, char**) -> int {
     // Brush size field, displays current brush size
     // Brush size field position
 
-    auto [brushSizeFieldPosX, brushSizeFieldPosY] = Interface::CalculateBrushSizePos(brushSizeImage);
+    auto [brushSizeFieldPosX, brushSizeFieldPosY]{Interface::CalculateBrushSizePos(brushSizeImage)};
 
     BrushSizeDisplay brushSizeField(kBrushInitialRadius, buttonFont);
     bool brushSizeFieldPressed{false};
@@ -80,15 +80,15 @@ auto main(int, char**) -> int {
     BrushColorDisplay brushCurrentColor(kBrushCurrentColorBoxSize);
     brushCurrentColor.SetColor(brush.GetColor());
 
-    auto [palettePosX, palettePosY] = Interface::CalculatePalettePos({brushSizeFieldPosX, kButtonHeight});
+    auto [palettePosX, palettePosY]{Interface::CalculatePalettePos({brushSizeFieldPosX, kButtonHeight})};
     brushCurrentColor.SetPalettePosition(palettePosX, palettePosY);
 
     // Brush current color shape position
-    auto [brushColorShapePosX, brushColorShapePosY] = Interface::CalculateBrushColorShapePos({brushSizeFieldPosX, brushSizeFieldPosY});
+    auto [brushColorShapePosX, brushColorShapePosY]{Interface::CalculateBrushColorShapePos({brushSizeFieldPosX, brushSizeFieldPosY})};
     brushCurrentColor.SetPosition(brushColorShapePosX, brushColorShapePosY);
 
     // Zoom
-    auto [zoomOut, zoomIn, zoomBackground] = Interface::LoadZoomImages();
+    auto [zoomOut, zoomIn, zoomBackground]{Interface::LoadZoomImages()};
     float currentScale{kDefaultZoom};
 
     bool isMoved{false};
@@ -116,9 +116,9 @@ auto main(int, char**) -> int {
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 for (size_t i = 0; i < buttonNames.size(); ++i) {
                     if (buttons[i].AimButton({event.mouseButton.x, event.mouseButton.y})) {
-                        std::string result = buttonFunctions[i](pathsToFile, activeFile);  // Path to file
+                        std::string result{buttonFunctions[i](pathsToFile, activeFile)};  // Path to file
 
-                        [[maybe_unused]] const size_t oldFilesCount = pathsToFile.size();                                             // Check was file deleted succesfully or not
+                        [[maybe_unused]] const size_t oldFilesCount{pathsToFile.size()};                                              // Check was file deleted succesfully or not
                         WorkWithPath(pathsToFile, activeFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);  // Work with main buttons
 
                         if (image.HasImage() && oldFilesCount != pathsToFile.size()) {

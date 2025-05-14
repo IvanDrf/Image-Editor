@@ -31,9 +31,11 @@ namespace ActiveFile {
 struct ActiveContext {
     size_t& activeFile;
     size_t& previousFile;
+
     Paths& pathsToFile;
     Image& image;
     StackImage& previousStatus;
+
     StatusBar& statusBar;
 };
 
