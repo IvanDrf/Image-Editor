@@ -66,11 +66,11 @@ jobs:
           App/build
           /tmp/ccache
         key: ${{ runner.os }}-deps-${{ matrix.cache-suffix }}-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-deps-${{ matrix.cache-suffix }}-
 
     - name: Setup ccache
-      uses: hendrikmuhs/ccache-action@v1
-      with:
-        key: ccache-${{ matrix.std }}-${{ github.ref }}
+      uses: actions/setup-ccache@v3
 
     - name: Install dependencies
       run: |
@@ -102,13 +102,14 @@ jobs:
 
     - name: Store artifacts
       if: ${{ always() }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build-output-cpp${{ matrix.std }}
         path: |
           App/build/
           App/ImageEditor
         retention-days: 1
+        compression-level: 1
 
     - name: Show ccache stats
       run: ccache -s
