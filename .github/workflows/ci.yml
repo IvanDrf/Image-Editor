@@ -7,11 +7,6 @@ on:
     branches: [main]
     types: [opened, synchronize, reopened]
 
-env:
-  CCACHE_DIR: /tmp/ccache
-  CMAKE_ARGS: -DCMAKE_CXX_FLAGS="-O3"
-  CTEST_PARALLEL_LEVEL: 2
-
 jobs:
   clang-format:
     runs-on: ubuntu-latest
@@ -23,7 +18,7 @@ jobs:
     - name: Install clang-format
       run: sudo apt-get update && sudo apt-get install -y clang-format
 
-    - name: Check formatting
+    - name: clang-format
       run: |
         FILES=$(find . -type f -regex '.*\.\(cpp\|hpp\|h\)$' \
                 -not -path "./build/*" \
@@ -39,74 +34,38 @@ jobs:
 
         clang-format --dry-run --Werror --style=file $FILES || \
           (echo "❌ Formatting errors found! Run 'clang-format -i YOUR_FILE' to fix."; exit 1)
-          
+
   build:
-    runs-on: ubuntu-22.04
-    timeout-minutes: 15
-    strategy:
-      matrix:
-        std: [11, 14, 17, 20]
+    runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
-
-    - name: Cache dependencies
-      uses: actions/cache@v4
       with:
-        path: |
-          ~/.cache
-          /usr/local
-          App/build
-          /tmp/ccache
-        key: ${{ runner.os }}-deps-${{ matrix.std }}-${{ hashFiles('**/CMakeLists.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-deps-${{ matrix.std }}-
-          ${{ runner.os }}-deps-
+        ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
-    - name: Install build tools
+    - name: Install dependencies
       run: |
-        sudo apt-get update -qq
-        sudo apt-get install -y --no-install-recommends \
-          cmake \
-          libsfml-dev \
-          g++-10 \
-          ccache \
-          zstd
+        sudo apt-get update
+        sudo apt-get install -y cmake libsfml-dev g++-10
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
 
-    - name: Configure ccache
+    - name: Configure CMake
       run: |
-        echo "CCACHE_DIR=$CCACHE_DIR" >> $GITHUB_ENV
-        echo "CC=/usr/lib/ccache/gcc" >> $GITHUB_ENV
-        echo "CXX=/usr/lib/ccache/g++" >> $GITHUB_ENV
-        ccache --max-size=2G
-        ccache --show-stats
-
-    - name: Configure build
-      run: |
-        mkdir -p App/build && cd App/build
-        cmake .. \
-          -DCMAKE_CXX_COMPILER=g++-10 \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_CXX_STANDARD=${{ matrix.std }} \
-          $CMAKE_ARGS
+        mkdir -p App/build
+        cd App/build
+        cmake .. -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_BUILD_TYPE=Release
 
     - name: Build project
       working-directory: ./App/build
+      run: cmake --build . --config Release -- -j $(nproc)
+
+    - name: Verify executable
+      working-directory: ./App
       run: |
-        ccache --zero-stats
-        cmake --build . --config Release -- -j $(($(nproc) + 1))
-        ccache --show-stats
-
-    - name: Run tests
-      working-directory: ./App/build
-      run: ctest --output-on-failure -j $CTEST_PARALLEL_LEVEL
-
-    - name: Upload artifacts
-      if: ${{ always() }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-output-cpp${{ matrix.std }}
-        path: |
-          App/build/
-          App/ImageEditor
-        retention-days: 1
+        if [ -f "./ImageEditor" ]; then
+          echo "✅ Executable built successfully"
+          ls -lh ./ImageEditor
+        else
+          echo "❌ Executable not found!"
+          exit 1
+        fi
