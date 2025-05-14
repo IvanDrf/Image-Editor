@@ -152,4 +152,6 @@ void DeletePath(Paths& pathToFile, const std::string& fileName);
 namespace Zoom {
 void ZoomIn(Image& image);
 void ZoomOut(Image& image);
+
+void Reset(Image& image, StatusBar& statusBar, Brush& brush, float& currentZoom);
 }  // namespace Zoom

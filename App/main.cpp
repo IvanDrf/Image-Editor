@@ -90,7 +90,7 @@ auto main(int, char**) -> int {
 
     // Zoom
     auto [zoomOut, zoomIn, zoomBackground]{Interface::LoadZoomImages()};
-    float currentScale{kDefaultZoom};
+    float currentZoom{kDefaultZoom};
 
     bool isMoved{false};
     bool isMoveButton{false};
@@ -125,8 +125,8 @@ auto main(int, char**) -> int {
                         if (image.HasImage() && oldFilesCount != pathsToFile.size()) {
                             Back::SelectNewActiveFile(i, activeFile, pathsToFile.size());
 
-                            currentScale = kDefaultZoom;
-                            brush.UpdateCursorScale(currentScale);
+                            currentZoom = kDefaultZoom;
+                            brush.UpdateCursorScale(currentZoom);
                         }
 
                         // Move button
@@ -139,6 +139,10 @@ auto main(int, char**) -> int {
 
                             buttons[i].SetColor((isMoveButton) ? (kActiveButtonColor) : kToolsColor);  // Set active 'Move' button color
                             statusBar.UpdateStatus((isMoveButton) ? ("Move selected") : ("Move is no longer selected"), (isMoved) ? (sf::Color::Green) : (sf::Color::Red));
+                        }
+
+                        if (image.HasImage() && i == Buttons::Reset) {
+                            Zoom::Reset(image, statusBar, brush, currentZoom);
                         }
 
                         if (brushPressed && buttons[Buttons::SelectBrush].GetColor() != kActiveButtonColor) {
@@ -166,7 +170,7 @@ auto main(int, char**) -> int {
                     brush.SetRadius(0);
                     brushSizeField.SetText(0);
 
-                    brush.UpdateCursorScale(currentScale);
+                    brush.UpdateCursorScale(currentZoom);
                 } else {
                     brushSizeFieldPressed = false;
                 }
@@ -179,22 +183,22 @@ auto main(int, char**) -> int {
                 const sf::Vector2i mousePosition{event.mouseButton.x, event.mouseButton.y};
                 if (image.HasImage() && zoomIn->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
                     Zoom::ZoomIn(image);
-                    currentScale += kZoomStep;
+                    currentZoom += kZoomStep;
 
-                    brush.UpdateCursorScale(currentScale);
+                    brush.UpdateCursorScale(currentZoom);
 
-                    statusBar.UpdateStatus("Current zoom: " + std::to_string(currentScale).substr(0, 3));
+                    statusBar.UpdateStatus("Current zoom: " + std::to_string(currentZoom).substr(0, 3));
                 }
 
                 // Zoom Out
                 if (image.HasImage() && zoomOut->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
-                    if (currentScale - kZoomStep >= 0) {
+                    if (currentZoom - kZoomStep >= 0) {
                         Zoom::ZoomOut(image);
-                        currentScale = currentScale - kZoomStep;
+                        currentZoom = currentZoom - kZoomStep;
 
-                        brush.UpdateCursorScale(currentScale);
+                        brush.UpdateCursorScale(currentZoom);
 
-                        statusBar.UpdateStatus("Current zoom: " + std::to_string(currentScale).substr(0, 3));
+                        statusBar.UpdateStatus("Current zoom: " + std::to_string(currentZoom).substr(0, 3));
                     }
                 }
             }
@@ -213,13 +217,7 @@ auto main(int, char**) -> int {
 
             // Reset image postion -> default image position and zoom
             if (!brushPressed && image.HasImage() && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::R) {
-                image.SetPosition(kFileFieldWidth, kButtonHeight);
-                image.SetMainImageScale();
-
-                currentScale = kDefaultZoom;
-
-                brush.UpdateCursorScale(currentScale);
-                statusBar.UpdateStatus("Current zoom: " + std::to_string(currentScale).substr(0, 3));
+                Zoom::Reset(image, statusBar, brush, currentZoom);
             }
 
             // Select active image by key 'up'
@@ -249,7 +247,7 @@ auto main(int, char**) -> int {
                 brush.SetRadius(brushSizeField.InputSize(event));
                 brushSizeField.SetText(brush.GetRadius());
 
-                brush.UpdateCursorScale(currentScale);
+                brush.UpdateCursorScale(currentZoom);
             }
 
             // Change brush size (Increase size)
@@ -257,7 +255,7 @@ auto main(int, char**) -> int {
                 brush.SetRadius(std::min(brush.GetRadius() + kBrushChangeRadius, 1000));
                 brushSizeField.SetText(brush.GetRadius());
 
-                brush.UpdateCursorScale(currentScale);
+                brush.UpdateCursorScale(currentZoom);
             }
 
             // Change brush size (Decrease size)
@@ -265,7 +263,7 @@ auto main(int, char**) -> int {
                 brush.SetRadius(std::max(kBrushInitialRadius / kBrushInitialRadius, brush.GetRadius() - kBrushChangeRadius));
                 brushSizeField.SetText(brush.GetRadius());
 
-                brush.UpdateCursorScale(currentScale);
+                brush.UpdateCursorScale(currentZoom);
             }
 
             // Set Brush Color by hot key
