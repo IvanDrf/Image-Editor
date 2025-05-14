@@ -30,8 +30,8 @@ class Image {
 
     [[nodiscard]] sf::Vector2f GetScale() const;
     [[nodiscard]] sf::FloatRect GetSpriteBound() const;
-    const sf::Sprite& GetSprite() const;
-    const sf::Texture& GetTexture() const;
+    [[nodiscard]] const sf::Sprite& GetSprite() const;
+    [[nodiscard]] const sf::Texture& GetTexture() const;
 
     [[nodiscard]] sf::Vector2f GetImagePosition(const sf::Vector2i& mousePosition) const;
     [[nodiscard]] sf::Image& GetImage();

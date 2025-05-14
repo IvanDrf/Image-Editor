@@ -10,8 +10,8 @@ Button::Button(const float x, const float y, const std::string& name, const sf::
     text_.setFillColor(sf::Color::White);
     text_.setString(name);
 
-    float textWidth = text_.getGlobalBounds().width;
-    float textHeight = text_.getGlobalBounds().height;
+    float textWidth{text_.getGlobalBounds().width};
+    float textHeight{text_.getGlobalBounds().height};
 
     text_.setOrigin(textWidth / 2, textHeight / 2);
     text_.setPosition(x + kButtonWidth / 2, y + kButtonHeight / 2 - textHeight / 2);
@@ -23,22 +23,26 @@ Button::Button(const float x, const float y, const std::string& name, const sf::
     shape_.setPosition(x, y);
 }
 
+sf::Vector2f Button::GetPosition() const {
+    return shape_.getPosition();
+}
+
+sf::Color Button::GetColor() const {
+    return shape_.getFillColor();
+}
+
 void Button::SetPosition(const float x, const float y) {
     text_.setPosition(x + kButtonWidth / 2, y + kButtonHeight / 2 - text_.getGlobalBounds().height / 2);
     shape_.setPosition(sf::Vector2f(x, y));
-}
-
-void Button::DrawButton(sf::RenderWindow& window) const {
-    window.draw(shape_);
-    window.draw(text_);
 }
 
 void Button::SetColor(const sf::Color& newColor) {
     shape_.setFillColor(newColor);
 }
 
-sf::Color Button::GetColor() const {
-    return shape_.getFillColor();
+void Button::DrawButton(sf::RenderWindow& window) const {
+    window.draw(shape_);
+    window.draw(text_);
 }
 
 bool Button::AimButton(const sf::Vector2i& mousePosition) const {
@@ -88,4 +92,7 @@ void Button::CreateMenuButtons(std::vector<Button>& buttons, const std::vector<s
 
     buttons[Buttons::Move].SetColor(kToolsColor);  // Diff color for move
     buttons[Buttons::Move].SetPosition(5.5f * kButtonWidth, 0);
+
+    buttons[Buttons::Reset].SetColor(kToolsColor);
+    buttons[Buttons::Reset].SetPosition(buttons[Buttons::Move].GetPosition().x + kButtonWidth, 0);
 }

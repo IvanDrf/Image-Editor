@@ -13,11 +13,13 @@ class Button {
  public:
     Button(const float x, const float y, const std::string& name, const sf::Color& color, const sf::Font& font);
 
+    [[nodiscard]] sf::Vector2f GetPosition() const;
+    [[nodiscard]] sf::Color GetColor() const;
+
     void SetPosition(const float x, const float y);
+    void SetColor(const sf::Color& newColor);
 
     void DrawButton(sf::RenderWindow& window) const;
-    void SetColor(const sf::Color& newColor);
-    sf::Color GetColor() const;
 
     [[nodiscard]] bool AimButton(const sf::Vector2i& mousePosition) const;
 

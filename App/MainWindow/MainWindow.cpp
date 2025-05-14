@@ -32,10 +32,15 @@ void WorkWithPath(Paths& pathToFile, size_t activeFile, const std::string& resul
             break;
         }
 
+        // Select Brush
         case (Buttons::SelectBrush): {
             Back::SelectBrush(brushPressed, image, statusBar);
 
             break;
+        }
+
+        default: {
+            return;
         }
     }
 }
@@ -195,5 +200,15 @@ void ZoomIn(Image& image) {
 void ZoomOut(Image& image) {
     image.SetScale(image.GetScale().x - kZoomStep, image.GetScale().y - kZoomStep);
     image.SetPosition(kFileFieldWidth, kButtonHeight);
+}
+
+void Reset(Image& image, StatusBar& statusBar, Brush& brush, float& currentZoom) {
+    image.SetPosition(kFileFieldWidth, kButtonHeight);
+    image.SetMainImageScale();
+
+    currentZoom = kDefaultZoom;
+
+    brush.UpdateCursorScale(currentZoom);
+    statusBar.UpdateStatus("Current zoom: " + std::to_string(currentZoom).substr(0, 3));
 }
 }  // namespace Zoom

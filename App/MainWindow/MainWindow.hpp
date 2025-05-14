@@ -11,7 +11,8 @@ enum Buttons {
     DeleteFile = 1,
     SaveFile = 2,
     SelectBrush = 3,
-    Move = 4
+    Move = 4,
+    Reset = 5
 };
 
 // Constants
@@ -151,4 +152,6 @@ void DeletePath(Paths& pathToFile, const std::string& fileName);
 namespace Zoom {
 void ZoomIn(Image& image);
 void ZoomOut(Image& image);
+
+void Reset(Image& image, StatusBar& statusBar, Brush& brush, float& currentZoom);
 }  // namespace Zoom
