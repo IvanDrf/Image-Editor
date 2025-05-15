@@ -134,10 +134,6 @@ auto main(int, char**) -> int {
                             statusBar.UpdateStatus((isMoveButton) ? ("Move selected") : ("Move is no longer selected"), (isMoved) ? (sf::Color::Green) : (sf::Color::Red));
                         }
 
-                        if (image.HasImage() && i == Buttons::Reset) {
-                            Zoom::Reset(image, statusBar, brush, currentZoom);
-                        }
-
                         if (brushPressed && buttons[Buttons::SelectBrush].GetColor() != kActiveButtonColor) {
                             buttons[Buttons::SelectBrush].SetColor(kActiveButtonColor);
 

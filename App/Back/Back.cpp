@@ -38,6 +38,10 @@ void ButtonsFunc(AppData& data, size_t buttonNumber) {
             break;
         }
 
+        case (Buttons::Reset): {
+            Back::Reset(data);
+        }
+
         default: {
             return;
         }
@@ -135,6 +139,12 @@ void SelectBrush(AppData& data) {
     }
 
     data.statusBar.UpdateStatus("Brush is no longer selected");
+}
+
+void Reset(AppData& data) {
+    if (data.image.HasImage()) {
+        Zoom::Reset(data.image, data.statusBar, data.brush, data.currentZoom);
+    }
 }
 }  // namespace Back
 
