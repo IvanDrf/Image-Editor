@@ -4,7 +4,6 @@
 #include <vector>
 
 // Interface
-
 #include "Back/Back.hpp"
 #include "Brush/Brush.hpp"
 #include "Button/Button.hpp"
@@ -103,7 +102,7 @@ auto main(int, char**) -> int {
     size_t previousFile{};                 // Previous active file
 
     std::string buttonInputResult{};
-    AppData appData{pathsToFile, activeFile, previousFile, buttonInputResult, image, fileField, statusBar, previousStatus, brushPressed};
+    AppData appData{pathsToFile, previousFile, activeFile, buttonInputResult, image, currentZoom, fileField, statusBar, previousStatus, brush, brushPressed};
 
     // Main Loop
     while (mainWindow.isOpen()) {
@@ -122,13 +121,6 @@ auto main(int, char**) -> int {
 
                         [[maybe_unused]] const size_t oldFilesCount{pathsToFile.size()};  // Check was file deleted succesfully or not
                         ButtonsFunc(appData, i);                                          // Work with main buttons
-
-                        if (image.HasImage() && oldFilesCount != pathsToFile.size()) {  // Select new Active file
-                            Back::SelectNewActiveFile(i, activeFile, pathsToFile.size());
-
-                            currentZoom = kDefaultZoom;
-                            brush.UpdateCursorScale(currentZoom);
-                        }
 
                         // Move button
                         if (image.HasImage() && i == Buttons::Move) {
@@ -177,6 +169,7 @@ auto main(int, char**) -> int {
                 }
 
                 // Select active image by mouse
+
                 activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
                 ActiveFile::SelectActiveImage(appData);
 
@@ -310,7 +303,7 @@ auto main(int, char**) -> int {
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Delete) {
                 std::string result = Interface::DeleteFile(pathsToFile, activeFile);
 
-                Back::SelectNewActiveFile(Buttons::DeleteFile, activeFile, pathsToFile.size());
+                ActiveFile::ChangeActiveFileNumber(Buttons::DeleteFile, activeFile, pathsToFile.size());
                 ButtonsFunc(appData, Buttons::DeleteFile);
             }
         }

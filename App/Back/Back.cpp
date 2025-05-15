@@ -71,6 +71,10 @@ void AddFile(AppData& data) {
 
         data.statusBar.UpdateStatus("Image loaded successfully", sf::Color::Green);
 
+        ActiveFile::ChangeActiveFileNumber(Buttons::AddFile, data.activeFile, data.pathsToFile.size());
+        data.currentZoom = kDefaultZoom;                 // Reset zoom
+        data.brush.UpdateCursorScale(data.currentZoom);  // Reset zoom
+
     } catch (...) {
         data.statusBar.UpdateStatus("Image could not be found", sf::Color::Red);
     }
@@ -91,23 +95,19 @@ void DeleteFile(AppData& data) {
         return;
     }
 
-    size_t oldLength{data.fileField.GetFiles().size()};  // Old count of files
     data.fileField.DeleteFile(Path::GetFileName(data.result));
-    size_t newLength{data.fileField.GetFiles().size()};  // New count of files
-
-    if (oldLength == newLength) {
-        data.statusBar.UpdateStatus("File not found", sf::Color::Red);
-
-        return;
-    }
-
     data.statusBar.UpdateStatus("File was deleted successfully", sf::Color::Green);
     Path::DeletePath(data.pathsToFile, data.result);  // Delete path to deleting file
+
+    ActiveFile::ChangeActiveFileNumber(Buttons::DeleteFile, data.activeFile, data.pathsToFile.size());
+    data.currentZoom = kDefaultZoom;                 // Reset zoom
+    data.brush.UpdateCursorScale(data.currentZoom);  // Reset zoom
 
     data.image.ClearImage(data.previousStatus);  // Reset scale, texture and e.t.c
     if (!data.pathsToFile.empty()) {
         data.image.LoadImage(data.pathsToFile[data.activeFile]);  // Load previous image
         data.image.SetMainImageScale();
+
     } else {
         data.brushPressed = false;  // If there no files left
     }
@@ -136,24 +136,6 @@ void SelectBrush(AppData& data) {
 
     data.statusBar.UpdateStatus("Brush is no longer selected");
 }
-
-#ifndef NONE
-#define NONE (std::numeric_limits<size_t>::max())
-void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile, size_t files) {
-    if (buttonNumber == Buttons::AddFile) {
-        activeFile = files - 1;
-        return;
-    }
-
-    if (buttonNumber == Buttons::DeleteFile) {
-        --activeFile;
-        if (activeFile == NONE && files > 0) {
-            activeFile = 0;
-        }
-    }
-}
-#endif
-
 }  // namespace Back
 
 namespace Path {

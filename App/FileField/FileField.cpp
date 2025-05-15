@@ -22,7 +22,7 @@ FileField::FileField() {
     // appDataFileBackGround_.setOrigin(0, kFileBackGroundSize.y / 2);
 }
 
-void FileField::DrawField(sf::RenderWindow& window, size_t appDataFile) {
+void FileField::DrawField(sf::RenderWindow& window, size_t activeFile) {
     window.draw(shape_);
 
     displayedFiles_.clear();
@@ -34,7 +34,7 @@ void FileField::DrawField(sf::RenderWindow& window, size_t appDataFile) {
 
     float textPositionY{1.15f * kButtonHeight};
 
-    activeFileBackGround_.setPosition(0, textPositionY + appDataFile * kLineHeight);
+    activeFileBackGround_.setPosition(0, textPositionY + activeFile * kLineHeight);
     if (!files_.empty()) {
         window.draw(activeFileBackGround_);
     }
@@ -66,7 +66,7 @@ const std::vector<std::string>& FileField::GetFiles() const {
     return files_;
 }
 
-size_t FileField::GetActiveFile(const sf::Vector2i& mousePosition, size_t appDataFile) const {
+size_t FileField::GetActiveFile(const sf::Vector2i& mousePosition, size_t activeFile) const {
     if (files_.size() == 1) {
         return 0;
     }
@@ -77,7 +77,7 @@ size_t FileField::GetActiveFile(const sf::Vector2i& mousePosition, size_t appDat
         }
     }
 
-    return appDataFile;
+    return activeFile;
 }
 
 namespace {
@@ -86,7 +86,6 @@ void UpdateActiveImage(AppData& appData) {
         appData.image.ClearImage(appData.previousStatus);                  // Destroy old image
         appData.image.LoadImage(appData.pathsToFile[appData.activeFile]);  // Load selected image
         appData.image.SetMainImageScale();                                 // Set main properties
-
     } catch (std::runtime_error& e) {
         appData.statusBar.UpdateStatus(e.what());
     }
@@ -96,16 +95,30 @@ void UpdateActiveImage(AppData& appData) {
 }  // namespace
 
 namespace ActiveFile {
+
 #ifndef NONE
-#define NONE (std::numeric_limits<std::size_t>::max())
+#define NONE (std::numeric_limits<size_t>::max())
+#endif
+
+void ChangeActiveFileNumber(size_t buttonNumber, size_t& activeFile, size_t files) {
+    if (buttonNumber == Buttons::AddFile) {
+        activeFile = files - 1;
+        return;
+    }
+
+    if (buttonNumber == Buttons::DeleteFile) {
+        --activeFile;
+        if (activeFile == NONE && files > 0) {
+            activeFile = 0;
+        }
+    }
+}
 
 void SelectActiveImage(AppData& appData) {
     if (appData.activeFile != NONE && appData.activeFile != appData.previousFile) {
         UpdateActiveImage(appData);
     }
 }
-
-#endif
 
 void SelectUpperImage(AppData& appData) {
     if (appData.pathsToFile.size() > 1 && appData.activeFile > 0) {

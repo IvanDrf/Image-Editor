@@ -18,10 +18,14 @@ struct AppData {
     size_t& activeFile;         // Current active file
     const std::string& result;  // Buttons function result
 
-    Image& image;  // Current image
+    Image& image;        // Current image
+    float& currentZoom;  // Current zoom
+
     FileField& fileField;
     StatusBar& statusBar;
     StackImage& previousStatus;
+
+    Brush& brush;
     bool& brushPressed;
 };
 
@@ -37,8 +41,6 @@ void DeleteFile(AppData& data);
 void SaveFile(AppData& data);
 void SelectFile(AppData& data);
 void SelectBrush(AppData& data);
-
-void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile, size_t files);
 }  // namespace Back
 
 // Functions that process the path

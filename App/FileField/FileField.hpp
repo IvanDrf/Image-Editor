@@ -29,7 +29,8 @@ class FileField {
 
 // Active file
 namespace ActiveFile {
-void SelectActiveImage(AppData& active);
+void ChangeActiveFileNumber(size_t buttonNumber, size_t& activeFile, size_t files);  // Add file, delete file
+void SelectActiveImage(AppData& active);                                             // Switch between files
 
 void SelectUpperImage(AppData& active);
 void SelectLowerImage(AppData& active);
