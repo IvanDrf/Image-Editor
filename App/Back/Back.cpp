@@ -8,33 +8,32 @@
 #include "../StatusBar/StatusBar.hpp"
 
 // Main Methods for working with files
-void WorkWithPath(Paths& pathToFile, size_t activeFile, const std::string& result, size_t buttonNumber, Image& image, FileField& fileField, StatusBar& statusBar, bool& brushPressed,
-                  StackImage& previousStatus) {
+void ButtonsFunc(AppData& data, size_t buttonNumber) {
     switch (static_cast<Buttons>(buttonNumber)) {
         // Add file button
         case (Buttons::AddFile): {
-            Back::AddFile(pathToFile, result, image, fileField, statusBar, previousStatus);
+            Back::AddFile(data);
 
             break;
         }
 
         // Delete file button
         case (Buttons::DeleteFile): {
-            Back::DeleteFile(pathToFile, activeFile, result, image, fileField, statusBar, previousStatus, brushPressed);
+            Back::DeleteFile(data);
 
             break;
         }
 
         // Save file button
         case (Buttons::SaveFile): {
-            Back::SaveFile(result, image, statusBar);
+            Back::SaveFile(data);
 
             break;
         }
 
         // Select Brush
         case (Buttons::SelectBrush): {
-            Back::SelectBrush(brushPressed, image, statusBar);
+            Back::SelectBrush(data);
 
             break;
         }
@@ -46,95 +45,96 @@ void WorkWithPath(Paths& pathToFile, size_t activeFile, const std::string& resul
 }
 
 namespace Back {
-void AddFile(Paths& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus) {
-    if (result.empty()) {
+void AddFile(AppData& data) {
+    if (data.result.empty()) {
         return;
     }
 
     try {
-        if (std::find(fileField.GetFiles().begin(), fileField.GetFiles().end(), Path::GetFileName(result)) != fileField.GetFiles().end()) {
-            statusBar.UpdateStatus("File has already been added");
+        if (std::find(data.fileField.GetFiles().begin(), data.fileField.GetFiles().end(), Path::GetFileName(data.result)) != data.fileField.GetFiles().end()) {
+            data.statusBar.UpdateStatus("File has already been added");
 
             return;
         }
 
         sf::Image temp;
-        if (!temp.loadFromFile(result)) {
+        if (!temp.loadFromFile(data.result)) {
             throw std::invalid_argument("Image could not be found");
         }
 
-        pathToFile.push_back(result);      // Add new path to the new file
-        image.ClearImage(previousStatus);  // Clear if there was some image
-        image.LoadImage(result);           // Load new image
-        image.SetMainImageScale();
+        data.pathToFile.push_back(data.result);      // Add new path to the new file
+        data.image.ClearImage(data.previousStatus);  // Clear if there was some image
+        data.image.LoadImage(data.result);           // Load new image
+        data.image.SetMainImageScale();
 
-        fileField.AddFile(Path::GetFileName(result));
+        data.fileField.AddFile(Path::GetFileName(data.result));
 
-        statusBar.UpdateStatus("Image loaded successfully", sf::Color::Green);
+        data.statusBar.UpdateStatus("Image loaded successfully", sf::Color::Green);
+
     } catch (...) {
-        statusBar.UpdateStatus("Image could not be found", sf::Color::Red);
+        data.statusBar.UpdateStatus("Image could not be found", sf::Color::Red);
     }
 }
 
-void SaveFile(const std::string& result, Image& image, StatusBar& statusBar) {
-    if (!result.empty() && image.SaveImage(result)) {
-        statusBar.UpdateStatus("File was saved successfully", sf::Color::Green);
+void SaveFile(AppData& data) {
+    if (!data.result.empty() && data.image.SaveImage(data.result)) {
+        data.statusBar.UpdateStatus("File was saved successfully", sf::Color::Green);
 
         return;
     }
 
-    statusBar.UpdateStatus("Unable to save the file", sf::Color::Red);
+    data.statusBar.UpdateStatus("Unable to save the file", sf::Color::Red);
 }
 
-void DeleteFile(Paths& pathToFile, size_t activeFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus, bool& brushPressed) {
-    if (result.empty()) {
+void DeleteFile(AppData& data) {
+    if (data.result.empty()) {
         return;
     }
 
-    size_t oldLength{fileField.GetFiles().size()};  // Old count of files
-    fileField.DeleteFile(Path::GetFileName(result));
-    size_t newLength{fileField.GetFiles().size()};  // New count of files
+    size_t oldLength{data.fileField.GetFiles().size()};  // Old count of files
+    data.fileField.DeleteFile(Path::GetFileName(data.result));
+    size_t newLength{data.fileField.GetFiles().size()};  // New count of files
 
     if (oldLength == newLength) {
-        statusBar.UpdateStatus("File not found", sf::Color::Red);
+        data.statusBar.UpdateStatus("File not found", sf::Color::Red);
 
         return;
     }
 
-    statusBar.UpdateStatus("File was deleted successfully", sf::Color::Green);
-    Path::DeletePath(pathToFile, result);  // Delete path to deleting file
+    data.statusBar.UpdateStatus("File was deleted successfully", sf::Color::Green);
+    Path::DeletePath(data.pathToFile, data.result);  // Delete path to deleting file
 
-    image.ClearImage(previousStatus);  // Reset scale, texture and e.t.c
-    if (!pathToFile.empty()) {
-        image.LoadImage(pathToFile[activeFile]);  // Load previous image
-        image.SetMainImageScale();
+    data.image.ClearImage(data.previousStatus);  // Reset scale, texture and e.t.c
+    if (!data.pathToFile.empty()) {
+        data.image.LoadImage(data.pathToFile[data.activeFile]);  // Load previous image
+        data.image.SetMainImageScale();
     } else {
-        brushPressed = false;  // If there no files left
+        data.brushPressed = false;  // If there no files left
     }
 }
 
-void SelectFile(Paths& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus) {
-    if (!result.empty() && std::find(fileField.GetFiles().begin(), fileField.GetFiles().end(), result) != fileField.GetFiles().end()) {
-        statusBar.UpdateStatus("File " + result + " selected", sf::Color::Green);
+void SelectFile(AppData& data) {
+    if (!data.result.empty() && std::find(data.fileField.GetFiles().begin(), data.fileField.GetFiles().end(), data.result) != data.fileField.GetFiles().end()) {
+        data.statusBar.UpdateStatus("File " + data.result + " selected", sf::Color::Green);
 
-        image.ClearImage(previousStatus);                     // Clear old image
-        image.LoadImage(Path::FindPath(pathToFile, result));  // Select image
-        image.SetMainImageScale();
+        data.image.ClearImage(data.previousStatus);                          // Clear old image
+        data.image.LoadImage(Path::FindPath(data.pathToFile, data.result));  // Select image
+        data.image.SetMainImageScale();
 
         return;
     }
 
-    statusBar.UpdateStatus("File " + result + " cannot be selected", sf::Color::Red);
+    data.statusBar.UpdateStatus("File " + data.result + " cannot be selected", sf::Color::Red);
 }
 
-void SelectBrush(bool& brushPressed, const Image& image, StatusBar& statusBar) {
-    brushPressed = !brushPressed && image.HasImage();
-    if (brushPressed) {
-        statusBar.UpdateStatus("Brush selected", sf::Color::Green);
+void SelectBrush(AppData& data) {
+    data.brushPressed = !data.brushPressed && data.image.HasImage();
+    if (data.brushPressed) {
+        data.statusBar.UpdateStatus("Brush selected", sf::Color::Green);
         return;
     }
 
-    statusBar.UpdateStatus("Brush is no longer selected");
+    data.statusBar.UpdateStatus("Brush is no longer selected");
 }
 
 #ifndef NONE

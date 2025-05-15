@@ -4,7 +4,11 @@
 #include <stack>
 
 using uint = unsigned int;
-using ButtonFunction = std::string (*)(const std::vector<std::string>&, size_t);
+
+using Paths = std::vector<std::string>;
+using StackImage = std::stack<sf::Image>;
+
+using ButtonFunction = std::string (*)(Paths&, size_t);
 
 enum Buttons {
     AddFile = 0,

@@ -192,8 +192,6 @@ std::string SaveFileWindow(const std::string& fileName) {
     return result;
 }
 
-using Paths = const std::vector<std::string>;
-
 std::string AddFile([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile) {
     return AddFileWindow();
 }

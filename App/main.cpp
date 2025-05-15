@@ -20,7 +20,6 @@
 
 // Menu Buttons, realization in InputWindow.cpp
 namespace Interface {
-using Paths = const std::vector<std::string>;
 
 // File buttons
 std::string AddFile([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
@@ -103,7 +102,9 @@ auto main(int, char**) -> int {
     size_t activeFile{NONE};               // Current active file
     size_t previousFile{};                 // Previous active file
 
+    std::string buttonInputResult{};
     ActiveFile::ActiveContext activeContext{activeFile, previousFile, pathsToFile, image, previousStatus, statusBar};
+    AppData appData{pathsToFile, activeFile, buttonInputResult, image, fileField, statusBar, previousStatus, brushPressed};
 
     // Main Loop
     while (mainWindow.isOpen()) {
@@ -118,12 +119,12 @@ auto main(int, char**) -> int {
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 for (size_t i = 0; i < buttonNames.size(); ++i) {
                     if (buttons[i].AimButton({event.mouseButton.x, event.mouseButton.y})) {
-                        std::string result{buttonFunctions[i](pathsToFile, activeFile)};  // Path to file
+                        buttonInputResult = buttonFunctions[i](pathsToFile, activeFile);  // Path to file
 
-                        [[maybe_unused]] const size_t oldFilesCount{pathsToFile.size()};                                              // Check was file deleted succesfully or not
-                        WorkWithPath(pathsToFile, activeFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);  // Work with main buttons
+                        [[maybe_unused]] const size_t oldFilesCount{pathsToFile.size()};  // Check was file deleted succesfully or not
+                        ButtonsFunc(appData, i);                                          // Work with main buttons
 
-                        if (image.HasImage() && oldFilesCount != pathsToFile.size()) {
+                        if (image.HasImage() && oldFilesCount != pathsToFile.size()) {  // Select new Active file
                             Back::SelectNewActiveFile(i, activeFile, pathsToFile.size());
 
                             currentZoom = kDefaultZoom;
@@ -297,13 +298,13 @@ auto main(int, char**) -> int {
             // Add new image (Ctrl+N)
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::O && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 std::string result = Interface::AddFile(pathsToFile, activeFile);
-                WorkWithPath(pathsToFile, activeFile, result, Buttons::AddFile, image, fileField, statusBar, brushPressed, previousStatus);
+                ButtonsFunc(appData, Buttons::AddFile);
             }
 
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
                 std::string result = Interface::SaveFile(pathsToFile, activeFile);
-                WorkWithPath(pathsToFile, activeFile, result, Buttons::SaveFile, image, fileField, statusBar, brushPressed, previousStatus);
+                ButtonsFunc(appData, Buttons::SaveFile);
             }
 
             // Delete current file
@@ -311,7 +312,7 @@ auto main(int, char**) -> int {
                 std::string result = Interface::DeleteFile(pathsToFile, activeFile);
 
                 Back::SelectNewActiveFile(Buttons::DeleteFile, activeFile, pathsToFile.size());
-                WorkWithPath(pathsToFile, activeFile, result, Buttons::DeleteFile, image, fileField, statusBar, brushPressed, previousStatus);
+                ButtonsFunc(appData, Buttons::DeleteFile);
             }
         }
 

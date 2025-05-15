@@ -5,27 +5,37 @@
 #include <string>
 #include <vector>
 
+#include "../MainWindow/MainWindow.hpp"
+
 class Image;
 class FileField;
 class StatusBar;
 class Brush;
 
-using Paths = std::vector<std::string>;
-using StackImage = std::stack<sf::Image>;
+struct AppData {
+    Paths& pathToFile;          // Vector with paths of files
+    size_t& activeFile;         // Current active file
+    const std::string& result;  // Buttons function result
+
+    Image& image;  // Current image
+    FileField& fileField;
+    StatusBar& statusBar;
+    StackImage& previousStatus;
+    bool& brushPressed;
+};
 
 // The main function that handles pressing each button
-void WorkWithPath(Paths& pathToFile, size_t activeFile, const std::string& result, size_t buttonNumber, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed,
-                  StackImage& previousStatus);
+void ButtonsFunc(AppData& data, size_t buttonNumber);
 //
 
 // Functions that are responsible for uploading files, etc. backend
 namespace Back {
-void AddFile(Paths& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus);
-void DeleteFile(Paths& pathToFile, size_t activeFile, const std::string& result, Image& image, FileField& FileField, StatusBar& statusBar, StackImage& previousStatus, bool& brushPressed);
+void AddFile(AppData& data);
+void DeleteFile(AppData& data);
 
-void SaveFile(const std::string& result, Image& image, StatusBar& statusBar);
-void SelectFile(Paths& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus);
-void SelectBrush(bool& brushPressed, const Image& image, StatusBar& StatusBar);
+void SaveFile(AppData& data);
+void SelectFile(AppData& data);
+void SelectBrush(AppData& data);
 
 void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile, size_t files);
 }  // namespace Back
