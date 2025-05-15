@@ -2,7 +2,7 @@ name: Clang-Format Check
 
 on:
   push:
-    branches: [develop, main]
+    branches: [ref, main]
 
   pull_request:
     branches: [main]
