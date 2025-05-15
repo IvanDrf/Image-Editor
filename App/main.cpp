@@ -29,7 +29,7 @@ std::string SaveFile(Paths& pathsToFile, size_t activeFile);
 // Tools buttons
 std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
 std::string MoveImage([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
-std::string Reset([[maybe_unused]] Paths& pathToFile, [[maybe_unused]] size_t activeFile);
+std::string Reset([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
 }  // namespace Interface
 
 auto main(int, char**) -> int {
@@ -103,8 +103,7 @@ auto main(int, char**) -> int {
     size_t previousFile{};                 // Previous active file
 
     std::string buttonInputResult{};
-    ActiveFile::ActiveContext activeContext{activeFile, previousFile, pathsToFile, image, previousStatus, statusBar};
-    AppData appData{pathsToFile, activeFile, buttonInputResult, image, fileField, statusBar, previousStatus, brushPressed};
+    AppData appData{pathsToFile, activeFile, previousFile, buttonInputResult, image, fileField, statusBar, previousStatus, brushPressed};
 
     // Main Loop
     while (mainWindow.isOpen()) {
@@ -179,7 +178,7 @@ auto main(int, char**) -> int {
 
                 // Select active image by mouse
                 activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
-                ActiveFile::SelectActiveImage(activeContext);
+                ActiveFile::SelectActiveImage(appData);
 
                 // Zoom In
                 const sf::Vector2i mousePosition{event.mouseButton.x, event.mouseButton.y};
@@ -224,12 +223,12 @@ auto main(int, char**) -> int {
 
             // Select active image by key 'up'
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Up && activeFile != NONE) {
-                ActiveFile::SelectUpperImage(activeContext);
+                ActiveFile::SelectUpperImage(appData);
             }
 
             // Select active image by key 'down'
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Down) {
-                ActiveFile::SelectLowerImage(activeContext);
+                ActiveFile::SelectLowerImage(appData);
             }
 
             // Brush drawing

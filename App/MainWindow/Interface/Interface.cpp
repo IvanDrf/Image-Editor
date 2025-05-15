@@ -220,7 +220,7 @@ std::string MoveImage([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size
     return "";
 }
 
-std::string Reset([[maybe_unused]] Paths& pathToFile, [[maybe_unused]] size_t activeFile) {
+std::string Reset([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile) {
     return "";
 }
 }  // namespace Interface

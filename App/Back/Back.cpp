@@ -62,7 +62,7 @@ void AddFile(AppData& data) {
             throw std::invalid_argument("Image could not be found");
         }
 
-        data.pathToFile.push_back(data.result);      // Add new path to the new file
+        data.pathsToFile.push_back(data.result);     // Add new path to the new file
         data.image.ClearImage(data.previousStatus);  // Clear if there was some image
         data.image.LoadImage(data.result);           // Load new image
         data.image.SetMainImageScale();
@@ -102,11 +102,11 @@ void DeleteFile(AppData& data) {
     }
 
     data.statusBar.UpdateStatus("File was deleted successfully", sf::Color::Green);
-    Path::DeletePath(data.pathToFile, data.result);  // Delete path to deleting file
+    Path::DeletePath(data.pathsToFile, data.result);  // Delete path to deleting file
 
     data.image.ClearImage(data.previousStatus);  // Reset scale, texture and e.t.c
-    if (!data.pathToFile.empty()) {
-        data.image.LoadImage(data.pathToFile[data.activeFile]);  // Load previous image
+    if (!data.pathsToFile.empty()) {
+        data.image.LoadImage(data.pathsToFile[data.activeFile]);  // Load previous image
         data.image.SetMainImageScale();
     } else {
         data.brushPressed = false;  // If there no files left
@@ -117,8 +117,8 @@ void SelectFile(AppData& data) {
     if (!data.result.empty() && std::find(data.fileField.GetFiles().begin(), data.fileField.GetFiles().end(), data.result) != data.fileField.GetFiles().end()) {
         data.statusBar.UpdateStatus("File " + data.result + " selected", sf::Color::Green);
 
-        data.image.ClearImage(data.previousStatus);                          // Clear old image
-        data.image.LoadImage(Path::FindPath(data.pathToFile, data.result));  // Select image
+        data.image.ClearImage(data.previousStatus);                           // Clear old image
+        data.image.LoadImage(Path::FindPath(data.pathsToFile, data.result));  // Select image
         data.image.SetMainImageScale();
 
         return;
@@ -157,16 +157,16 @@ void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile, size_t files) 
 }  // namespace Back
 
 namespace Path {
-void DeletePath(Paths& pathToFile, const std::string& fileName) {
-    for (const auto& file : pathToFile) {
+void DeletePath(Paths& pathsToFile, const std::string& fileName) {
+    for (const auto& file : pathsToFile) {
         if (file == fileName) {
-            pathToFile.erase(std::remove(pathToFile.begin(), pathToFile.end(), file), pathToFile.end());
+            pathsToFile.erase(std::remove(pathsToFile.begin(), pathsToFile.end(), file), pathsToFile.end());
         }
     }
 }
 
-std::string FindPath(Paths& pathToFile, const std::string& fileName) {
-    for (const auto& file : pathToFile) {
+std::string FindPath(Paths& pathsToFile, const std::string& fileName) {
+    for (const auto& file : pathsToFile) {
         if (GetFileName(file) == fileName) {
             return file;
         }

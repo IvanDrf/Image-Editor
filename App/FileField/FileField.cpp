@@ -19,10 +19,10 @@ FileField::FileField() {
     activeFileBackGround_.setSize(kFileBackGroundSize);
     activeFileBackGround_.setFillColor(kFileBackGroundColor);
     activeFileBackGround_.setPosition(0, kButtonHeight);
-    // activeFileBackGround_.setOrigin(0, kFileBackGroundSize.y / 2);
+    // appDataFileBackGround_.setOrigin(0, kFileBackGroundSize.y / 2);
 }
 
-void FileField::DrawField(sf::RenderWindow& window, size_t activeFile) {
+void FileField::DrawField(sf::RenderWindow& window, size_t appDataFile) {
     window.draw(shape_);
 
     displayedFiles_.clear();
@@ -34,7 +34,7 @@ void FileField::DrawField(sf::RenderWindow& window, size_t activeFile) {
 
     float textPositionY{1.15f * kButtonHeight};
 
-    activeFileBackGround_.setPosition(0, textPositionY + activeFile * kLineHeight);
+    activeFileBackGround_.setPosition(0, textPositionY + appDataFile * kLineHeight);
     if (!files_.empty()) {
         window.draw(activeFileBackGround_);
     }
@@ -66,7 +66,7 @@ const std::vector<std::string>& FileField::GetFiles() const {
     return files_;
 }
 
-size_t FileField::GetActiveFile(const sf::Vector2i& mousePosition, size_t activeFile) const {
+size_t FileField::GetActiveFile(const sf::Vector2i& mousePosition, size_t appDataFile) const {
     if (files_.size() == 1) {
         return 0;
     }
@@ -77,21 +77,21 @@ size_t FileField::GetActiveFile(const sf::Vector2i& mousePosition, size_t active
         }
     }
 
-    return activeFile;
+    return appDataFile;
 }
 
 namespace {
-void UpdateActiveImage(ActiveFile::ActiveContext& active) {
+void UpdateActiveImage(AppData& appData) {
     try {
-        active.image.ClearImage(active.previousStatus);                 // Destroy old image
-        active.image.LoadImage(active.pathsToFile[active.activeFile]);  // Load selected image
-        active.image.SetMainImageScale();                               // Set main properties
+        appData.image.ClearImage(appData.previousStatus);                  // Destroy old image
+        appData.image.LoadImage(appData.pathsToFile[appData.activeFile]);  // Load selected image
+        appData.image.SetMainImageScale();                                 // Set main properties
 
     } catch (std::runtime_error& e) {
-        active.statusBar.UpdateStatus(e.what());
+        appData.statusBar.UpdateStatus(e.what());
     }
 
-    active.previousFile = active.activeFile;
+    appData.previousFile = appData.activeFile;
 }
 }  // namespace
 
@@ -99,27 +99,27 @@ namespace ActiveFile {
 #ifndef NONE
 #define NONE (std::numeric_limits<std::size_t>::max())
 
-void SelectActiveImage(ActiveContext& active) {
-    if (active.activeFile != NONE && active.activeFile != active.previousFile) {
-        UpdateActiveImage(active);
+void SelectActiveImage(AppData& appData) {
+    if (appData.activeFile != NONE && appData.activeFile != appData.previousFile) {
+        UpdateActiveImage(appData);
     }
 }
 
 #endif
 
-void SelectUpperImage(ActiveContext& active) {
-    if (active.pathsToFile.size() > 1 && active.activeFile > 0) {
-        --active.activeFile;
+void SelectUpperImage(AppData& appData) {
+    if (appData.pathsToFile.size() > 1 && appData.activeFile > 0) {
+        --appData.activeFile;
 
-        UpdateActiveImage(active);
+        UpdateActiveImage(appData);
     }
 }
 
-void SelectLowerImage(ActiveContext& active) {
-    if (active.pathsToFile.size() > 1 && active.activeFile < active.pathsToFile.size() - 1) {
-        ++active.activeFile;
+void SelectLowerImage(AppData& appData) {
+    if (appData.pathsToFile.size() > 1 && appData.activeFile < appData.pathsToFile.size() - 1) {
+        ++appData.activeFile;
 
-        UpdateActiveImage(active);
+        UpdateActiveImage(appData);
     }
 }
 

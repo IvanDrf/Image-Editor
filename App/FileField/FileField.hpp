@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "../Back/Back.hpp"
 #include "../Image/Image.hpp"
 #include "../MainWindow/MainWindow.hpp"
 #include "../StatusBar/StatusBar.hpp"
@@ -28,22 +29,8 @@ class FileField {
 
 // Active file
 namespace ActiveFile {
-using Paths = const std::vector<std::string>;
-using StackImage = std::stack<sf::Image>;
+void SelectActiveImage(AppData& active);
 
-struct ActiveContext {
-    size_t& activeFile;
-    size_t& previousFile;
-
-    Paths& pathsToFile;
-    Image& image;
-    StackImage& previousStatus;
-
-    StatusBar& statusBar;
-};
-
-void SelectActiveImage(ActiveContext& active);
-
-void SelectUpperImage(ActiveContext& active);
-void SelectLowerImage(ActiveContext& active);
+void SelectUpperImage(AppData& active);
+void SelectLowerImage(AppData& active);
 }  // namespace ActiveFile

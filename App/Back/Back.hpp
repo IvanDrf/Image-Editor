@@ -13,7 +13,8 @@ class StatusBar;
 class Brush;
 
 struct AppData {
-    Paths& pathToFile;          // Vector with paths of files
+    Paths& pathsToFile;         // Vector with paths of files
+    size_t& previousFile;       // Previous active file
     size_t& activeFile;         // Current active file
     const std::string& result;  // Buttons function result
 
@@ -42,8 +43,8 @@ void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile, size_t files);
 
 // Functions that process the path
 namespace Path {
-void DeletePath(Paths& pathToFile, const std::string& fileName);
-[[nodiscard]] std::string FindPath(Paths& pathToFile, const std::string& fileName);
+void DeletePath(Paths& pathsToFile, const std::string& fileName);
+[[nodiscard]] std::string FindPath(Paths& pathsToFile, const std::string& fileName);
 [[nodiscard]] std::string GetFileName(const std::string& fileName);
 
 }  // namespace Path
