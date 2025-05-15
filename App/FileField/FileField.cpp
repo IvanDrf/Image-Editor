@@ -96,9 +96,6 @@ void UpdateActiveImage(ActiveFile::ActiveContext& active) {
 }  // namespace
 
 namespace ActiveFile {
-using Paths = std::vector<std::string>;
-using StackImage = std::stack<sf::Image>;
-
 #ifndef NONE
 #define NONE (std::numeric_limits<std::size_t>::max())
 

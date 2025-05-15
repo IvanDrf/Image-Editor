@@ -43,4 +43,7 @@ struct Position {
 [[nodiscard]] Position CalculateBrushColorShapePos(const Position& position);
 [[nodiscard]] Position CalculatePalettePos(const Position& position);
 
+std::string AddFileWindow();  // Add file button
+
+std::string SaveFileWindow(const std::string& fileName);  // Save file button
 }  // namespace Interface

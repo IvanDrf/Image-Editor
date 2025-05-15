@@ -5,6 +5,7 @@
 
 // Interface
 
+#include "Back/Back.hpp"
 #include "Brush/Brush.hpp"
 #include "Button/Button.hpp"
 #include "FileField/FileField.hpp"
@@ -18,7 +19,7 @@
 #define FPS (30)
 
 // Menu Buttons, realization in InputWindow.cpp
-namespace Front {
+namespace Interface {
 using Paths = const std::vector<std::string>;
 
 // File buttons
@@ -30,7 +31,7 @@ std::string SaveFile(Paths& pathsToFile, size_t activeFile);
 std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
 std::string MoveImage([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
 std::string Reset([[maybe_unused]] Paths& pathToFile, [[maybe_unused]] size_t activeFile);
-}  // namespace Front
+}  // namespace Interface
 
 auto main(int, char**) -> int {
     sf::RenderWindow mainWindow(sf::VideoMode(kMainWindowWidth, kMainWindowHeight), "Image Editor");
@@ -59,7 +60,7 @@ auto main(int, char**) -> int {
     Button::CreateMenuButtons(buttons, buttonNames, buttonColors, buttonFont);
 
     // Main Button Functions
-    ButtonFunction buttonFunctions[]{Front::AddFile, Front::DeleteFile, Front::SaveFile, Front::SelectBrush, Front::MoveImage, Front::Reset};
+    ButtonFunction buttonFunctions[]{Interface::AddFile, Interface::DeleteFile, Interface::SaveFile, Interface::SelectBrush, Interface::MoveImage, Interface::Reset};
 
     // Brush
     Brush brush(kBrushInitialRadius, sf::Color::White);
@@ -108,7 +109,7 @@ auto main(int, char**) -> int {
     while (mainWindow.isOpen()) {
         sf::Event event;
         while (mainWindow.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {  // Close Window
+            if (event.type == sf::Event::Closed) {  // Close Interface
                 mainWindow.close();
                 return 0;
             }
@@ -295,19 +296,19 @@ auto main(int, char**) -> int {
 
             // Add new image (Ctrl+N)
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::O && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-                std::string result = Front::AddFile(pathsToFile, activeFile);
+                std::string result = Interface::AddFile(pathsToFile, activeFile);
                 WorkWithPath(pathsToFile, activeFile, result, Buttons::AddFile, image, fileField, statusBar, brushPressed, previousStatus);
             }
 
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-                std::string result = Front::SaveFile(pathsToFile, activeFile);
+                std::string result = Interface::SaveFile(pathsToFile, activeFile);
                 WorkWithPath(pathsToFile, activeFile, result, Buttons::SaveFile, image, fileField, statusBar, brushPressed, previousStatus);
             }
 
             // Delete current file
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Delete) {
-                std::string result = Front::DeleteFile(pathsToFile, activeFile);
+                std::string result = Interface::DeleteFile(pathsToFile, activeFile);
 
                 Back::SelectNewActiveFile(Buttons::DeleteFile, activeFile, pathsToFile.size());
                 WorkWithPath(pathsToFile, activeFile, result, Buttons::DeleteFile, image, fileField, statusBar, brushPressed, previousStatus);

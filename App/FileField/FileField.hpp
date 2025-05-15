@@ -28,6 +28,9 @@ class FileField {
 
 // Active file
 namespace ActiveFile {
+using Paths = const std::vector<std::string>;
+using StackImage = std::stack<sf::Image>;
+
 struct ActiveContext {
     size_t& activeFile;
     size_t& previousFile;
