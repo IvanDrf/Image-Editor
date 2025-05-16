@@ -34,8 +34,8 @@
 ### Build Instructions
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/sfml-image-editor.git
-cd sfml-image-editor
+git clone https://github.com/IvanDrf/Image-Editor.git
+cd App
 
 # Build with CMake
 mkdir build && cd build
@@ -75,6 +75,7 @@ https://github.com/user-attachments/assets/b6bf4a59-6226-4203-839e-261ee8f306b2
 | Save    | `Ctrl + S`  | Save current image       |
 | Up      | `↑`         | Move selection up        |
 | Down    | `↓`         | Move selection down      |
+| Reset   | `R`         | Reset zoom and position  |
 
 ### 🎨 Brush
 | Action       | Shortcut | Description                  |
