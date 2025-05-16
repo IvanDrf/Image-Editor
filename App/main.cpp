@@ -14,6 +14,7 @@
 #include "StatusBar/StatusBar.hpp"
 
 #define NONE (std::numeric_limits<std::size_t>::max())
+#define BUTTONSNAMES {"Add file", "Delete file", "Save file", "Brush", "Move", "Reset"}
 #define KEY (event.key.code)
 #define FPS (30)
 
@@ -50,7 +51,7 @@ auto main(int, char**) -> int {
     auto [backgorund, menuShape, menuImage, brushSizeImage]{Interface::CreateInterface()};
 
     // Menu Buttons
-    const std::vector<std::string> buttonNames = {"Add file", "Delete file", "Save file", "Brush", "Move", "Reset"};
+    const std::vector<std::string> buttonNames = BUTTONSNAMES;
     const auto buttonIcons{Interface::LoadButtonImages()};  // Button Icons
 
     std::vector<Button> buttons;
