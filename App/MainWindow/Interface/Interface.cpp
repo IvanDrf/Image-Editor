@@ -97,6 +97,30 @@ Image CreateBrushSizeImage() {
     return brushSizeImage;
 }
 
+BrushSizeDisplay CreateBrushSizeDisplay(const float x, const float y, sf::Font& font) {
+    BrushSizeDisplay brushSizeField(kBrushInitialRadius, font);
+    bool brushSizeFieldPressed{false};
+
+    brushSizeField.SetPosition(x, y);
+    brushSizeField.SetShapeSize({kBrushBoxWidth, kBrushBoxHeight});
+
+    return brushSizeField;
+}
+
+BrushColorDisplay CreateBrushColorDisplay(const float x, const float y, Brush& brush) {
+    BrushColorDisplay brushColorField(kBrushCurrentColorBoxSize);
+    brushColorField.SetColor(brush.GetColor());
+
+    auto [palettePosX, palettePosY]{Interface::CalculatePalettePos({x, kButtonHeight})};
+    brushColorField.SetPalettePosition(palettePosX, palettePosY);
+
+    // Brush current color shape position
+    auto [brushColorShapePosX, brushColorShapePosY]{Interface::CalculateBrushColorShapePos({x, y})};
+    brushColorField.SetPosition(brushColorShapePosX, brushColorShapePosY);
+
+    return brushColorField;
+}
+
 [[nodiscard]] Zoom LoadZoomImages() {
     Zoom images;
 

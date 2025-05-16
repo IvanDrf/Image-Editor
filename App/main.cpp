@@ -14,13 +14,16 @@
 #include "StatusBar/StatusBar.hpp"
 
 #define NONE (std::numeric_limits<std::size_t>::max())
-#define BUTTONSNAMES {"Add file", "Delete file", "Save file", "Brush", "Move", "Reset"}
+
+#define BUTTONS_NAMES {"Add file", "Delete file", "Save file", "Brush", "Move", "Reset"}
+#define BUTTONS_COLORS {kFileButtonColor, kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor}
+#define BUTTONS_FUNCTIONS {Interface::AddFile, Interface::DeleteFile, Interface::SaveFile, Interface::SelectBrush, Interface::MoveImage, Interface::Reset}
+
 #define KEY (event.key.code)
 #define FPS (30)
 
 // Menu Buttons, realization in InputWindow.cpp
 namespace Interface {
-
 // File buttons
 std::string AddFile([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
 std::string DeleteFile(Paths& pathsToFile, size_t activeFile);
@@ -51,45 +54,29 @@ auto main(int, char**) -> int {
     auto [backgorund, menuShape, menuImage, brushSizeImage]{Interface::CreateInterface()};
 
     // Menu Buttons
-    const std::vector<std::string> buttonNames = BUTTONSNAMES;
-    const auto buttonIcons{Interface::LoadButtonImages()};  // Button Icons
+    const std::vector<std::string> buttonNames = BUTTONS_NAMES;
+    const std::vector<sf::RectangleShape> buttonIcons{Interface::LoadButtonImages()};  // Button Icons
 
-    std::vector<Button> buttons;
-    const std::vector<sf::Color> buttonColors{kFileButtonColor, kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor};
-    Button::CreateMenuButtons(buttons, buttonNames, buttonColors, buttonFont);
+    const std::vector<sf::Color> buttonColors = BUTTONS_COLORS;
+    std::vector<Button> buttons{Button::CreateMenuButtons(buttonNames, buttonColors, buttonFont)};
 
     // Main Button Functions
-    ButtonFunction buttonFunctions[]{Interface::AddFile, Interface::DeleteFile, Interface::SaveFile, Interface::SelectBrush, Interface::MoveImage, Interface::Reset};
+    ButtonFunction buttonFunctions[] BUTTONS_FUNCTIONS;
 
     // Brush
-    Brush brush(kBrushInitialRadius, sf::Color::White);
+    Brush brush{};
     bool brushPressed{false};
     bool isPaletteOpen{false};
 
-    // Brush size field, displays current brush size
-    // Brush size field position
+    auto [brushSizeFieldPosX, brushSizeFieldPosY]{Interface::CalculateBrushSizePos(brushSizeImage)};  // Brush size field positions
 
-    auto [brushSizeFieldPosX, brushSizeFieldPosY]{Interface::CalculateBrushSizePos(brushSizeImage)};
+    auto brushSizeField{Interface::CreateBrushSizeDisplay(brushSizeFieldPosX, brushSizeFieldPosY, buttonFont)};  // Shows current brush size
+    auto brushColorField{Interface::CreateBrushColorDisplay(brushSizeFieldPosX, brushSizeFieldPosY, brush)};     // Shows current brush color
 
-    BrushSizeDisplay brushSizeField(kBrushInitialRadius, buttonFont);
     bool brushSizeFieldPressed{false};
 
-    brushSizeField.SetPosition(brushSizeFieldPosX, brushSizeFieldPosY);
-    brushSizeField.SetShapeSize({kBrushBoxWidth, kBrushBoxHeight});
-
-    // Brush current color, displays current brush color
-    BrushColorDisplay brushCurrentColor(kBrushCurrentColorBoxSize);
-    brushCurrentColor.SetColor(brush.GetColor());
-
-    auto [palettePosX, palettePosY]{Interface::CalculatePalettePos({brushSizeFieldPosX, kButtonHeight})};
-    brushCurrentColor.SetPalettePosition(palettePosX, palettePosY);
-
-    // Brush current color shape position
-    auto [brushColorShapePosX, brushColorShapePosY]{Interface::CalculateBrushColorShapePos({brushSizeFieldPosX, brushSizeFieldPosY})};
-    brushCurrentColor.SetPosition(brushColorShapePosX, brushColorShapePosY);
-
     // Zoom
-    auto [zoomOut, zoomIn, zoomBackground]{Interface::LoadZoomImages()};
+    auto [zoomOutImage, zoomInImage, zoomBackground]{Interface::LoadZoomImages()};
     float currentZoom{kDefaultZoom};
 
     bool isMoved{false};
@@ -171,7 +158,7 @@ auto main(int, char**) -> int {
 
                 // Zoom In
                 const sf::Vector2i mousePosition{event.mouseButton.x, event.mouseButton.y};
-                if (image.HasImage() && zoomIn->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                if (image.HasImage() && zoomInImage->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
                     Zoom::ZoomIn(image);
                     currentZoom += kZoomStep;
 
@@ -181,7 +168,7 @@ auto main(int, char**) -> int {
                 }
 
                 // Zoom Out
-                if (image.HasImage() && zoomOut->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                if (image.HasImage() && zoomOutImage->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
                     if (currentZoom - kZoomStep >= 0) {
                         Zoom::ZoomOut(image);
                         currentZoom = currentZoom - kZoomStep;
@@ -258,22 +245,22 @@ auto main(int, char**) -> int {
 
             // Set Brush Color by hot key
             if (brushPressed && event.type == sf::Event::KeyPressed) {
-                brush.SetColor(KEY, brushCurrentColor);
-                brushCurrentColor.SetColor(brush.GetColor());
+                brush.SetColor(KEY, brushColorField);
+                brushColorField.SetColor(brush.GetColor());
             }
 
             // Set Brush Color by Palette
             if (isPaletteOpen && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                if (brushCurrentColor.PaletteClicked({event.mouseButton.x, event.mouseButton.y})) {
-                    brush.SetColor(brushCurrentColor.GetPaletteColor({event.mouseButton.x, event.mouseButton.y}));
+                if (brushColorField.PaletteClicked({event.mouseButton.x, event.mouseButton.y})) {
+                    brush.SetColor(brushColorField.GetPaletteColor({event.mouseButton.x, event.mouseButton.y}));
 
-                    brushCurrentColor.SetColor(brush.GetColor());
+                    brushColorField.SetColor(brush.GetColor());
                 }
             }
 
             // Open and close Palette
             if (brushPressed && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                if (brushCurrentColor.ShapeClicked({event.mouseButton.x, event.mouseButton.y})) {
+                if (brushColorField.ShapeClicked({event.mouseButton.x, event.mouseButton.y})) {
                     isPaletteOpen = !isPaletteOpen;
                 }
             }
@@ -358,16 +345,16 @@ auto main(int, char**) -> int {
         brushSizeImage.DrawImage(mainWindow);  // Brush current size image
         brushSizeField.Draw(mainWindow);       // Brush current size field
 
-        brushCurrentColor.Draw(mainWindow);  // Brush current color field
+        brushColorField.Draw(mainWindow);  // Brush current color field
 
         if (isPaletteOpen) {
-            brushCurrentColor.DrawPalette(mainWindow);  // Draw palette
+            brushColorField.DrawPalette(mainWindow);  // Draw palette
         }
 
         if (!brushPressed) {
             zoomBackground->DrawImage(mainWindow);
-            zoomIn->DrawImage(mainWindow);
-            zoomOut->DrawImage(mainWindow);
+            zoomInImage->DrawImage(mainWindow);
+            zoomOutImage->DrawImage(mainWindow);
         }
 
         mainWindow.display();

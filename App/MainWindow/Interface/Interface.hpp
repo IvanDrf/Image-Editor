@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
+#include "../../Brush/Brush.hpp"
 #include "../../Image/Image.hpp"
 
 // Functions
@@ -24,6 +25,9 @@ struct MenuInterface {
 [[nodiscard]] sf::RectangleShape CreateMenuShape();
 [[nodiscard]] Image CreateMenuImage();
 [[nodiscard]] Image CreateBrushSizeImage();
+
+[[nodiscard]] BrushSizeDisplay CreateBrushSizeDisplay(const float x, const float y, sf::Font& font);
+[[nodiscard]] BrushColorDisplay CreateBrushColorDisplay(const float x, const float y, Brush& brush);
 
 struct Zoom {
     std::unique_ptr<Image> zoomOut;
