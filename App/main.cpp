@@ -12,6 +12,7 @@
 #include "MainWindow/MainWindow.hpp"
 #include "StatusBar/StatusBar.hpp"
 
+// clang-format off
 #define NONE (std::numeric_limits<std::size_t>::max())
 
 #define BUTTONS_NAMES {"Add file", "Delete file", "Save file", "Brush", "Move", "Reset"}
@@ -22,6 +23,7 @@
 #define FPS (30)
 
 #define NO_ARGS [[maybe_unused]] Paths &pathsToFile, [[maybe_unused]] size_t activeFile
+// clang-format on
 
 // Menu Buttons, realization in Interface.cpp
 namespace Interface {
