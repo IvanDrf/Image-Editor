@@ -79,7 +79,7 @@ auto main(int, char**) -> int {
 
     bool isMoved{false};
     bool isMoveButton{false};
-    sf::Vector2i lastMousePos{};
+    sf::Vector2i currentMousePos{};  // Last mouse position in moving image
 
     // Create small menu for brush color and brush size
 
@@ -113,7 +113,7 @@ auto main(int, char**) -> int {
                             isMoveButton = !isMoveButton;
                             brushPressed = false;  // Change status after swap brush/move
 
-                            lastMousePos = sf::Mouse::getPosition(mainWindow);
+                            currentMousePos = sf::Mouse::getPosition(mainWindow);
 
                             buttons[i].SetColor((isMoveButton) ? (kActiveButtonColor) : kToolsColor);  // Set active 'Move' button color
                             statusBar.UpdateStatus((isMoveButton) ? ("Move selected") : ("Move is no longer selected"), (isMoved) ? (sf::Color::Green) : (sf::Color::Red));
@@ -182,7 +182,7 @@ auto main(int, char**) -> int {
             if (image.HasImage() && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || isMoved)) {
                 isMoved = true;
                 brushPressed = false;
-                lastMousePos = sf::Mouse::getPosition(mainWindow);
+                currentMousePos = sf::Mouse::getPosition(mainWindow);
             }
 
             // Ending of moving image
@@ -291,10 +291,10 @@ auto main(int, char**) -> int {
 
         // Moving image
         if (image.HasImage() && isMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            sf::Vector2i currentMousePos{sf::Mouse::getPosition(mainWindow)};
+            sf::Vector2i lastMousePos{sf::Mouse::getPosition(mainWindow)};
 
-            image.SetPosition(image.GetSprite().getPosition() + sf::Vector2f(currentMousePos - lastMousePos));
-            lastMousePos = currentMousePos;
+            image.SetPosition(image.GetSprite().getPosition() + sf::Vector2f(lastMousePos - currentMousePos));
+            currentMousePos = lastMousePos;
         }
 
         mainWindow.clear();
