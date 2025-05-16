@@ -119,8 +119,7 @@ auto main(int, char**) -> int {
                     if (buttons[i].AimButton({event.mouseButton.x, event.mouseButton.y})) {
                         buttonInputResult = buttonFunctions[i](pathsToFile, activeFile);  // Path to file
 
-                        [[maybe_unused]] const size_t oldFilesCount{pathsToFile.size()};  // Check was file deleted succesfully or not
-                        ButtonsFunc(appData, i);                                          // Work with main buttons
+                        ButtonsFunc(appData, i);  // Work with main buttons
 
                         // Move button
                         if (image.HasImage() && i == Buttons::Move) {
