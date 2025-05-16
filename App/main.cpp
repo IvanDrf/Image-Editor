@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-// Interface
 #include "Back/Back.hpp"
 #include "Brush/Brush.hpp"
 #include "Button/Button.hpp"
@@ -16,33 +15,32 @@
 #define NONE (std::numeric_limits<std::size_t>::max())
 
 #define BUTTONS_NAMES {"Add file", "Delete file", "Save file", "Brush", "Move", "Reset"}
-#define BUTTONS_COLORS {kFileButtonColor, kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor}
+#define BUTTONS_COLORS {kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor, kToolsColor}
 #define BUTTONS_FUNCTIONS {Interface::AddFile, Interface::DeleteFile, Interface::SaveFile, Interface::SelectBrush, Interface::MoveImage, Interface::Reset}
 
 #define KEY (event.key.code)
 #define FPS (30)
 
-// Menu Buttons, realization in InputWindow.cpp
+#define NO_ARGS [[maybe_unused]] Paths &pathsToFile, [[maybe_unused]] size_t activeFile
+
+// Menu Buttons, realization in Interface.cpp
 namespace Interface {
 // File buttons
-std::string AddFile([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
+std::string AddFile(NO_ARGS);
 std::string DeleteFile(Paths& pathsToFile, size_t activeFile);
 std::string SaveFile(Paths& pathsToFile, size_t activeFile);
 
 // Tools buttons
-std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
-std::string MoveImage([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
-std::string Reset([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
+std::string SelectBrush(NO_ARGS);
+std::string MoveImage(NO_ARGS);
+std::string Reset(NO_ARGS);
 }  // namespace Interface
 
 auto main(int, char**) -> int {
     sf::RenderWindow mainWindow(sf::VideoMode(kMainWindowWidth, kMainWindowHeight), "Image Editor");
     mainWindow.setFramerateLimit(FPS);
 
-    sf::Font buttonFont;  // Font for Buttons
-    if (!buttonFont.loadFromFile("../WindowFiles/open-sans.ttf")) {
-        throw std::runtime_error("Font could not be uploaded");
-    }
+    auto mainFont{Interface::LoadMainFont()};
 
     // Interface: current image, field with files names, status bar
     Image image;
@@ -51,14 +49,14 @@ auto main(int, char**) -> int {
     FileField fileField;
     StatusBar statusBar;
 
-    auto [backgorund, menuShape, menuImage, brushSizeImage]{Interface::CreateInterface()};
+    auto [backgorund, menuImage, brushSizeImage]{Interface::CreateInterface()};
 
     // Menu Buttons
-    const std::vector<std::string> buttonNames = BUTTONS_NAMES;
     const std::vector<sf::RectangleShape> buttonIcons{Interface::LoadButtonImages()};  // Button Icons
 
+    const std::vector<std::string> buttonNames = BUTTONS_NAMES;
     const std::vector<sf::Color> buttonColors = BUTTONS_COLORS;
-    std::vector<Button> buttons{Button::CreateMenuButtons(buttonNames, buttonColors, buttonFont)};
+    std::vector<Button> buttons{Interface::CreateMenuButtons(buttonNames, buttonColors, mainFont)};
 
     // Main Button Functions
     ButtonFunction buttonFunctions[] BUTTONS_FUNCTIONS;
@@ -70,8 +68,8 @@ auto main(int, char**) -> int {
 
     auto [brushSizeFieldPosX, brushSizeFieldPosY]{Interface::CalculateBrushSizePos(brushSizeImage)};  // Brush size field positions
 
-    auto brushSizeField{Interface::CreateBrushSizeDisplay(brushSizeFieldPosX, brushSizeFieldPosY, buttonFont)};  // Shows current brush size
-    auto brushColorField{Interface::CreateBrushColorDisplay(brushSizeFieldPosX, brushSizeFieldPosY, brush)};     // Shows current brush color
+    auto brushSizeField{Interface::CreateBrushSizeDisplay(brushSizeFieldPosX, brushSizeFieldPosY, mainFont)};  // Shows current brush size
+    auto brushColorField{Interface::CreateBrushColorDisplay(brushSizeFieldPosX, brushSizeFieldPosY, brush)};   // Shows current brush color
 
     bool brushSizeFieldPressed{false};
 
@@ -304,11 +302,10 @@ auto main(int, char**) -> int {
         // Draw elements
         image.DrawImage(mainWindow);  // Main image
 
-        mainWindow.draw(backgorund);                  // Button backgorund
         fileField.DrawField(mainWindow, activeFile);  // Field with added files
         statusBar.DrawStatusBar(mainWindow);          // Status bar
 
-        mainWindow.draw(menuShape);       // Small menu
+        mainWindow.draw(backgorund);      // Button backgorund
         menuImage.DrawImage(mainWindow);  // Small menu image
 
         size_t activeButton{Button::GetActiveButton()};
@@ -323,18 +320,13 @@ auto main(int, char**) -> int {
 
             if (i != activeButton) {
                 buttons[i].DrawButton(mainWindow);
-
-                if (i < Buttons::Reset) {
-                    mainWindow.draw(buttonIcons[i]);
-                }
+                mainWindow.draw(buttonIcons[i]);
             }
         }
 
         if (buttonTarget && activeButton != NONE) {
             buttons[activeButton].DrawButton(mainWindow);
-            if (activeButton < Buttons::Reset) {
-                mainWindow.draw(buttonIcons[activeButton]);
-            }
+            mainWindow.draw(buttonIcons[activeButton]);
         }
 
         if (brushPressed) {  // Draw brush cursor
@@ -342,7 +334,7 @@ auto main(int, char**) -> int {
             mainWindow.draw(brush.GetBrushCursor());
         }
 
-        brushSizeImage.DrawImage(mainWindow);  // Brush current size image
+        brushSizeImage.DrawImage(mainWindow);  // Brush size image, circles
         brushSizeField.Draw(mainWindow);       // Brush current size field
 
         brushColorField.Draw(mainWindow);  // Brush current color field

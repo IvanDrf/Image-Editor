@@ -4,30 +4,18 @@
 #include <memory>
 
 #include "../../Brush/Brush.hpp"
+#include "../../Button/Button.hpp"
 #include "../../Image/Image.hpp"
 
 // Functions
 namespace Interface {
 struct MenuInterface {
-    sf::RectangleShape backGround;
+    sf::RectangleShape background;  // Buttons background
 
-    sf::RectangleShape menuShape;
     Image menuImage;
 
     Image brushSizeImage;
 };
-
-[[nodiscard]] std::vector<sf::RectangleShape> LoadButtonImages();
-
-[[nodiscard]] MenuInterface CreateInterface();
-
-[[nodiscard]] sf::RectangleShape CreateBackground();
-[[nodiscard]] sf::RectangleShape CreateMenuShape();
-[[nodiscard]] Image CreateMenuImage();
-[[nodiscard]] Image CreateBrushSizeImage();
-
-[[nodiscard]] BrushSizeDisplay CreateBrushSizeDisplay(const float x, const float y, sf::Font& font);
-[[nodiscard]] BrushColorDisplay CreateBrushColorDisplay(const float x, const float y, Brush& brush);
 
 struct Zoom {
     std::unique_ptr<Image> zoomOut;
@@ -36,7 +24,19 @@ struct Zoom {
     std::unique_ptr<Image> zoomBackground;
 };
 
+[[nodiscard]] sf::Font LoadMainFont();
 [[nodiscard]] Zoom LoadZoomImages();
+[[nodiscard]] std::vector<sf::RectangleShape> LoadButtonImages();
+
+[[nodiscard]] MenuInterface CreateInterface();
+
+[[nodiscard]] std::vector<Button> CreateMenuButtons(const std::vector<std::string>& names, const std::vector<sf::Color>& colors, const sf::Font& font);
+[[nodiscard]] sf::RectangleShape CreateBackground();
+[[nodiscard]] Image CreateMenuImage();
+
+[[nodiscard]] Image CreateBrushSizeImage();
+[[nodiscard]] BrushSizeDisplay CreateBrushSizeDisplay(const float x, const float y, sf::Font& font);
+[[nodiscard]] BrushColorDisplay CreateBrushColorDisplay(const float x, const float y, Brush& brush);
 
 struct Position {
     float x = 0;
