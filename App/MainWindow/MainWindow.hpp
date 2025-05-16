@@ -4,7 +4,11 @@
 #include <stack>
 
 using uint = unsigned int;
-using ButtonFunction = std::string (*)(const std::vector<std::string>&, size_t);
+
+using Paths = std::vector<std::string>;
+using StackImage = std::stack<sf::Image>;
+
+using ButtonFunction = std::string (*)(Paths&, size_t);
 
 enum Buttons {
     AddFile = 0,
@@ -22,7 +26,7 @@ const uint kDesktopWidth{sf::VideoMode::getDesktopMode().width};
 const uint kDesktopHeight{sf::VideoMode::getDesktopMode().height};
 }  // namespace
 
-namespace {  // Window Size
+namespace {  // Interface Size
 const float kMainWindowWidth{kDesktopWidth * 0.9f};
 const float kMainWindowHeight{kDesktopHeight * 0.8f};
 }  // namespace
@@ -74,7 +78,7 @@ constexpr float kIconX{5};
 const float kIconY{kButtonHeight / 6.2f};
 }  // namespace
 
-namespace {  // Small Window Size
+namespace {  // Small Interface Size
 const float kSmallWindowWidth{kMainWindowWidth * 0.25f};
 const float kSmallWindowHeight{kMainWindowHeight * 0.2f};
 }  // namespace
@@ -115,43 +119,3 @@ constexpr float kZoomStep{0.1f};
 constexpr float kZoomBackgroundScaleX{0.4f};
 constexpr float kZoomBackgroundScaleY{0.35f};
 }  // namespace
-
-using Paths = std::vector<std::string>;
-using StackImage = std::stack<sf::Image>;
-
-class Image;
-class FileField;
-class StatusBar;
-class Brush;
-
-// The main function that handles pressing each button
-void WorkWithPath(Paths& pathToFile, size_t activeFile, const std::string& result, size_t buttonNumber, Image& image, FileField& FileField, StatusBar& StatusBar, bool& brushPressed,
-                  StackImage& previousStatus);
-//
-
-// Functions that are responsible for uploading files, etc. backend
-namespace Back {
-void AddFile(Paths& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus);
-void DeleteFile(Paths& pathToFile, size_t activeFile, const std::string& result, Image& image, FileField& FileField, StatusBar& statusBar, StackImage& previousStatus, bool& brushPressed);
-
-void SaveFile(const std::string& result, Image& image, StatusBar& statusBar);
-void SelectFile(Paths& pathToFile, const std::string& result, Image& image, FileField& fileField, StatusBar& statusBar, StackImage& previousStatus);
-void SelectBrush(bool& brushPressed, const Image& image, StatusBar& StatusBar);
-
-void SelectNewActiveFile(size_t buttonNumber, size_t& activeFile, size_t files);
-}  // namespace Back
-
-// Functions that process the path
-namespace Path {
-void DeletePath(Paths& pathToFile, const std::string& fileName);
-[[nodiscard]] std::string FindPath(Paths& pathToFile, const std::string& fileName);
-[[nodiscard]] std::string GetFileName(const std::string& fileName);
-
-}  // namespace Path
-
-namespace Zoom {
-void ZoomIn(Image& image);
-void ZoomOut(Image& image);
-
-void Reset(Image& image, StatusBar& statusBar, Brush& brush, float& currentZoom);
-}  // namespace Zoom

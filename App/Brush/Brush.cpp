@@ -2,7 +2,7 @@
 
 #include "../MainWindow/MainWindow.hpp"
 
-Brush::Brush(const int radius, const sf::Color& color) : radius_(radius), color_(color) {
+Brush::Brush() : radius_(kBrushInitialRadius), color_(sf::Color::White) {
     if (!brushCursorTexture.loadFromFile("../WindowFiles/brush-cursor.png")) {
         throw std::runtime_error("Brush cursor could not be uploaded");
     }
@@ -10,6 +10,11 @@ Brush::Brush(const int radius, const sf::Color& color) : radius_(radius), color_
     brushCursorSprite.setOrigin(brushCursorTexture.getSize().x / 2, brushCursorTexture.getSize().y / 2);
 
     UpdateCursorScale(1.f);
+}
+
+Brush::Brush(const int radius, const sf::Color& color) : Brush::Brush() {
+    radius_ = radius;
+    color_ = color;
 
     shape_.setRadius(radius);
     shape_.setFillColor(color);

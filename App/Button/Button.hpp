@@ -25,6 +25,4 @@ class Button {
 
     static size_t GetActiveButton();
     void AnimateButton(const sf::RenderWindow& window, size_t buttonIndex);
-
-    static void CreateMenuButtons(std::vector<Button>& buttons, const std::vector<std::string>& names, const std::vector<sf::Color>& colors, const sf::Font& font);
 };

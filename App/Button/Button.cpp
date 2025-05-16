@@ -82,17 +82,3 @@ void Button::AnimateButton(const sf::RenderWindow& window, size_t buttonIndex) {
         activeButton = std::numeric_limits<size_t>::max();
     }
 }
-
-void Button::CreateMenuButtons(std::vector<Button>& buttons, const std::vector<std::string>& names, const std::vector<sf::Color>& colors, const sf::Font& font) {
-    for (size_t i = 0; i < names.size(); ++i) {
-        buttons.emplace_back(kSmallMenuWidth + kButtonWidth * i, 0, names[i], colors[i], font);
-    }
-
-    buttons[Buttons::SelectBrush].SetColor(kToolsColor);  // Diff color for brush
-
-    buttons[Buttons::Move].SetColor(kToolsColor);  // Diff color for move
-    buttons[Buttons::Move].SetPosition(5.5f * kButtonWidth, 0);
-
-    buttons[Buttons::Reset].SetColor(kToolsColor);
-    buttons[Buttons::Reset].SetPosition(buttons[Buttons::Move].GetPosition().x + kButtonWidth, 0);
-}

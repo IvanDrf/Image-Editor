@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "../Back/Back.hpp"
 #include "../Image/Image.hpp"
 #include "../MainWindow/MainWindow.hpp"
 #include "../StatusBar/StatusBar.hpp"
@@ -28,19 +29,9 @@ class FileField {
 
 // Active file
 namespace ActiveFile {
-struct ActiveContext {
-    size_t& activeFile;
-    size_t& previousFile;
+void ChangeActiveFileNumber(size_t buttonNumber, size_t& activeFile, size_t files);  // Add file, delete file
+void SelectActiveImage(AppData& active);                                             // Switch between files
 
-    Paths& pathsToFile;
-    Image& image;
-    StackImage& previousStatus;
-
-    StatusBar& statusBar;
-};
-
-void SelectActiveImage(ActiveContext& active);
-
-void SelectUpperImage(ActiveContext& active);
-void SelectLowerImage(ActiveContext& active);
+void SelectUpperImage(AppData& active);
+void SelectLowerImage(AppData& active);
 }  // namespace ActiveFile

@@ -3,8 +3,7 @@
 #include <string>
 #include <vector>
 
-// Interface
-
+#include "Back/Back.hpp"
 #include "Brush/Brush.hpp"
 #include "Button/Button.hpp"
 #include "FileField/FileField.hpp"
@@ -13,33 +12,37 @@
 #include "MainWindow/MainWindow.hpp"
 #include "StatusBar/StatusBar.hpp"
 
+// clang-format off
 #define NONE (std::numeric_limits<std::size_t>::max())
+
+#define BUTTONS_NAMES {"Add file", "Delete file", "Save file", "Brush", "Move", "Reset"}
+#define BUTTONS_COLORS {kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor, kToolsColor}
+#define BUTTONS_FUNCTIONS {Interface::AddFile, Interface::DeleteFile, Interface::SaveFile, Interface::SelectBrush, Interface::MoveImage, Interface::Reset}
+
 #define KEY (event.key.code)
 #define FPS (30)
 
-// Menu Buttons, realization in InputWindow.cpp
-namespace Front {
-using Paths = const std::vector<std::string>;
+#define NO_ARGS [[maybe_unused]] Paths &pathsToFile, [[maybe_unused]] size_t activeFile
+// clang-format on
 
+// Menu Buttons, realization in Interface.cpp
+namespace Interface {
 // File buttons
-std::string AddFile([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
+std::string AddFile(NO_ARGS);
 std::string DeleteFile(Paths& pathsToFile, size_t activeFile);
 std::string SaveFile(Paths& pathsToFile, size_t activeFile);
 
 // Tools buttons
-std::string SelectBrush([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
-std::string MoveImage([[maybe_unused]] Paths& pathsToFile, [[maybe_unused]] size_t activeFile);
-std::string Reset([[maybe_unused]] Paths& pathToFile, [[maybe_unused]] size_t activeFile);
-}  // namespace Front
+std::string SelectBrush(NO_ARGS);
+std::string MoveImage(NO_ARGS);
+std::string Reset(NO_ARGS);
+}  // namespace Interface
 
 auto main(int, char**) -> int {
     sf::RenderWindow mainWindow(sf::VideoMode(kMainWindowWidth, kMainWindowHeight), "Image Editor");
     mainWindow.setFramerateLimit(FPS);
 
-    sf::Font buttonFont;  // Font for Buttons
-    if (!buttonFont.loadFromFile("../WindowFiles/open-sans.ttf")) {
-        throw std::runtime_error("Font could not be uploaded");
-    }
+    auto mainFont{Interface::LoadMainFont()};
 
     // Interface: current image, field with files names, status bar
     Image image;
@@ -48,53 +51,37 @@ auto main(int, char**) -> int {
     FileField fileField;
     StatusBar statusBar;
 
-    auto [backgorund, menuShape, menuImage, brushSizeImage]{Interface::CreateInterface()};
+    auto [backgorund, menuImage, brushSizeImage]{Interface::CreateInterface()};
 
     // Menu Buttons
-    const std::vector<std::string> buttonNames = {"Add file", "Delete file", "Save file", "Brush", "Move", "Reset"};
-    const auto buttonIcons{Interface::LoadButtonImages()};  // Button Icons
+    const std::vector<sf::RectangleShape> buttonIcons{Interface::LoadButtonImages()};  // Button Icons
 
-    std::vector<Button> buttons;
-    const std::vector<sf::Color> buttonColors{kFileButtonColor, kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor};
-    Button::CreateMenuButtons(buttons, buttonNames, buttonColors, buttonFont);
+    const std::vector<std::string> buttonNames = BUTTONS_NAMES;
+    const std::vector<sf::Color> buttonColors = BUTTONS_COLORS;
+    std::vector<Button> buttons{Interface::CreateMenuButtons(buttonNames, buttonColors, mainFont)};
 
     // Main Button Functions
-    ButtonFunction buttonFunctions[]{Front::AddFile, Front::DeleteFile, Front::SaveFile, Front::SelectBrush, Front::MoveImage, Front::Reset};
+    ButtonFunction buttonFunctions[] BUTTONS_FUNCTIONS;
 
     // Brush
-    Brush brush(kBrushInitialRadius, sf::Color::White);
+    Brush brush{};
     bool brushPressed{false};
     bool isPaletteOpen{false};
 
-    // Brush size field, displays current brush size
-    // Brush size field position
+    auto [brushSizeFieldPosX, brushSizeFieldPosY]{Interface::CalculateBrushSizePos(brushSizeImage)};  // Brush size field positions
 
-    auto [brushSizeFieldPosX, brushSizeFieldPosY]{Interface::CalculateBrushSizePos(brushSizeImage)};
+    auto brushSizeField{Interface::CreateBrushSizeDisplay(brushSizeFieldPosX, brushSizeFieldPosY, mainFont)};  // Shows current brush size
+    auto brushColorField{Interface::CreateBrushColorDisplay(brushSizeFieldPosX, brushSizeFieldPosY, brush)};   // Shows current brush color
 
-    BrushSizeDisplay brushSizeField(kBrushInitialRadius, buttonFont);
     bool brushSizeFieldPressed{false};
 
-    brushSizeField.SetPosition(brushSizeFieldPosX, brushSizeFieldPosY);
-    brushSizeField.SetShapeSize({kBrushBoxWidth, kBrushBoxHeight});
-
-    // Brush current color, displays current brush color
-    BrushColorDisplay brushCurrentColor(kBrushCurrentColorBoxSize);
-    brushCurrentColor.SetColor(brush.GetColor());
-
-    auto [palettePosX, palettePosY]{Interface::CalculatePalettePos({brushSizeFieldPosX, kButtonHeight})};
-    brushCurrentColor.SetPalettePosition(palettePosX, palettePosY);
-
-    // Brush current color shape position
-    auto [brushColorShapePosX, brushColorShapePosY]{Interface::CalculateBrushColorShapePos({brushSizeFieldPosX, brushSizeFieldPosY})};
-    brushCurrentColor.SetPosition(brushColorShapePosX, brushColorShapePosY);
-
     // Zoom
-    auto [zoomOut, zoomIn, zoomBackground]{Interface::LoadZoomImages()};
+    auto [zoomOutImage, zoomInImage, zoomBackground]{Interface::LoadZoomImages()};
     float currentZoom{kDefaultZoom};
 
     bool isMoved{false};
     bool isMoveButton{false};
-    sf::Vector2i lastMousePos{};
+    sf::Vector2i currentMousePos{};  // Last mouse position in moving image
 
     // Create small menu for brush color and brush size
 
@@ -102,13 +89,14 @@ auto main(int, char**) -> int {
     size_t activeFile{NONE};               // Current active file
     size_t previousFile{};                 // Previous active file
 
-    ActiveFile::ActiveContext activeContext{activeFile, previousFile, pathsToFile, image, previousStatus, statusBar};
+    std::string buttonInputResult{};
+    AppData appData{pathsToFile, previousFile, activeFile, buttonInputResult, image, currentZoom, fileField, statusBar, previousStatus, brush, brushPressed};
 
     // Main Loop
     while (mainWindow.isOpen()) {
         sf::Event event;
         while (mainWindow.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {  // Close Window
+            if (event.type == sf::Event::Closed) {  // Close Interface
                 mainWindow.close();
                 return 0;
             }
@@ -117,17 +105,9 @@ auto main(int, char**) -> int {
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 for (size_t i = 0; i < buttonNames.size(); ++i) {
                     if (buttons[i].AimButton({event.mouseButton.x, event.mouseButton.y})) {
-                        std::string result{buttonFunctions[i](pathsToFile, activeFile)};  // Path to file
+                        buttonInputResult = buttonFunctions[i](pathsToFile, activeFile);  // Path to file
 
-                        [[maybe_unused]] const size_t oldFilesCount{pathsToFile.size()};                                              // Check was file deleted succesfully or not
-                        WorkWithPath(pathsToFile, activeFile, result, i, image, fileField, statusBar, brushPressed, previousStatus);  // Work with main buttons
-
-                        if (image.HasImage() && oldFilesCount != pathsToFile.size()) {
-                            Back::SelectNewActiveFile(i, activeFile, pathsToFile.size());
-
-                            currentZoom = kDefaultZoom;
-                            brush.UpdateCursorScale(currentZoom);
-                        }
+                        ButtonsFunc(appData, i);  // Work with main buttons
 
                         // Move button
                         if (image.HasImage() && i == Buttons::Move) {
@@ -135,14 +115,10 @@ auto main(int, char**) -> int {
                             isMoveButton = !isMoveButton;
                             brushPressed = false;  // Change status after swap brush/move
 
-                            lastMousePos = sf::Mouse::getPosition(mainWindow);
+                            currentMousePos = sf::Mouse::getPosition(mainWindow);
 
                             buttons[i].SetColor((isMoveButton) ? (kActiveButtonColor) : kToolsColor);  // Set active 'Move' button color
                             statusBar.UpdateStatus((isMoveButton) ? ("Move selected") : ("Move is no longer selected"), (isMoved) ? (sf::Color::Green) : (sf::Color::Red));
-                        }
-
-                        if (image.HasImage() && i == Buttons::Reset) {
-                            Zoom::Reset(image, statusBar, brush, currentZoom);
                         }
 
                         if (brushPressed && buttons[Buttons::SelectBrush].GetColor() != kActiveButtonColor) {
@@ -176,12 +152,13 @@ auto main(int, char**) -> int {
                 }
 
                 // Select active image by mouse
+
                 activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
-                ActiveFile::SelectActiveImage(activeContext);
+                ActiveFile::SelectActiveImage(appData);
 
                 // Zoom In
                 const sf::Vector2i mousePosition{event.mouseButton.x, event.mouseButton.y};
-                if (image.HasImage() && zoomIn->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                if (image.HasImage() && zoomInImage->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
                     Zoom::ZoomIn(image);
                     currentZoom += kZoomStep;
 
@@ -191,7 +168,7 @@ auto main(int, char**) -> int {
                 }
 
                 // Zoom Out
-                if (image.HasImage() && zoomOut->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                if (image.HasImage() && zoomOutImage->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
                     if (currentZoom - kZoomStep >= 0) {
                         Zoom::ZoomOut(image);
                         currentZoom = currentZoom - kZoomStep;
@@ -207,7 +184,7 @@ auto main(int, char**) -> int {
             if (image.HasImage() && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || isMoved)) {
                 isMoved = true;
                 brushPressed = false;
-                lastMousePos = sf::Mouse::getPosition(mainWindow);
+                currentMousePos = sf::Mouse::getPosition(mainWindow);
             }
 
             // Ending of moving image
@@ -222,12 +199,12 @@ auto main(int, char**) -> int {
 
             // Select active image by key 'up'
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Up && activeFile != NONE) {
-                ActiveFile::SelectUpperImage(activeContext);
+                ActiveFile::SelectUpperImage(appData);
             }
 
             // Select active image by key 'down'
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Down) {
-                ActiveFile::SelectLowerImage(activeContext);
+                ActiveFile::SelectLowerImage(appData);
             }
 
             // Brush drawing
@@ -268,22 +245,22 @@ auto main(int, char**) -> int {
 
             // Set Brush Color by hot key
             if (brushPressed && event.type == sf::Event::KeyPressed) {
-                brush.SetColor(KEY, brushCurrentColor);
-                brushCurrentColor.SetColor(brush.GetColor());
+                brush.SetColor(KEY, brushColorField);
+                brushColorField.SetColor(brush.GetColor());
             }
 
             // Set Brush Color by Palette
             if (isPaletteOpen && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                if (brushCurrentColor.PaletteClicked({event.mouseButton.x, event.mouseButton.y})) {
-                    brush.SetColor(brushCurrentColor.GetPaletteColor({event.mouseButton.x, event.mouseButton.y}));
+                if (brushColorField.PaletteClicked({event.mouseButton.x, event.mouseButton.y})) {
+                    brush.SetColor(brushColorField.GetPaletteColor({event.mouseButton.x, event.mouseButton.y}));
 
-                    brushCurrentColor.SetColor(brush.GetColor());
+                    brushColorField.SetColor(brush.GetColor());
                 }
             }
 
             // Open and close Palette
             if (brushPressed && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                if (brushCurrentColor.ShapeClicked({event.mouseButton.x, event.mouseButton.y})) {
+                if (brushColorField.ShapeClicked({event.mouseButton.x, event.mouseButton.y})) {
                     isPaletteOpen = !isPaletteOpen;
                 }
             }
@@ -295,31 +272,31 @@ auto main(int, char**) -> int {
 
             // Add new image (Ctrl+N)
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::O && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-                std::string result = Front::AddFile(pathsToFile, activeFile);
-                WorkWithPath(pathsToFile, activeFile, result, Buttons::AddFile, image, fileField, statusBar, brushPressed, previousStatus);
+                std::string result = Interface::AddFile(pathsToFile, activeFile);
+                ButtonsFunc(appData, Buttons::AddFile);
             }
 
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-                std::string result = Front::SaveFile(pathsToFile, activeFile);
-                WorkWithPath(pathsToFile, activeFile, result, Buttons::SaveFile, image, fileField, statusBar, brushPressed, previousStatus);
+                std::string result = Interface::SaveFile(pathsToFile, activeFile);
+                ButtonsFunc(appData, Buttons::SaveFile);
             }
 
             // Delete current file
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Delete) {
-                std::string result = Front::DeleteFile(pathsToFile, activeFile);
+                std::string result = Interface::DeleteFile(pathsToFile, activeFile);
 
-                Back::SelectNewActiveFile(Buttons::DeleteFile, activeFile, pathsToFile.size());
-                WorkWithPath(pathsToFile, activeFile, result, Buttons::DeleteFile, image, fileField, statusBar, brushPressed, previousStatus);
+                ActiveFile::ChangeActiveFileNumber(Buttons::DeleteFile, activeFile, pathsToFile.size());
+                ButtonsFunc(appData, Buttons::DeleteFile);
             }
         }
 
         // Moving image
         if (image.HasImage() && isMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            sf::Vector2i currentMousePos{sf::Mouse::getPosition(mainWindow)};
+            sf::Vector2i lastMousePos{sf::Mouse::getPosition(mainWindow)};
 
-            image.SetPosition(image.GetSprite().getPosition() + sf::Vector2f(currentMousePos - lastMousePos));
-            lastMousePos = currentMousePos;
+            image.SetPosition(image.GetSprite().getPosition() + sf::Vector2f(lastMousePos - currentMousePos));
+            currentMousePos = lastMousePos;
         }
 
         mainWindow.clear();
@@ -327,11 +304,10 @@ auto main(int, char**) -> int {
         // Draw elements
         image.DrawImage(mainWindow);  // Main image
 
-        mainWindow.draw(backgorund);                  // Button backgorund
         fileField.DrawField(mainWindow, activeFile);  // Field with added files
         statusBar.DrawStatusBar(mainWindow);          // Status bar
 
-        mainWindow.draw(menuShape);       // Small menu
+        mainWindow.draw(backgorund);      // Button backgorund
         menuImage.DrawImage(mainWindow);  // Small menu image
 
         size_t activeButton{Button::GetActiveButton()};
@@ -346,18 +322,13 @@ auto main(int, char**) -> int {
 
             if (i != activeButton) {
                 buttons[i].DrawButton(mainWindow);
-
-                if (i < Buttons::Reset) {
-                    mainWindow.draw(buttonIcons[i]);
-                }
+                mainWindow.draw(buttonIcons[i]);
             }
         }
 
         if (buttonTarget && activeButton != NONE) {
             buttons[activeButton].DrawButton(mainWindow);
-            if (activeButton < Buttons::Reset) {
-                mainWindow.draw(buttonIcons[activeButton]);
-            }
+            mainWindow.draw(buttonIcons[activeButton]);
         }
 
         if (brushPressed) {  // Draw brush cursor
@@ -365,19 +336,19 @@ auto main(int, char**) -> int {
             mainWindow.draw(brush.GetBrushCursor());
         }
 
-        brushSizeImage.DrawImage(mainWindow);  // Brush current size image
+        brushSizeImage.DrawImage(mainWindow);  // Brush size image, circles
         brushSizeField.Draw(mainWindow);       // Brush current size field
 
-        brushCurrentColor.Draw(mainWindow);  // Brush current color field
+        brushColorField.Draw(mainWindow);  // Brush current color field
 
         if (isPaletteOpen) {
-            brushCurrentColor.DrawPalette(mainWindow);  // Draw palette
+            brushColorField.DrawPalette(mainWindow);  // Draw palette
         }
 
         if (!brushPressed) {
             zoomBackground->DrawImage(mainWindow);
-            zoomIn->DrawImage(mainWindow);
-            zoomOut->DrawImage(mainWindow);
+            zoomInImage->DrawImage(mainWindow);
+            zoomOutImage->DrawImage(mainWindow);
         }
 
         mainWindow.display();

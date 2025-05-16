@@ -89,8 +89,8 @@ const sf::Texture& Image::GetTexture() const {
 sf::Vector2f Image::GetImagePosition(const sf::Vector2i& mousePosition) const {
     sf::FloatRect bounds = sprite_.getGlobalBounds();
 
-    float imageX = (mousePosition.x - bounds.left) / sprite_.getScale().x;
-    float imageY = (mousePosition.y - bounds.top) / sprite_.getScale().y;
+    float imageX{(mousePosition.x - bounds.left) / sprite_.getScale().x};
+    float imageY{(mousePosition.y - bounds.top) / sprite_.getScale().y};
 
     return sf::Vector2f(imageX, imageY);
 }

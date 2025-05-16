@@ -2,7 +2,8 @@ name: CI/CD
 
 on:
   push:
-    branches: [develop, main]
+    branches: [develop, ref, main]
+
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
@@ -23,7 +24,7 @@ jobs:
         FILES=$(find . -type f -regex '.*\.\(cpp\|hpp\|h\)$' \
                 -not -path "./build/*" \
                 -not -path "./third_party/*")
-        
+
         if [ -z "$FILES" ]; then
           echo "No C++ files found. Skipping."
           exit 0

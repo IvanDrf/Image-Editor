@@ -26,6 +26,7 @@ class Brush {
     sf::Sprite brushCursorSprite;
 
  public:
+    Brush();
     Brush(const int radius, const sf::Color& color);
 
     void SetRadius(const int newRadius);

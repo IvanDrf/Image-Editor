@@ -213,3 +213,4 @@ _deps
 
 # Additional
 build*/
+*.sh
