@@ -36,7 +36,7 @@ Zoom LoadZoomImages() {
 }
 
 // Load Icons for buttons
-std::vector<sf::RectangleShape> LoadButtonImages() {
+ICONS LoadButtonImages() {
     sf::Texture addIcon;
     if (!addIcon.loadFromFile("../WindowFiles/add-image.png")) {
         throw std::runtime_error("Add Image could not be uploaded");
@@ -68,7 +68,8 @@ std::vector<sf::RectangleShape> LoadButtonImages() {
     }
 
     static const std::vector<sf::Texture> icons = {addIcon, deleteIcon, saveIcon, brushIcon, moveIcon, resetIcon};
-    std::vector<sf::RectangleShape> iconShapes;  // Icon shapes and icons
+  
+    ICONS iconShapes;  // Icon shapes and icons
 
     for (size_t i = 0; i < icons.size(); ++i) {
         iconShapes.emplace_back(sf::Vector2f(kButtonWidth / 5.5f, kButtonWidth / 5.5f));
@@ -89,8 +90,8 @@ MenuInterface CreateInterface() {
     return {CreateBackground(), CreateMenuImage(), CreateBrushSizeImage()};
 }
 
-std::vector<Button> CreateMenuButtons(const std::vector<std::string>& names, const std::vector<sf::Color>& colors, const sf::Font& font) {
-    std::vector<Button> buttons{};
+BUTTONS CreateMenuButtons(const NAMES& names, const COLORS& colors, const sf::Font& font) {
+    BUTTONS buttons{};
 
     for (size_t i = 0; i < names.size(); ++i) {
         buttons.emplace_back(kSmallMenuWidth + kButtonWidth * i, 0, names[i], colors[i], font);

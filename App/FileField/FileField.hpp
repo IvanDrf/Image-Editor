@@ -13,7 +13,7 @@ class FileField {
     sf::RectangleShape shape_;
     sf::Font font_;
 
-    std::vector<std::string> files_;
+    NAMES files_;
     std::vector<sf::Text> displayedFiles_;
 
  public:
@@ -24,7 +24,7 @@ class FileField {
     void DeleteFile(const std::string& fileName);
 
     [[nodiscard]] size_t GetActiveFile(const sf::Vector2i& mousePosition, size_t activeFile) const;
-    [[nodiscard]] const std::vector<std::string>& GetFiles() const;
+    [[nodiscard]] const NAMES& GetFiles() const;
 };
 
 // Active file

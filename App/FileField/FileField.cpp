@@ -62,7 +62,7 @@ void FileField::DeleteFile(const std::string& fileName) {
     files_.erase(std::remove(files_.begin(), files_.end(), fileName), files_.end());
 }
 
-const std::vector<std::string>& FileField::GetFiles() const {
+const NAMES& FileField::GetFiles() const {
     return files_;
 }
 
