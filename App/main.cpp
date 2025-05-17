@@ -72,9 +72,9 @@ auto main(int, char**) -> int {
 
     // Create small menu for brush color and brush size
 
-    Paths pathsToFile;  // Paths to files
-    size_t activeFile{NONE};               // Current active file
-    size_t previousFile{};                 // Previous active file
+    Paths pathsToFile;        // Paths to files
+    size_t activeFile{NONE};  // Current active file
+    size_t previousFile{};    // Previous active file
 
     std::string buttonInputResult{};
     AppData appData{pathsToFile, previousFile, activeFile, buttonInputResult, image, currentZoom, fileField, statusBar, previousStatus, brush, brushPressed};
