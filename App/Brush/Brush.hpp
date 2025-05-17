@@ -45,7 +45,10 @@ class Brush {
     void Draw(sf::Image& image, const sf::Vector2f& position) const;
 
     static void DrawOnImage(AppData& appData, const sf::Event& event);
-    static void ChangeBrushSize(AppData& appData, sf::Event& event, BrushSizeDisplay& brushSizeField);
+
+    static void InputBrushSize(AppData& appData, sf::Event& event, BrushSizeDisplay& brushSizeField);
+    static void IncreaseBrushSize(AppData& appData, BrushSizeDisplay& brushSizeField);
+    static void DecreaseBrushSize(AppData& appData, BrushSizeDisplay& brushSizeField);
 
     void SetBrushCursor(const sf::Vector2i& mousePosition);
 };

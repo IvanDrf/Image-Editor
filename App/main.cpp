@@ -216,23 +216,17 @@ auto main(int, char**) -> int {
 
             // Change brush size
             if (brushSizeFieldPressed && event.type == sf::Event::TextEntered) {
-                Brush::ChangeBrushSize(appData, event, brushSizeField);
+                Brush::InputBrushSize(appData, event, brushSizeField);  // Input brush size in brush field
             }
 
             // Change brush size (Increase size)
             if (brushPressed && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::RBracket) {
-                brush.SetRadius(std::min(brush.GetRadius() + kBrushChangeRadius, 1000));
-                brushSizeField.SetText(brush.GetRadius());
-
-                brush.UpdateCursorScale(currentZoom);
+                Brush::IncreaseBrushSize(appData, brushSizeField);
             }
 
             // Change brush size (Decrease size)
             if (brushPressed && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::LBracket) {
-                brush.SetRadius(std::max(kBrushInitialRadius / kBrushInitialRadius, brush.GetRadius() - kBrushChangeRadius));
-                brushSizeField.SetText(brush.GetRadius());
-
-                brush.UpdateCursorScale(currentZoom);
+                Brush::DecreaseBrushSize(appData, brushSizeField);
             }
 
             // Set Brush Color by hot key
