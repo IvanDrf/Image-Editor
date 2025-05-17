@@ -26,11 +26,11 @@ struct Zoom {
 // Config
 [[nodiscard]] sf::Font LoadMainFont();
 [[nodiscard]] Zoom LoadZoomImages();
-[[nodiscard]] std::vector<sf::RectangleShape> LoadButtonImages();
+[[nodiscard]] ICONS LoadButtonImages();
 
 [[nodiscard]] MenuInterface CreateInterface();
 
-[[nodiscard]] std::vector<Button> CreateMenuButtons(const std::vector<std::string>& names, const std::vector<sf::Color>& colors, const sf::Font& font);
+[[nodiscard]] BUTTONS CreateMenuButtons(const NAMES& names, const COLORS& colors, const sf::Font& font);
 [[nodiscard]] sf::RectangleShape CreateBackground();
 [[nodiscard]] Image CreateMenuImage();
 
