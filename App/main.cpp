@@ -12,19 +12,6 @@
 #include "MainWindow/MainWindow.hpp"
 #include "StatusBar/StatusBar.hpp"
 
-// clang-format off
-#define NONE (std::numeric_limits<std::size_t>::max())
-
-#define BUTTONS_NAMES {"Add file", "Delete file", "Save file", "Brush", "Move", "Reset"}
-#define BUTTONS_COLORS {kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor, kToolsColor}
-#define BUTTONS_FUNCTIONS {Interface::AddFile, Interface::DeleteFile, Interface::SaveFile, Interface::SelectBrush, Interface::MoveImage, Interface::Reset}
-
-#define KEY (event.key.code)
-#define FPS (30)
-
-#define NO_ARGS [[maybe_unused]] Paths &pathsToFile, [[maybe_unused]] size_t activeFile
-// clang-format on
-
 // Menu Buttons, realization in Interface.cpp
 namespace Interface {
 // File buttons
@@ -46,19 +33,19 @@ auto main(int, char**) -> int {
 
     // Interface: current image, field with files names, status bar
     Image image;
-    std::stack<sf::Image> previousStatus;  // Image modification history
+    StackImage previousStatus;  // Image modification history
 
     FileField fileField;
     StatusBar statusBar;
 
-    auto [backgorund, menuImage, brushSizeImage]{Interface::CreateInterface()};
+    auto [background, menuImage, brushSizeImage]{Interface::CreateInterface()};
 
     // Menu Buttons
-    const std::vector<sf::RectangleShape> buttonIcons{Interface::LoadButtonImages()};  // Button Icons
+    const ICONS buttonIcons{Interface::LoadButtonImages()};  // Button Icons
 
-    const std::vector<std::string> buttonNames = BUTTONS_NAMES;
-    const std::vector<sf::Color> buttonColors = BUTTONS_COLORS;
-    std::vector<Button> buttons{Interface::CreateMenuButtons(buttonNames, buttonColors, mainFont)};
+    const NAMES buttonNames = BUTTONS_NAMES;
+    const COLORS buttonColors = BUTTONS_COLORS;
+    BUTTONS buttons{Interface::CreateMenuButtons(buttonNames, buttonColors, mainFont)};
 
     // Main Button Functions
     ButtonFunction buttonFunctions[] BUTTONS_FUNCTIONS;
@@ -85,7 +72,7 @@ auto main(int, char**) -> int {
 
     // Create small menu for brush color and brush size
 
-    std::vector<std::string> pathsToFile;  // Paths to files
+    Paths pathsToFile;  // Paths to files
     size_t activeFile{NONE};               // Current active file
     size_t previousFile{};                 // Previous active file
 
@@ -185,7 +172,14 @@ auto main(int, char**) -> int {
             // Beginning of moving image
             if (image.HasImage() && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || isMoved)) {
                 isMoved = true;
+
                 brushPressed = false;
+                if (buttons[Buttons::SelectBrush].GetColor() == kActiveButtonColor) {
+                    buttons[Buttons::SelectBrush].SetColor(kToolsColor);
+
+                    statusBar.UpdateStatus("Brush is no longer selected");
+                }
+
                 currentMousePos = sf::Mouse::getPosition(mainWindow);
             }
 
@@ -231,17 +225,12 @@ auto main(int, char**) -> int {
 
             // Set Brush Color by hot key
             if (brushPressed && event.type == sf::Event::KeyPressed) {
-                brush.SetColor(KEY, brushColorField);
-                brushColorField.SetColor(brush.GetColor());
+                Brush::SetBrushColorKey(brush, brushColorField, KEY);
             }
 
             // Set Brush Color by Palette
             if (isPaletteOpen && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                if (brushColorField.PaletteClicked({event.mouseButton.x, event.mouseButton.y})) {
-                    brush.SetColor(brushColorField.GetPaletteColor({event.mouseButton.x, event.mouseButton.y}));
-
-                    brushColorField.SetColor(brush.GetColor());
-                }
+                brushColorField.SetPaletteColor(brush, event.mouseButton.x, event.mouseButton.y);
             }
 
             // Open and close Palette
@@ -293,7 +282,7 @@ auto main(int, char**) -> int {
         fileField.DrawField(mainWindow, activeFile);  // Field with added files
         statusBar.DrawStatusBar(mainWindow);          // Status bar
 
-        mainWindow.draw(backgorund);      // Button backgorund
+        mainWindow.draw(background);      // Button background
         menuImage.DrawImage(mainWindow);  // Small menu image
 
         size_t activeButton{Button::GetActiveButton()};

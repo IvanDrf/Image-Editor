@@ -3,6 +3,24 @@
 #include <SFML/Graphics.hpp>
 #include <stack>
 
+// clang-format off
+#define NONE (std::numeric_limits<std::size_t>::max())
+
+#define NAMES std::vector<std::string>
+#define COLORS std::vector<sf::Color>
+#define ICONS std::vector<sf::RectangleShape>
+
+#define BUTTONS std::vector<Button>
+#define BUTTONS_NAMES {"Add file", "Delete file", "Save file", "Brush", "Move", "Reset"}
+#define BUTTONS_COLORS {kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor, kToolsColor}
+#define BUTTONS_FUNCTIONS {Interface::AddFile, Interface::DeleteFile, Interface::SaveFile, Interface::SelectBrush, Interface::MoveImage, Interface::Reset}
+
+#define KEY event.key.code
+#define FPS (30)
+
+#define NO_ARGS [[maybe_unused]] Paths &pathsToFile, [[maybe_unused]] size_t activeFile
+// clang-format on
+
 using uint = unsigned int;
 
 using Paths = std::vector<std::string>;

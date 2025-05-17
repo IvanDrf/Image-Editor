@@ -50,6 +50,8 @@ class Brush {
     static void IncreaseBrushSize(AppData& appData, BrushSizeDisplay& brushSizeField);
     static void DecreaseBrushSize(AppData& appData, BrushSizeDisplay& brushSizeField);
 
+    static void SetBrushColorKey(Brush& brush, BrushColorDisplay& brushColorField, const sf::Keyboard::Key& key);
+
     void SetBrushCursor(const sf::Vector2i& mousePosition);
 };
 
@@ -95,4 +97,6 @@ class BrushColorDisplay {
 
     void DrawPalette(sf::RenderWindow& window) const;
     void Draw(sf::RenderWindow& window) const;
+
+    void SetPaletteColor(Brush& brush, const float x, const float y);
 };
