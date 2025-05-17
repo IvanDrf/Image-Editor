@@ -29,12 +29,13 @@ struct AppData {
     bool& brushPressed;
 };
 
+namespace Back {
 // The main function that handles pressing each button
 void ButtonsFunc(AppData& data, size_t buttonNumber);
 //
 
 // Functions that are responsible for uploading files, etc. backend
-namespace Back {
+
 void AddFile(AppData& data);
 void DeleteFile(AppData& data);
 

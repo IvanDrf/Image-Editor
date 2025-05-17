@@ -95,11 +95,6 @@ void UpdateActiveImage(AppData& appData) {
 }  // namespace
 
 namespace ActiveFile {
-
-#ifndef NONE
-#define NONE (std::numeric_limits<size_t>::max())
-#endif
-
 void ChangeActiveFileNumber(size_t buttonNumber, size_t& activeFile, size_t files) {
     if (buttonNumber == Buttons::AddFile) {
         activeFile = files - 1;

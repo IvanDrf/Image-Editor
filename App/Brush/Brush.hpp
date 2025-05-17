@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Back/Back.hpp"
 #include "../Image/Image.hpp"
 #include "SFML/Graphics.hpp"
 
@@ -14,6 +15,7 @@ constexpr char kMaxInputNumber{57};  // 9 in ASKII
 const sf::Color kBrushInputSizeColor{152, 167, 212};
 }  // namespace
 
+class BrushSizeDisplay;
 class BrushColorDisplay;
 
 class Brush {
@@ -39,7 +41,16 @@ class Brush {
     void SetColor(const sf::Keyboard::Key& keyboardButton, BrushColorDisplay& brushCurrentColor);
 
     [[nodiscard]] sf::Color GetColor() const;
+
     void Draw(sf::Image& image, const sf::Vector2f& position) const;
+
+    static void DrawOnImage(AppData& appData, const sf::Event& event);
+
+    static void InputBrushSize(AppData& appData, sf::Event& event, BrushSizeDisplay& brushSizeField);
+    static void IncreaseBrushSize(AppData& appData, BrushSizeDisplay& brushSizeField);
+    static void DecreaseBrushSize(AppData& appData, BrushSizeDisplay& brushSizeField);
+
+    static void SetBrushColorKey(Brush& brush, BrushColorDisplay& brushColorField, const sf::Keyboard::Key& key);
 
     void SetBrushCursor(const sf::Vector2i& mousePosition);
 };
@@ -86,4 +97,6 @@ class BrushColorDisplay {
 
     void DrawPalette(sf::RenderWindow& window) const;
     void Draw(sf::RenderWindow& window) const;
+
+    void SetPaletteColor(Brush& brush, const float x, const float y);
 };

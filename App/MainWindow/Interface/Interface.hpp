@@ -7,7 +7,6 @@
 #include "../../Button/Button.hpp"
 #include "../../Image/Image.hpp"
 
-// Functions
 namespace Interface {
 struct MenuInterface {
     sf::RectangleShape background;  // Buttons background
@@ -24,6 +23,7 @@ struct Zoom {
     std::unique_ptr<Image> zoomBackground;
 };
 
+// Config
 [[nodiscard]] sf::Font LoadMainFont();
 [[nodiscard]] Zoom LoadZoomImages();
 [[nodiscard]] std::vector<sf::RectangleShape> LoadButtonImages();
@@ -38,6 +38,7 @@ struct Zoom {
 [[nodiscard]] BrushSizeDisplay CreateBrushSizeDisplay(const float x, const float y, sf::Font& font);
 [[nodiscard]] BrushColorDisplay CreateBrushColorDisplay(const float x, const float y, Brush& brush);
 
+// Calculation posiions
 struct Position {
     float x = 0;
     float y = 0;
@@ -46,6 +47,8 @@ struct Position {
 [[nodiscard]] Position CalculateBrushSizePos(const Image& image);
 [[nodiscard]] Position CalculateBrushColorShapePos(const Position& position);
 [[nodiscard]] Position CalculatePalettePos(const Position& position);
+
+// Interface Windows
 
 std::string AddFileWindow();  // Add file button
 

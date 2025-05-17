@@ -110,6 +110,56 @@ void Brush::Draw(sf::Image& image, const sf::Vector2f& position) const {
     }
 }
 
+void Brush::DrawOnImage(AppData& appData, const sf::Event& event) {
+    auto& image{appData.image};
+    auto& brush{appData.brush};
+    auto& previousStatus{appData.previousStatus};
+
+    const sf::Vector2f imageBoundary{kFileFieldWidth + image.GetSpriteBound().width, kButtonWidth + image.GetSpriteBound().height};
+
+    if (event.mouseMove.x >= kFileFieldWidth && event.mouseMove.x <= imageBoundary.x && event.mouseMove.y >= kButtonHeight && event.mouseMove.y <= imageBoundary.y) {
+        image.SaveState(previousStatus);
+        brush.Draw(image.GetImage(), image.GetImagePosition({event.mouseMove.x, event.mouseMove.y}));
+
+        image.UpdateTexture();
+    }
+}
+
+void Brush::InputBrushSize(AppData& appData, sf::Event& event, BrushSizeDisplay& brushSizeField) {
+    auto& brush{appData.brush};
+    auto& currentZoom{appData.currentZoom};
+
+    brush.SetRadius(brushSizeField.InputSize(event));
+    brushSizeField.SetText(brush.GetRadius());
+
+    brush.UpdateCursorScale(currentZoom);
+}
+
+void Brush::IncreaseBrushSize(AppData& appData, BrushSizeDisplay& brushSizeField) {
+    auto& brush{appData.brush};
+    auto& currentZoom{appData.currentZoom};
+
+    brush.SetRadius(std::min(brush.GetRadius() + kBrushChangeRadius, kBrushMaxRadius));
+    brushSizeField.SetText(brush.GetRadius());
+
+    brush.UpdateCursorScale(currentZoom);
+}
+
+void Brush::DecreaseBrushSize(AppData& appData, BrushSizeDisplay& brushSizeField) {
+    auto& brush{appData.brush};
+    auto& currentZoom{appData.currentZoom};
+
+    brush.SetRadius(std::max(kBrushInitialRadius / kBrushInitialRadius, brush.GetRadius() - kBrushChangeRadius));
+    brushSizeField.SetText(brush.GetRadius());
+
+    brush.UpdateCursorScale(currentZoom);
+}
+
+void Brush::SetBrushColorKey(Brush& brush, BrushColorDisplay& brushColorField, const sf::Keyboard::Key& key) {
+    brush.SetColor(key, brushColorField);
+    brushColorField.SetColor(brush.GetColor());
+}
+
 void Brush::SetBrushCursor(const sf::Vector2i& mousePosition) {
     brushCursorSprite.setPosition(mousePosition.x, mousePosition.y);
 }
@@ -222,4 +272,12 @@ void BrushColorDisplay::DrawPalette(sf::RenderWindow& window) const {
 
 void BrushColorDisplay::Draw(sf::RenderWindow& window) const {
     window.draw(shape_);
+}
+
+void BrushColorDisplay::SetPaletteColor(Brush& brush, const float x, const float y) {
+    if (PaletteClicked({x, y})) {
+        brush.SetColor(GetPaletteColor({x, y}));
+
+        SetColor(brush.GetColor());
+    }
 }
