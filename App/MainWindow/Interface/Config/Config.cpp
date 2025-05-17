@@ -68,6 +68,7 @@ ICONS LoadButtonImages() {
     }
 
     static const std::vector<sf::Texture> icons = {addIcon, deleteIcon, saveIcon, brushIcon, moveIcon, resetIcon};
+  
     ICONS iconShapes;  // Icon shapes and icons
 
     for (size_t i = 0; i < icons.size(); ++i) {
