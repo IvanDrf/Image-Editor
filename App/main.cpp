@@ -216,10 +216,7 @@ auto main(int, char**) -> int {
 
             // Change brush size
             if (brushSizeFieldPressed && event.type == sf::Event::TextEntered) {
-                brush.SetRadius(brushSizeField.InputSize(event));
-                brushSizeField.SetText(brush.GetRadius());
-
-                brush.UpdateCursorScale(currentZoom);
+                Brush::ChangeBrushSize(appData, event, brushSizeField);
             }
 
             // Change brush size (Increase size)

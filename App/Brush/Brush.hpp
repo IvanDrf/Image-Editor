@@ -15,6 +15,7 @@ constexpr char kMaxInputNumber{57};  // 9 in ASKII
 const sf::Color kBrushInputSizeColor{152, 167, 212};
 }  // namespace
 
+class BrushSizeDisplay;
 class BrushColorDisplay;
 
 class Brush {
@@ -40,8 +41,11 @@ class Brush {
     void SetColor(const sf::Keyboard::Key& keyboardButton, BrushColorDisplay& brushCurrentColor);
 
     [[nodiscard]] sf::Color GetColor() const;
+
     void Draw(sf::Image& image, const sf::Vector2f& position) const;
-    static void DrawOnImage(AppData& appData,const sf::Event& event);
+
+    static void DrawOnImage(AppData& appData, const sf::Event& event);
+    static void ChangeBrushSize(AppData& appData, sf::Event& event, BrushSizeDisplay& brushSizeField);
 
     void SetBrushCursor(const sf::Vector2i& mousePosition);
 };

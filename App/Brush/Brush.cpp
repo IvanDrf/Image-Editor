@@ -121,6 +121,13 @@ void Brush::DrawOnImage(AppData& appData, const sf::Event& event) {
     }
 }
 
+void Brush::ChangeBrushSize(AppData& appData, sf::Event& event, BrushSizeDisplay& brushSizeField) {
+    appData.brush.SetRadius(brushSizeField.InputSize(event));
+    brushSizeField.SetText(appData.brush.GetRadius());
+
+    appData.brush.UpdateCursorScale(appData.currentZoom);
+}
+
 void Brush::SetBrushCursor(const sf::Vector2i& mousePosition) {
     brushCursorSprite.setPosition(mousePosition.x, mousePosition.y);
 }
