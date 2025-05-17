@@ -8,6 +8,7 @@
 #include "../StatusBar/StatusBar.hpp"
 
 // Main Methods for working with files
+namespace Back{
 void ButtonsFunc(AppData& data, size_t buttonNumber) {
     switch (static_cast<Buttons>(buttonNumber)) {
         // Add file button
@@ -48,7 +49,7 @@ void ButtonsFunc(AppData& data, size_t buttonNumber) {
     }
 }
 
-namespace Back {
+
 void AddFile(AppData& data) {
     if (data.result.empty()) {
         return;

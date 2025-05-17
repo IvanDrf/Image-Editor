@@ -105,9 +105,11 @@ auto main(int, char**) -> int {
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 for (size_t i = 0; i < buttonNames.size(); ++i) {
                     if (buttons[i].AimButton({event.mouseButton.x, event.mouseButton.y})) {
+                        // Front
                         buttonInputResult = buttonFunctions[i](pathsToFile, activeFile);  // Path to file
 
-                        ButtonsFunc(appData, i);  // Work with main buttons
+                        // Back
+                        Back::ButtonsFunc(appData, i);  // Work with main buttons
 
                         // Move button
                         if (image.HasImage() && i == Buttons::Move) {
@@ -209,14 +211,7 @@ auto main(int, char**) -> int {
 
             // Brush drawing
             if (brushPressed && !isPaletteOpen && event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                const sf::Vector2f imageBoundary{kFileFieldWidth + image.GetSpriteBound().width, kButtonWidth + image.GetSpriteBound().height};
-
-                if (event.mouseMove.x >= kFileFieldWidth && event.mouseMove.x <= imageBoundary.x && event.mouseMove.y >= kButtonHeight && event.mouseMove.y <= imageBoundary.y) {
-                    image.SaveState(previousStatus);
-                    brush.Draw(image.GetImage(), image.GetImagePosition({event.mouseMove.x, event.mouseMove.y}));
-
-                    image.UpdateTexture();
-                }
+                Brush::DrawOnImage(appData, event);
             }
 
             // Change brush size
@@ -272,22 +267,22 @@ auto main(int, char**) -> int {
 
             // Add new image (Ctrl+N)
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::O && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-                std::string result = Interface::AddFile(pathsToFile, activeFile);
-                ButtonsFunc(appData, Buttons::AddFile);
+                std::string result{Interface::AddFile(pathsToFile, activeFile)};
+                Back::ButtonsFunc(appData, Buttons::AddFile);
             }
 
             // Save image (Ctrl+S)
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-                std::string result = Interface::SaveFile(pathsToFile, activeFile);
-                ButtonsFunc(appData, Buttons::SaveFile);
+                std::string result{Interface::SaveFile(pathsToFile, activeFile)};
+                Back::ButtonsFunc(appData, Buttons::SaveFile);
             }
 
             // Delete current file
             if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Delete) {
-                std::string result = Interface::DeleteFile(pathsToFile, activeFile);
+                std::string result{Interface::DeleteFile(pathsToFile, activeFile)};
 
                 ActiveFile::ChangeActiveFileNumber(Buttons::DeleteFile, activeFile, pathsToFile.size());
-                ButtonsFunc(appData, Buttons::DeleteFile);
+                Back::ButtonsFunc(appData, Buttons::DeleteFile);
             }
         }
 

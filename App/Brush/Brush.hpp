@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Back/Back.hpp"
 #include "../Image/Image.hpp"
 #include "SFML/Graphics.hpp"
 
@@ -40,6 +41,7 @@ class Brush {
 
     [[nodiscard]] sf::Color GetColor() const;
     void Draw(sf::Image& image, const sf::Vector2f& position) const;
+    static void DrawOnImage(AppData& appData,const sf::Event& event);
 
     void SetBrushCursor(const sf::Vector2i& mousePosition);
 };

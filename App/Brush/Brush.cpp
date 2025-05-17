@@ -110,6 +110,17 @@ void Brush::Draw(sf::Image& image, const sf::Vector2f& position) const {
     }
 }
 
+void Brush::DrawOnImage(AppData& appData, const sf::Event& event) {
+    const sf::Vector2f imageBoundary{kFileFieldWidth + appData.image.GetSpriteBound().width, kButtonWidth + appData.image.GetSpriteBound().height};
+
+    if (event.mouseMove.x >= kFileFieldWidth && event.mouseMove.x <= imageBoundary.x && event.mouseMove.y >= kButtonHeight && event.mouseMove.y <= imageBoundary.y) {
+        appData.image.SaveState(appData.previousStatus);
+        appData.brush.Draw(appData.image.GetImage(), appData.image.GetImagePosition({event.mouseMove.x, event.mouseMove.y}));
+
+        appData.image.UpdateTexture();
+    }
+}
+
 void Brush::SetBrushCursor(const sf::Vector2i& mousePosition) {
     brushCursorSprite.setPosition(mousePosition.x, mousePosition.y);
 }
