@@ -98,5 +98,5 @@ class BrushColorDisplay {
     void DrawPalette(sf::RenderWindow& window) const;
     void Draw(sf::RenderWindow& window) const;
 
-    void SetPaletteColor(Brush& brush, const float x, const float y);
+    void SetPaletteColor(Brush& brush, const int x, const int y);
 };
