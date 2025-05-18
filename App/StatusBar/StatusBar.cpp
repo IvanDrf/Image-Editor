@@ -1,7 +1,7 @@
 #include "StatusBar.hpp"
 
 StatusBar::StatusBar() {
-    if (!font_.loadFromFile("../WindowFiles/Pragmatica.ttf")) {
+    if (!font_.loadFromFile("../WindowFiles/Fonts/Pragmatica.ttf")) {
         throw std::runtime_error("Font could not be uploaded");
     }
 

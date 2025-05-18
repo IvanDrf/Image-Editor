@@ -3,7 +3,7 @@
 #include "../MainWindow/MainWindow.hpp"
 
 Brush::Brush() : radius_(kBrushInitialRadius), color_(sf::Color::White) {
-    if (!brushCursorTexture.loadFromFile("../WindowFiles/brush-cursor.png")) {
+    if (!brushCursorTexture.loadFromFile("../WindowFiles/Images/brush-cursor.png")) {
         throw std::runtime_error("Brush cursor could not be uploaded");
     }
     brushCursorSprite.setTexture(brushCursorTexture);
@@ -227,7 +227,7 @@ BrushColorDisplay::BrushColorDisplay(const sf::Vector2f& size) {
     shape_.setOutlineColor(sf::Color::White);
     shape_.setOutlineThickness(kDefaultOutlineThickness);
 
-    palette_.LoadImage("../WindowFiles/palette-image.png");
+    palette_.LoadImage("../WindowFiles/Images/palette-image.png");
     palette_.SetScale(kPaletteScale, kPaletteScale);
 
     auto bounds = palette_.GetSprite().getGlobalBounds();
