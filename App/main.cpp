@@ -55,10 +55,8 @@ auto main(int, char**) -> int {
     bool brushPressed{false};
     bool isPaletteOpen{false};
 
-    auto [brushSizeFieldPosX, brushSizeFieldPosY]{Interface::CalculateBrushSizePos(brushSizeImage)};  // Brush size field positions
-
-    auto brushSizeField{Interface::CreateBrushSizeDisplay(brushSizeFieldPosX, brushSizeFieldPosY, mainFont)};  // Shows current brush size
-    auto brushColorField{Interface::CreateBrushColorDisplay(brushSizeFieldPosX, brushSizeFieldPosY, brush)};   // Shows current brush color
+    auto brushSizeField{Interface::CreateBrushSizeDisplay(brushSizeImage, mainFont)};  // Shows current brush size
+    auto brushColorField{Interface::CreateBrushColorDisplay(brushSizeImage, brush)};   // Shows current brush color
 
     bool brushSizeFieldPressed{false};
 

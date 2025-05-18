@@ -35,8 +35,8 @@ struct Zoom {
 [[nodiscard]] Image CreateMenuImage();
 
 [[nodiscard]] Image CreateBrushSizeImage();
-[[nodiscard]] BrushSizeDisplay CreateBrushSizeDisplay(const float x, const float y, sf::Font& font);
-[[nodiscard]] BrushColorDisplay CreateBrushColorDisplay(const float x, const float y, Brush& brush);
+[[nodiscard]] BrushSizeDisplay CreateBrushSizeDisplay(const Image& brushSizeImage, sf::Font& font);
+[[nodiscard]] BrushColorDisplay CreateBrushColorDisplay(const Image& brushSizeImage, Brush& brush);
 
 // Calculation posiions
 struct Position {

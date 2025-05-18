@@ -134,7 +134,9 @@ Image CreateBrushSizeImage() {
     return brushSizeImage;
 }
 
-BrushSizeDisplay CreateBrushSizeDisplay(const float x, const float y, sf::Font& font) {
+BrushSizeDisplay CreateBrushSizeDisplay(const Image& brushSizeImage, sf::Font& font) {
+    auto [x, y]{Interface::CalculateBrushSizePos(brushSizeImage)};  // Brush size field positions
+
     BrushSizeDisplay brushSizeField(kBrushInitialRadius, font);
     bool brushSizeFieldPressed{false};
 
@@ -144,7 +146,9 @@ BrushSizeDisplay CreateBrushSizeDisplay(const float x, const float y, sf::Font& 
     return brushSizeField;
 }
 
-BrushColorDisplay CreateBrushColorDisplay(const float x, const float y, Brush& brush) {
+BrushColorDisplay CreateBrushColorDisplay(const Image& brushSizeImage, Brush& brush) {
+    auto [x, y]{Interface::CalculateBrushSizePos(brushSizeImage)};  // Brush size field positions
+
     BrushColorDisplay brushColorField(kBrushCurrentColorBoxSize);
     brushColorField.SetColor(brush.GetColor());
 
