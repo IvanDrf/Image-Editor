@@ -3,7 +3,7 @@
 namespace Interface {
 sf::Font LoadMainFont() {
     sf::Font mainFont;
-    if (!mainFont.loadFromFile("../WindowFiles/open-sans.ttf")) {
+    if (!mainFont.loadFromFile("../WindowFiles/Fonts/open-sans.ttf")) {
         throw std::runtime_error("Font could not be uploaded");
     }
 
@@ -14,20 +14,20 @@ Zoom LoadZoomImages() {
     Zoom images;
 
     images.zoomOut = std::make_unique<Image>();
-    images.zoomOut->LoadImage("../WindowFiles/zoomOut-image.png");
+    images.zoomOut->LoadImage("../WindowFiles/Images/zoomOut-image.png");
     images.zoomOut->SetScale(kZoomImageScale, kZoomImageScale);
 
     images.zoomOut->SetPosition(kZoomOutPosX, kZoomOutPosY);
 
     images.zoomIn = std::make_unique<Image>();
-    images.zoomIn->LoadImage("../WindowFiles/zoomIn-image.png");
+    images.zoomIn->LoadImage("../WindowFiles/Images/zoomIn-image.png");
     images.zoomIn->SetScale(kZoomImageScale, kZoomImageScale);
 
     float zoomInPosX{kZoomOutPosX + images.zoomOut->GetSpriteBound().width};
     images.zoomIn->SetPosition(zoomInPosX, kZoomOutPosY);
 
     images.zoomBackground = std::make_unique<Image>();
-    images.zoomBackground->LoadImage("../WindowFiles/zoomBackground-image.png");
+    images.zoomBackground->LoadImage("../WindowFiles/Images/zoomBackground-image.png");
     images.zoomBackground->SetScale(kZoomBackgroundScaleX, kZoomBackgroundScaleY);
 
     images.zoomBackground->SetPosition(kZoomOutPosX - 2.5f, kZoomOutPosY);
@@ -38,32 +38,32 @@ Zoom LoadZoomImages() {
 // Load Icons for buttons
 ICONS LoadButtonImages() {
     sf::Texture addIcon;
-    if (!addIcon.loadFromFile("../WindowFiles/add-image.png")) {
+    if (!addIcon.loadFromFile("../WindowFiles/Images/add-image.png")) {
         throw std::runtime_error("Add Image could not be uploaded");
     }
 
     sf::Texture deleteIcon;
-    if (!deleteIcon.loadFromFile("../WindowFiles/delete-image.png")) {
+    if (!deleteIcon.loadFromFile("../WindowFiles/Images/delete-image.png")) {
         throw std::runtime_error("Delete image could not be uploaded");
     }
 
     sf::Texture saveIcon;
-    if (!saveIcon.loadFromFile("../WindowFiles/save-image.png")) {
+    if (!saveIcon.loadFromFile("../WindowFiles/Images/save-image.png")) {
         throw std::runtime_error("Save image could not be uploaded");
     }
 
     sf::Texture brushIcon;
-    if (!brushIcon.loadFromFile("../WindowFiles/brush-image.png")) {
+    if (!brushIcon.loadFromFile("../WindowFiles/Images/brush-image.png")) {
         throw std::runtime_error("Brush image could not be uploaded");
     }
 
     sf::Texture moveIcon;
-    if (!moveIcon.loadFromFile("../WindowFiles/move-image.png")) {
+    if (!moveIcon.loadFromFile("../WindowFiles/Images/move-image.png")) {
         throw std::runtime_error("Move image could not be uploaded");
     }
 
     sf::Texture resetIcon;
-    if (!resetIcon.loadFromFile("../WindowFiles/reset-image.png")) {
+    if (!resetIcon.loadFromFile("../WindowFiles/Images/reset-image.png")) {
         throw std::runtime_error("Reset image could not be uploaded");
     }
 
@@ -117,7 +117,7 @@ sf::RectangleShape CreateBackground() {
 
 Image CreateMenuImage() {
     Image menuImage;
-    menuImage.LoadImage("../WindowFiles/smallMenu-image.png");
+    menuImage.LoadImage("../WindowFiles/Images/smallMenu-image.png");
     menuImage.SetScale(kSmallMenuScale, kSmallMenuScale);
     menuImage.SetOrigin(menuImage.GetSpriteBound().width / 2, 0);
     menuImage.SetPosition(kSmallMenuIconPosition);
@@ -127,7 +127,7 @@ Image CreateMenuImage() {
 
 Image CreateBrushSizeImage() {
     Image brushSizeImage;
-    brushSizeImage.LoadImage("../WindowFiles/brush-size.png");
+    brushSizeImage.LoadImage("../WindowFiles/Images/brush-size.png");
     brushSizeImage.SetScale(kBrushImageScale, kBrushImageScale);
     brushSizeImage.SetPosition(kBrushSizeImagePosition);
 

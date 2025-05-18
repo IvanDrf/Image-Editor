@@ -5,7 +5,7 @@
 #include "../MainWindow/MainWindow.hpp"
 
 FileField::FileField() {
-    if (!font_.loadFromFile("../WindowFiles/open-sans-semibold.ttf")) {
+    if (!font_.loadFromFile("../WindowFiles/Fonts/open-sans-semibold.ttf")) {
         throw std::runtime_error("Font could not be uploaded");
     }
 
