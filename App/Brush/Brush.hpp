@@ -21,8 +21,8 @@ class BrushColorDisplay;
 class Brush {
  private:
     sf::CircleShape shape_;
-    sf::Color color_;
     float radius_;
+    sf::Color color_;
 
     sf::Texture brushCursorTexture;
     sf::Sprite brushCursorSprite;
