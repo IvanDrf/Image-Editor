@@ -175,7 +175,7 @@ std::string GetFileName(const std::string& fileName) {
     }
 
     std::string result{};
-    for (size_t i = reversedName.length() - 1; i >= 0 && i < reversedName.length(); --i) {
+    for (size_t i = reversedName.length() - 1; i < reversedName.length(); --i) {
         result += reversedName[i];
     }
 

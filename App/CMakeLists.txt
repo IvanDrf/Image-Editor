@@ -30,4 +30,5 @@ find_package(SFML 2.5 COMPONENTS system window graphics REQUIRED)
 
 add_executable(ImageEditor ${SOURCES})
 
+target_compile_options(ImageEditor PUBLIC -g -Wall -Werror -pedantic -Wextra)
 target_link_libraries(ImageEditor sfml-system sfml-window sfml-graphics)

@@ -274,7 +274,7 @@ void BrushColorDisplay::Draw(sf::RenderWindow& window) const {
     window.draw(shape_);
 }
 
-void BrushColorDisplay::SetPaletteColor(Brush& brush, const float x, const float y) {
+void BrushColorDisplay::SetPaletteColor(Brush& brush, const int x, const int y) {
     if (PaletteClicked({x, y})) {
         brush.SetColor(GetPaletteColor({x, y}));
 

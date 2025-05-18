@@ -138,7 +138,6 @@ BrushSizeDisplay CreateBrushSizeDisplay(const Image& brushSizeImage, sf::Font& f
     auto [x, y]{Interface::CalculateBrushSizePos(brushSizeImage)};  // Brush size field positions
 
     BrushSizeDisplay brushSizeField(kBrushInitialRadius, font);
-    bool brushSizeFieldPressed{false};
 
     brushSizeField.SetPosition(x, y);
     brushSizeField.SetShapeSize({kBrushBoxWidth, kBrushBoxHeight});

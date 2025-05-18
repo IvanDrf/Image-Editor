@@ -21,8 +21,8 @@ class BrushColorDisplay;
 class Brush {
  private:
     sf::CircleShape shape_;
-    sf::Color color_;
     float radius_;
+    sf::Color color_;
 
     sf::Texture brushCursorTexture;
     sf::Sprite brushCursorSprite;
@@ -98,5 +98,5 @@ class BrushColorDisplay {
     void DrawPalette(sf::RenderWindow& window) const;
     void Draw(sf::RenderWindow& window) const;
 
-    void SetPaletteColor(Brush& brush, const float x, const float y);
+    void SetPaletteColor(Brush& brush, const int x, const int y);
 };
