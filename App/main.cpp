@@ -62,11 +62,11 @@ auto main(int, char**) -> int {
 
     // Zoom
     auto [zoomOutImage, zoomInImage, zoomBackground]{Interface::LoadZoomImages()};
-    float currentZoom{kDefaultZoom};
+    float currentZoom{kDefaultZoom};  // Curent zoom image
 
-    bool isMoved{false};
-    bool isMoveButton{false};
-    sf::Vector2i currentMousePos{};  // Last mouse position in moving image
+    bool isMoved{false};             // Is the image being moved
+    bool isMoveButton{false};        // Was move button pressed
+    sf::Vector2i currentMousePos{};  // Current mouse position in moving image
 
     // Create small menu for brush color and brush size
 
@@ -81,7 +81,7 @@ auto main(int, char**) -> int {
     while (mainWindow.isOpen()) {
         sf::Event event;
         while (mainWindow.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {  // Close Interface
+            if (event.type == sf::Event::Closed) {  // Close window
                 mainWindow.close();
                 return 0;
             }
