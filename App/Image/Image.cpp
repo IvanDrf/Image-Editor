@@ -99,6 +99,7 @@ sf::Image& Image::GetImage() {
     if (!hasImage_) {
         throw std::runtime_error("No image loaded");
     }
+
     return image_;
 }
 
@@ -106,6 +107,7 @@ void Image::LoadImage(const std::string& filePath) {
     if (!image_.loadFromFile(filePath)) {
         throw std::runtime_error("Image could not be found");
     }
+
     texture_.loadFromImage(image_);
     sprite_.setTexture(texture_);
     hasImage_ = true;

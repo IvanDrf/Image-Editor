@@ -36,54 +36,31 @@ Zoom LoadZoomImages() {
 }
 
 // Load Icons for buttons
-ICONS LoadButtonImages() {
-    sf::Texture addIcon;
-    if (!addIcon.loadFromFile("../WindowFiles/Images/add-image.png")) {
-        throw std::runtime_error("Add Image could not be uploaded");
-    }
+std::tuple<IMAGES, ICONS> LoadButtonImages() {
+    const NAMES paths{ADD_IMAGE, DELETE_IMAGE, SAVE_IMAGE, BRUSH_IMAGE, MOVE_IMAGE, RESET_IMAGE};
+    IMAGES icons(paths.size());
 
-    sf::Texture deleteIcon;
-    if (!deleteIcon.loadFromFile("../WindowFiles/Images/delete-image.png")) {
-        throw std::runtime_error("Delete image could not be uploaded");
+    size_t i{};
+    for (auto& icon : icons) {
+        icon = std::make_shared<Image>();
+        icon->LoadImage(paths[i++]);
     }
-
-    sf::Texture saveIcon;
-    if (!saveIcon.loadFromFile("../WindowFiles/Images/save-image.png")) {
-        throw std::runtime_error("Save image could not be uploaded");
-    }
-
-    sf::Texture brushIcon;
-    if (!brushIcon.loadFromFile("../WindowFiles/Images/brush-image.png")) {
-        throw std::runtime_error("Brush image could not be uploaded");
-    }
-
-    sf::Texture moveIcon;
-    if (!moveIcon.loadFromFile("../WindowFiles/Images/move-image.png")) {
-        throw std::runtime_error("Move image could not be uploaded");
-    }
-
-    sf::Texture resetIcon;
-    if (!resetIcon.loadFromFile("../WindowFiles/Images/reset-image.png")) {
-        throw std::runtime_error("Reset image could not be uploaded");
-    }
-
-    static const std::vector<sf::Texture> icons = {addIcon, deleteIcon, saveIcon, brushIcon, moveIcon, resetIcon};
 
     ICONS iconShapes;  // Icon shapes and icons
 
-    for (size_t i = 0; i < icons.size(); ++i) {
+    for (i = 0; i < icons.size(); ++i) {
         iconShapes.emplace_back(sf::Vector2f(kButtonWidth / 5.5f, kButtonWidth / 5.5f));
         iconShapes[i].setOrigin(0, iconShapes[i].getGlobalBounds().height / 2);
         iconShapes[i].setPosition(kSmallMenuWidth + kIconX + i * kButtonWidth, kButtonHeight / 2);
 
-        iconShapes[i].setTexture(&icons[i]);
+        iconShapes[i].setTexture(&icons[i]->GetTexture());
     }
 
     iconShapes[Buttons::AddFile].setPosition(kSmallMenuWidth + kIconX * 1.5f, kButtonHeight / 2);
     iconShapes[Buttons::Move].setPosition(5.55f * kButtonWidth, kButtonHeight / 2);
     iconShapes[Buttons::Reset].setPosition(iconShapes[Buttons::Move].getPosition().x + kButtonWidth, kButtonHeight / 2);
 
-    return iconShapes;
+    return {icons, iconShapes};
 }
 
 MenuInterface CreateInterface() {

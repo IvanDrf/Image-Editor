@@ -8,6 +8,15 @@
 
 #define NAMES std::vector<std::string>
 #define COLORS std::vector<sf::Color>
+
+#define ADD_IMAGE    "../WindowFiles/Images/add-image.png"
+#define DELETE_IMAGE "../WindowFiles/Images/delete-image.png"
+#define SAVE_IMAGE   "../WindowFiles/Images/save-image.png"
+#define BRUSH_IMAGE  "../WindowFiles/Images/brush-image.png"
+#define MOVE_IMAGE   "../WindowFiles/Images/move-image.png"
+#define RESET_IMAGE  "../WindowFiles/Images/reset-image.png"
+
+#define IMAGES std::vector<std::shared_ptr<Image>>
 #define ICONS std::vector<sf::RectangleShape>
 
 #define BUTTONS std::vector<Button>
@@ -15,6 +24,7 @@
 #define BUTTONS_COLORS {kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor, kToolsColor}
 #define BUTTONS_FUNCTIONS {Interface::AddFile, Interface::DeleteFile, Interface::SaveFile, Interface::SelectBrush, Interface::MoveImage, Interface::Reset}
 
+#define KEY_PRESSED sf::Keyboard::isKeyPressed
 #define KEY event.key.code
 #define FPS (30)
 

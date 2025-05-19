@@ -41,7 +41,7 @@ auto main(int, char**) -> int {
     auto [background, menuImage, brushSizeImage]{Interface::CreateInterface()};
 
     // Menu Buttons
-    const ICONS buttonIcons{Interface::LoadButtonImages()};  // Button Icons
+    const auto [_, buttonIcons]{Interface::LoadButtonImages()};  // Button Icons
 
     const NAMES buttonNames = BUTTONS_NAMES;
     const COLORS buttonColors = BUTTONS_COLORS;
@@ -168,7 +168,7 @@ auto main(int, char**) -> int {
             }
 
             // Beginning of moving image
-            if (image.HasImage() && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || isMoved)) {
+            if (image.HasImage() && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && (KEY_PRESSED(sf::Keyboard::Space) || isMoved)) {
                 isMoved = true;
 
                 brushPressed = false;
@@ -239,18 +239,18 @@ auto main(int, char**) -> int {
             }
 
             // Return previous image (Ctrl+Z)
-            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Z && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Z && KEY_PRESSED(sf::Keyboard::LControl)) {
                 image.BackState(previousStatus);
             }
 
             // Add new image (Ctrl+N)
-            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::O && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::O && KEY_PRESSED(sf::Keyboard::LControl)) {
                 std::string result{Interface::AddFile(pathsToFile, activeFile)};
                 Back::ButtonsFunc(appData, Buttons::AddFile);
             }
 
             // Save image (Ctrl+S)
-            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::S && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::S && KEY_PRESSED(sf::Keyboard::LControl)) {
                 std::string result{Interface::SaveFile(pathsToFile, activeFile)};
                 Back::ButtonsFunc(appData, Buttons::SaveFile);
             }
