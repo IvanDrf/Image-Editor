@@ -3,6 +3,8 @@
 # 🎨 SFML Image Editor
 
 *A simple yet powerful image editing tool built with C++ and SFML*
+![image](https://github.com/user-attachments/assets/713099a8-b693-42fc-98d7-b3a78b7b2559)
+
 
 ## Table of Contents
 - [Features](#-features)
