@@ -44,8 +44,7 @@ auto main(int, char**) -> int {
     const auto [_, buttonIcons]{Interface::LoadButtonImages()};  // Button Icons
 
     const NAMES buttonNames = BUTTONS_NAMES;
-    const COLORS buttonColors = BUTTONS_COLORS;
-    BUTTONS buttons{Interface::CreateMenuButtons(buttonNames, buttonColors, mainFont)};
+    BUTTONS buttons{Interface::CreateMenuButtons(buttonNames, BUTTONS_COLORS, mainFont)};
 
     // Main Button Functions
     ButtonFunction buttonFunctions[] BUTTONS_FUNCTIONS;

@@ -20,7 +20,15 @@
 #define ICONS std::vector<sf::RectangleShape>
 
 #define BUTTONS std::vector<Button>
-#define BUTTONS_NAMES {"Add file", "Delete file", "Save file", "Brush", "Move", "Reset"}
+
+#define ADD_FILE "Add file"
+#define DELETE_FILE "Delete file"
+#define SAVE_FILE "Save file"
+#define BRUSH "Brush"
+#define MOVE "Move"
+#define RESET "Reset"
+
+#define BUTTONS_NAMES {ADD_FILE, DELETE_FILE, SAVE_FILE, BRUSH, MOVE, RESET}
 #define BUTTONS_COLORS {kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor, kToolsColor}
 #define BUTTONS_FUNCTIONS {Interface::AddFile, Interface::DeleteFile, Interface::SaveFile, Interface::SelectBrush, Interface::MoveImage, Interface::Reset}
 
@@ -29,7 +37,7 @@
 #define FPS (30)
 
 #define NO_ARGS [[maybe_unused]] Paths &pathsToFile, [[maybe_unused]] size_t activeFile
-// clang-format on
+//clang format on
 
 using uint = unsigned int;
 
