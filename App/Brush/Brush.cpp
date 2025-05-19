@@ -87,24 +87,21 @@ sf::Color Brush::GetColor() const {
 }
 
 void Brush::Draw(sf::Image& image, const sf::Vector2f& position) const {
-    if (radius_ == 0) {
+    if (radius_ <= 0) {
         return;
     }
 
-    int radius{static_cast<int>(radius_)};
-    sf::Vector2u imageSize{image.getSize()};
+    const auto [width, height] = static_cast<sf::Vector2i>(image.getSize());
+    const auto [centerX, centerY] = static_cast<sf::Vector2i>(position);
 
-    const int radiusSquared{radius * radius};
+    const int radiusSquared = radius_ * radius_;
 
-    for (int x = -radius; x <= radius; ++x) {
-        for (int y = -radius; y <= radius; ++y) {
-            if (x * x + y * y <= radiusSquared) {
-                int pixelX = static_cast<int>(position.x) + x;
-                int pixelY = static_cast<int>(position.y) + y;
-
-                if (pixelX >= 0 && pixelX < static_cast<int>(imageSize.x) && pixelY >= 0 && pixelY < static_cast<int>(imageSize.y)) {
-                    image.setPixel(pixelX, pixelY, color_);
-                }
+    for (int y = std::max(0, centerY - radius_); y <= std::min(height - 1, centerY + radius_); y++) {
+        for (int x = std::max(0, centerX - radius_); x <= std::min(width - 1, centerX + radius_); x++) {
+            const int dx = x - centerX;
+            const int dy = y - centerY;
+            if (dx * dx + dy * dy <= radiusSquared) {
+                image.setPixel(x, y, color_);
             }
         }
     }
@@ -113,12 +110,10 @@ void Brush::Draw(sf::Image& image, const sf::Vector2f& position) const {
 void Brush::DrawOnImage(AppData& appData, const sf::Event& event) {
     auto& image{appData.image};
     auto& brush{appData.brush};
-    auto& previousStatus{appData.previousStatus};
 
     const sf::Vector2f imageBoundary{kFileFieldWidth + image.GetSpriteBound().width, kButtonWidth + image.GetSpriteBound().height};
 
     if (event.mouseMove.x >= kFileFieldWidth && event.mouseMove.x <= imageBoundary.x && event.mouseMove.y >= kButtonHeight && event.mouseMove.y <= imageBoundary.y) {
-        image.SaveState(previousStatus);
         brush.Draw(image.GetImage(), image.GetImagePosition({event.mouseMove.x, event.mouseMove.y}));
 
         image.UpdateTexture();
