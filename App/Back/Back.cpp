@@ -39,6 +39,7 @@ void ButtonsFunc(AppData& data, size_t buttonNumber) {
             break;
         }
 
+        // Reset zoom and image position
         case (Buttons::Reset): {
             Back::Reset(data);
         }
