@@ -36,38 +36,26 @@ Zoom LoadZoomImages() {
 }
 
 // Load Icons for buttons
-ICONS LoadButtonImages() {
-    sf::Texture addIcon;
-    if (!addIcon.loadFromFile("../WindowFiles/Images/add-image.png")) {
-        throw std::runtime_error("Add Image could not be uploaded");
-    }
+std::tuple<IMAGES, ICONS> LoadButtonImages() {
+    auto addIcon = std::make_shared<Image>();
+    addIcon->LoadImage("../WindowFiles/Images/delete-image.png");
 
-    sf::Texture deleteIcon;
-    if (!deleteIcon.loadFromFile("../WindowFiles/Images/delete-image.png")) {
-        throw std::runtime_error("Delete image could not be uploaded");
-    }
+    auto deleteIcon = std::make_shared<Image>();
+    deleteIcon->LoadImage("../WindowFiles/Images/delete-image.png");
 
-    sf::Texture saveIcon;
-    if (!saveIcon.loadFromFile("../WindowFiles/Images/save-image.png")) {
-        throw std::runtime_error("Save image could not be uploaded");
-    }
+    auto saveIcon = std::make_shared<Image>();
+    saveIcon->LoadImage("../WindowFiles/Images/save-image.png");
 
-    sf::Texture brushIcon;
-    if (!brushIcon.loadFromFile("../WindowFiles/Images/brush-image.png")) {
-        throw std::runtime_error("Brush image could not be uploaded");
-    }
+    auto brushIcon = std::make_shared<Image>();
+    brushIcon->LoadImage("../WindowFiles/Images/brush-image.png");
 
-    sf::Texture moveIcon;
-    if (!moveIcon.loadFromFile("../WindowFiles/Images/move-image.png")) {
-        throw std::runtime_error("Move image could not be uploaded");
-    }
+    auto moveIcon = std::make_shared<Image>();
+    moveIcon->LoadImage("../WindowFiles/Images/move-image.png");
 
-    sf::Texture resetIcon;
-    if (!resetIcon.loadFromFile("../WindowFiles/Images/reset-image.png")) {
-        throw std::runtime_error("Reset image could not be uploaded");
-    }
+    auto resetIcon = std::make_shared<Image>();
+    resetIcon->LoadImage("../WindowFiles/Images/reset-image.png");
 
-    static const std::vector<sf::Texture> icons = {addIcon, deleteIcon, saveIcon, brushIcon, moveIcon, resetIcon};
+    const std::vector<std::shared_ptr<Image>> icons = {addIcon, deleteIcon, saveIcon, brushIcon, moveIcon, resetIcon};
 
     ICONS iconShapes;  // Icon shapes and icons
 
@@ -76,14 +64,14 @@ ICONS LoadButtonImages() {
         iconShapes[i].setOrigin(0, iconShapes[i].getGlobalBounds().height / 2);
         iconShapes[i].setPosition(kSmallMenuWidth + kIconX + i * kButtonWidth, kButtonHeight / 2);
 
-        iconShapes[i].setTexture(&icons[i]);
+        iconShapes[i].setTexture(&icons[i]->GetTexture());
     }
 
     iconShapes[Buttons::AddFile].setPosition(kSmallMenuWidth + kIconX * 1.5f, kButtonHeight / 2);
     iconShapes[Buttons::Move].setPosition(5.55f * kButtonWidth, kButtonHeight / 2);
     iconShapes[Buttons::Reset].setPosition(iconShapes[Buttons::Move].getPosition().x + kButtonWidth, kButtonHeight / 2);
 
-    return iconShapes;
+    return {icons, iconShapes};
 }
 
 MenuInterface CreateInterface() {

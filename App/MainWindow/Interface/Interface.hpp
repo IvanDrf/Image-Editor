@@ -26,7 +26,8 @@ struct Zoom {
 // Config
 [[nodiscard]] sf::Font LoadMainFont();
 [[nodiscard]] Zoom LoadZoomImages();
-[[nodiscard]] ICONS LoadButtonImages();
+
+[[nodiscard]] std::tuple<IMAGES, ICONS> LoadButtonImages();
 
 [[nodiscard]] MenuInterface CreateInterface();
 

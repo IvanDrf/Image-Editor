@@ -8,6 +8,8 @@
 
 #define NAMES std::vector<std::string>
 #define COLORS std::vector<sf::Color>
+
+#define IMAGES std::vector<std::shared_ptr<Image>>
 #define ICONS std::vector<sf::RectangleShape>
 
 #define BUTTONS std::vector<Button>

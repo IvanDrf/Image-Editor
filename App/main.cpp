@@ -41,7 +41,7 @@ auto main(int, char**) -> int {
     auto [background, menuImage, brushSizeImage]{Interface::CreateInterface()};
 
     // Menu Buttons
-    const ICONS buttonIcons{Interface::LoadButtonImages()};  // Button Icons
+    const auto [_, buttonIcons]{Interface::LoadButtonImages()};  // Button Icons
 
     const NAMES buttonNames = BUTTONS_NAMES;
     const COLORS buttonColors = BUTTONS_COLORS;
