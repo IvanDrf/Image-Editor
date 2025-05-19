@@ -117,24 +117,15 @@ void DeleteFile(AppData& data) {
     }
 }
 
-void SelectFile(AppData& data) {
-    if (!data.result.empty() && std::find(data.fileField.GetFiles().begin(), data.fileField.GetFiles().end(), data.result) != data.fileField.GetFiles().end()) {
-        data.statusBar.UpdateStatus("File " + data.result + " selected", sf::Color::Green);
-
-        data.image.ClearImage(data.previousStatus);                           // Clear old image
-        data.image.LoadImage(Path::FindPath(data.pathsToFile, data.result));  // Select image
-        data.image.SetMainImageScale();
-
-        return;
-    }
-
-    data.statusBar.UpdateStatus("File " + data.result + " cannot be selected", sf::Color::Red);
-}
-
 void SelectBrush(AppData& data) {
     data.brushPressed = !data.brushPressed && data.image.HasImage();
     if (data.brushPressed) {
         data.statusBar.UpdateStatus("Brush selected", sf::Color::Green);
+        return;
+    }
+
+    if (!data.image.HasImage()) {
+        data.statusBar.UpdateStatus("There is no image", sf::Color::Red);
         return;
     }
 

@@ -40,7 +40,6 @@ void AddFile(AppData& data);
 void DeleteFile(AppData& data);
 
 void SaveFile(AppData& data);
-void SelectFile(AppData& data);
 void SelectBrush(AppData& data);
 
 void Reset(AppData& data);
