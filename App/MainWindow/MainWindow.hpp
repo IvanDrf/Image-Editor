@@ -15,6 +15,7 @@
 #define BUTTONS_COLORS {kFileButtonColor, kFileButtonColor, kFileButtonColor, kToolsColor, kToolsColor, kToolsColor}
 #define BUTTONS_FUNCTIONS {Interface::AddFile, Interface::DeleteFile, Interface::SaveFile, Interface::SelectBrush, Interface::MoveImage, Interface::Reset}
 
+#define KEY_PRESSED sf::Keyboard::isKeyPressed
 #define KEY event.key.code
 #define FPS (30)
 
