@@ -37,29 +37,18 @@ Zoom LoadZoomImages() {
 
 // Load Icons for buttons
 std::tuple<IMAGES, ICONS> LoadButtonImages() {
-    auto addIcon = std::make_shared<Image>();
-    addIcon->LoadImage("../WindowFiles/Images/delete-image.png");
+    const NAMES paths{ADD_IMAGE, DELETE_IMAGE, SAVE_IMAGE, BRUSH_IMAGE, MOVE_IMAGE, RESET_IMAGE};
+    IMAGES icons(paths.size());
 
-    auto deleteIcon = std::make_shared<Image>();
-    deleteIcon->LoadImage("../WindowFiles/Images/delete-image.png");
-
-    auto saveIcon = std::make_shared<Image>();
-    saveIcon->LoadImage("../WindowFiles/Images/save-image.png");
-
-    auto brushIcon = std::make_shared<Image>();
-    brushIcon->LoadImage("../WindowFiles/Images/brush-image.png");
-
-    auto moveIcon = std::make_shared<Image>();
-    moveIcon->LoadImage("../WindowFiles/Images/move-image.png");
-
-    auto resetIcon = std::make_shared<Image>();
-    resetIcon->LoadImage("../WindowFiles/Images/reset-image.png");
-
-    const std::vector<std::shared_ptr<Image>> icons = {addIcon, deleteIcon, saveIcon, brushIcon, moveIcon, resetIcon};
+    size_t i{};
+    for (auto& icon : icons) {
+        icon = std::make_shared<Image>();
+        icon->LoadImage(paths[i++]);
+    }
 
     ICONS iconShapes;  // Icon shapes and icons
 
-    for (size_t i = 0; i < icons.size(); ++i) {
+    for (i = 0; i < icons.size(); ++i) {
         iconShapes.emplace_back(sf::Vector2f(kButtonWidth / 5.5f, kButtonWidth / 5.5f));
         iconShapes[i].setOrigin(0, iconShapes[i].getGlobalBounds().height / 2);
         iconShapes[i].setPosition(kSmallMenuWidth + kIconX + i * kButtonWidth, kButtonHeight / 2);

@@ -9,6 +9,13 @@
 #define NAMES std::vector<std::string>
 #define COLORS std::vector<sf::Color>
 
+#define ADD_IMAGE    "../WindowFiles/Images/add-image.png"
+#define DELETE_IMAGE "../WindowFiles/Images/delete-image.png"
+#define SAVE_IMAGE   "../WindowFiles/Images/save-image.png"
+#define BRUSH_IMAGE  "../WindowFiles/Images/brush-image.png"
+#define MOVE_IMAGE   "../WindowFiles/Images/move-image.png"
+#define RESET_IMAGE  "../WindowFiles/Images/reset-image.png"
+
 #define IMAGES std::vector<std::shared_ptr<Image>>
 #define ICONS std::vector<sf::RectangleShape>
 
