@@ -41,17 +41,20 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo pacman -Sy --noconfirm cmake sfml gcc
+        sudo pacman -S --noconfirm --needed cmake sfml gcc
 
     - name: Configure CMake
+      timeout-minutes: 5
       run: |
         mkdir -p App/build
         cd App/build
         cmake .. -DCMAKE_BUILD_TYPE=Release
+        echo "CMake configuration completed"
 
     - name: Build project
+      timeout-minutes: 10
       working-directory: ./App/build
-      run: cmake --build . --config Release -- -j $(nproc)
+      run: cmake --build . --config Release -- -j 2
 
     - name: Verify executable
       working-directory: ./App
