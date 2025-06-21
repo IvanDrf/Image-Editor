@@ -2,7 +2,7 @@
 
 #include "../MainWindow/MainWindow.hpp"
 
-Image::Image() : hasImage_(false) {
+Image::Image() : hasImage_(false), sprite_(texture_) {
 }
 
 void Image::DrawImage(sf::RenderWindow& window) const {
@@ -14,7 +14,7 @@ void Image::DrawImage(sf::RenderWindow& window) const {
 void Image::ClearImage(std::stack<sf::Image>& previousStatus) {
     hasImage_ = false;
     texture_ = sf::Texture();
-    sprite_ = sf::Sprite();
+    sprite_ = sf::Sprite(texture_);
     image_ = sf::Image();
 
     while (!previousStatus.empty()) {
@@ -43,17 +43,17 @@ void Image::BackState(std::stack<sf::Image>& previousStatus) {
 }
 
 void Image::SetScale(const float scaleX, const float scaleY) {
-    sf::Vector2i position{sprite_.getPosition()};
+    auto position{sprite_.getPosition()};
 
-    sprite_.setScale(1.f, 1.f);
-    sprite_.setPosition(0.f, 0.f);
+    sprite_.setScale({1.f, 1.f});
+    sprite_.setPosition({0.f, 0.f});
 
-    sprite_.setPosition(position.x, position.y);
-    sprite_.setScale(scaleX, scaleY);
+    sprite_.setPosition({position.x, position.y});
+    sprite_.setScale({scaleX, scaleY});
 }
 
 void Image::SetPosition(const float positionX, const float positionY) {  // overload
-    sprite_.setPosition(positionX, positionY);
+    sprite_.setPosition({positionX, positionY});
 }
 
 void Image::SetPosition(const sf::Vector2f& position) {  // overload
@@ -61,7 +61,7 @@ void Image::SetPosition(const sf::Vector2f& position) {  // overload
 }
 
 void Image::SetOrigin(const float centerX, const float centerY) {
-    sprite_.setOrigin(centerX, centerY);
+    sprite_.setOrigin({centerX, centerY});
 }
 
 void Image::SetTexture(const sf::Texture& texture) {
@@ -87,12 +87,7 @@ const sf::Texture& Image::GetTexture() const {
 }
 
 sf::Vector2f Image::GetImagePosition(const sf::Vector2i& mousePosition) const {
-    sf::FloatRect bounds = sprite_.getGlobalBounds();
-
-    float imageX{(mousePosition.x - bounds.left) / sprite_.getScale().x};
-    float imageY{(mousePosition.y - bounds.top) / sprite_.getScale().y};
-
-    return sf::Vector2f(imageX, imageY);
+    return sprite_.getInverseTransform().transformPoint(static_cast<sf::Vector2f>(mousePosition));
 }
 
 sf::Image& Image::GetImage() {
@@ -114,15 +109,15 @@ void Image::LoadImage(const std::string& filePath) {
 }
 
 void Image::SetMainImageScale() {
-    sprite_.setScale(1.f, 1.f);
-    sprite_.setPosition(0.f, 0.f);
+    sprite_.setScale({1.f, 1.f});
+    sprite_.setPosition({0.f, 0.f});
 
-    sf::FloatRect imageBounds{sprite_.getGlobalBounds()};
-    float scaleX{(kMainWindowWidth - kFileFieldWidth) / imageBounds.width};
-    float scaleY{(kMainWindowHeight - kStatusBarHeight - kButtonHeight) / imageBounds.height};
+    auto imageBounds{sprite_.getGlobalBounds()};
+    float scaleX{(kMainWindowWidth - kFileFieldWidth) / imageBounds.size.x};
+    float scaleY{(kMainWindowHeight - kStatusBarHeight - kButtonHeight) / imageBounds.size.y};
 
-    sprite_.setScale(scaleX, scaleY);
-    sprite_.setPosition(kFileFieldWidth, kButtonHeight);
+    sprite_.setScale({scaleX, scaleY});
+    sprite_.setPosition({kFileFieldWidth, kButtonHeight});
 }
 
 bool Image::SaveImage(const std::string& fileName) {

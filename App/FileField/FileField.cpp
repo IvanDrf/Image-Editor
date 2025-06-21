@@ -1,24 +1,25 @@
 #include "FileField.hpp"
 
+#include <algorithm>
 #include <limits>
 
 #include "../MainWindow/MainWindow.hpp"
 
 FileField::FileField() {
-    if (!font_.loadFromFile("../WindowFiles/Fonts/open-sans-semibold.ttf")) {
+    if (!font_.openFromFile("../WindowFiles/Fonts/open-sans-semibold.ttf")) {
         throw std::runtime_error("Font could not be uploaded");
     }
 
-    shape_.setSize(sf::Vector2f(kFileFieldWidth, kFileFieldHeight));
+    shape_.setSize({kFileFieldWidth, kFileFieldHeight});
     shape_.setFillColor(KSystemColor);
     shape_.setOutlineColor(sf::Color::Black);
     shape_.setOutlineThickness(kDefaultOutlineThickness);
 
-    shape_.setPosition(0, kMainWindowHeight - kFileFieldHeight);
+    shape_.setPosition({0, kMainWindowHeight - kFileFieldHeight});
 
     activeFileBackGround_.setSize(kFileBackGroundSize);
     activeFileBackGround_.setFillColor(kFileBackGroundColor);
-    activeFileBackGround_.setPosition(0, kButtonHeight);
+    activeFileBackGround_.setPosition({0, kButtonHeight});
     // appDataFileBackGround_.setOrigin(0, kFileBackGroundSize.y / 2);
 }
 
@@ -27,14 +28,13 @@ void FileField::DrawField(sf::RenderWindow& window, size_t activeFile) {
 
     displayedFiles_.clear();
 
-    sf::Text filesNames;
-    filesNames.setFont(font_);
+    sf::Text filesNames(font_);
     filesNames.setCharacterSize(kCharacterSize);
     filesNames.setFillColor(sf::Color::White);
 
     float textPositionY{1.15f * kButtonHeight};
 
-    activeFileBackGround_.setPosition(0, textPositionY + activeFile * kLineHeight);
+    activeFileBackGround_.setPosition({0, textPositionY + activeFile * kLineHeight});
     if (!files_.empty()) {
         window.draw(activeFileBackGround_);
     }
@@ -42,7 +42,7 @@ void FileField::DrawField(sf::RenderWindow& window, size_t activeFile) {
     for (const auto& fileName : files_) {
         filesNames.setString(fileName);
 
-        filesNames.setPosition(10, textPositionY);
+        filesNames.setPosition({10, textPositionY});
         textPositionY += kLineHeight;
 
         displayedFiles_.emplace_back(filesNames);

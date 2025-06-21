@@ -1,5 +1,6 @@
 #include "Back.hpp"
 
+#include <algorithm>
 #include <limits>
 
 #include "../Brush/Brush.hpp"

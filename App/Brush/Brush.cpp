@@ -1,13 +1,16 @@
 #include "Brush.hpp"
 
+#include <SFML/Config.hpp>
+#include <algorithm>
+
 #include "../MainWindow/MainWindow.hpp"
 
-Brush::Brush() : radius_(kBrushInitialRadius), color_(sf::Color::White) {
-    if (!brushCursorTexture.loadFromFile("../WindowFiles/Images/brush-cursor.png")) {
+Brush::Brush() : radius_(kBrushInitialRadius), color_(sf::Color::White), brushCursorSprite_(brushCursorTexture_) {
+    if (!brushCursorTexture_.loadFromFile("../WindowFiles/Images/brush-cursor.png")) {
         throw std::runtime_error("Brush cursor could not be uploaded");
     }
-    brushCursorSprite.setTexture(brushCursorTexture);
-    brushCursorSprite.setOrigin(brushCursorTexture.getSize().x / 2, brushCursorTexture.getSize().y / 2);
+    brushCursorSprite_.setTexture(brushCursorTexture_);
+    brushCursorSprite_.setOrigin(sf::Vector2f{brushCursorTexture_.getSize().x / 2, brushCursorTexture_.getSize().y / 2});
 
     UpdateCursorScale(1.f);
 }
@@ -19,19 +22,19 @@ Brush::Brush(const int radius, const sf::Color& color) : Brush::Brush() {
     shape_.setRadius(radius);
     shape_.setFillColor(color);
 
-    shape_.setOrigin(radius, radius);
+    shape_.setOrigin({radius, radius});
 }
 
 void Brush::SetRadius(const int newRadius) {
     radius_ = newRadius;
 
     shape_.setRadius(newRadius);
-    shape_.setOrigin(newRadius, newRadius);
+    shape_.setOrigin({newRadius, newRadius});
 }
 
 void Brush::UpdateCursorScale(float currentScale) {
-    const sf::Vector2u bounds{brushCursorTexture.getSize()};
-    brushCursorSprite.setScale(2.8f * currentScale * radius_ / bounds.x, 2.8f * currentScale * radius_ / bounds.y);
+    const auto bounds{brushCursorTexture_.getSize()};
+    brushCursorSprite_.setScale({2.8f * currentScale * radius_ / bounds.x, 2.8f * currentScale * radius_ / bounds.y});
 }
 
 int Brush::GetRadius() const {
@@ -39,7 +42,7 @@ int Brush::GetRadius() const {
 }
 
 const sf::Sprite& Brush::GetBrushCursor() const {
-    return brushCursorSprite;
+    return brushCursorSprite_;
 }
 
 void Brush::SetColor(const sf::Color& newColor) {
@@ -49,27 +52,27 @@ void Brush::SetColor(const sf::Color& newColor) {
 
 void Brush::SetColor(const sf::Keyboard::Key& keyboardButton, BrushColorDisplay& brushCurrentColor) {
     switch (keyboardButton) {
-        case sf::Keyboard::R: {
+        case sf::Keyboard::Key::R: {
             color_ = sf::Color::Red;
             break;
         }
 
-        case sf::Keyboard::G: {
+        case sf::Keyboard::Key::G: {
             color_ = sf::Color::Green;
             break;
         }
 
-        case sf::Keyboard::B: {
+        case sf::Keyboard::Key::B: {
             color_ = sf::Color::Blue;
             break;
         }
 
-        case sf::Keyboard::Y: {
+        case sf::Keyboard::Key::Y: {
             color_ = sf::Color::Yellow;
             break;
         }
 
-        case sf::Keyboard::W: {
+        case sf::Keyboard::Key::W: {
             color_ = sf::Color::White;
             break;
         }
@@ -101,28 +104,31 @@ void Brush::Draw(sf::Image& image, const sf::Vector2f& position) const {
             const int dx = x - centerX;
             const int dy = y - centerY;
             if (dx * dx + dy * dy <= radiusSquared) {
-                image.setPixel(x, y, color_);
+                image.setPixel({x, y}, color_);
             }
         }
     }
 }
 
-void Brush::DrawOnImage(AppData& appData, const sf::Event& event) {
+void Brush::DrawOnImage(AppData& appData, const std::optional<sf::Event>& event) {
     auto& image{appData.image};
     auto& brush{appData.brush};
     auto& previousStatus{appData.previousStatus};
 
-    const sf::Vector2f imageBoundary{kFileFieldWidth + image.GetSpriteBound().width, kButtonWidth + image.GetSpriteBound().height};
+    const sf::Vector2f imageBoundary{kFileFieldWidth + image.GetSpriteBound().size.x, kButtonWidth + image.GetSpriteBound().size.y};
 
     image.SaveState(previousStatus);
-    if (event.mouseMove.x >= kFileFieldWidth && event.mouseMove.x <= imageBoundary.x && event.mouseMove.y >= kButtonHeight && event.mouseMove.y <= imageBoundary.y) {
-        brush.Draw(image.GetImage(), image.GetImagePosition({event.mouseMove.x, event.mouseMove.y}));
+
+    const auto mousePos{event->getIf<sf::Event::MouseMoved>()->position};
+
+    if (mousePos.x >= kFileFieldWidth && mousePos.x <= imageBoundary.x && mousePos.y >= kButtonHeight && mousePos.y <= imageBoundary.y) {
+        brush.Draw(image.GetImage(), image.GetImagePosition({mousePos.x, mousePos.y}));
 
         image.UpdateTexture();
     }
 }
 
-void Brush::InputBrushSize(AppData& appData, sf::Event& event, BrushSizeDisplay& brushSizeField) {
+void Brush::InputBrushSize(AppData& appData, std::optional<sf::Event>& event, BrushSizeDisplay& brushSizeField) {
     auto& brush{appData.brush};
     auto& currentZoom{appData.currentZoom};
 
@@ -158,12 +164,12 @@ void Brush::SetBrushColorKey(Brush& brush, BrushColorDisplay& brushColorField, c
 }
 
 void Brush::SetBrushCursor(const sf::Vector2i& mousePosition) {
-    brushCursorSprite.setPosition(mousePosition.x, mousePosition.y);
+    brushCursorSprite_.setPosition({mousePosition.x, mousePosition.y});
 }
 
 // Brush size display
 
-BrushSizeDisplay::BrushSizeDisplay(const int size, const sf::Font& font) {
+BrushSizeDisplay::BrushSizeDisplay(const int size, const sf::Font& font) : size_(font) {
     font_ = font;
 
     size_.setFont(font_);
@@ -183,18 +189,18 @@ void BrushSizeDisplay::SetShapeSize(const sf::Vector2f& shapeSize) {
 }
 
 void BrushSizeDisplay::SetPosition(const float x, const float y) {
-    shape_.setPosition(x, y);
-    size_.setPosition(x, y);
+    shape_.setPosition({x, y});
+    size_.setPosition({x, y});
 }
 
 bool BrushSizeDisplay::ShapeClicked(const sf::Vector2i& mousePosition) const {
     return shape_.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition));
 }
 
-int BrushSizeDisplay::InputSize(sf::Event& event) {
+int BrushSizeDisplay::InputSize(const std::optional<sf::Event>& event) {
     std::string newSize{size_.getString()};
 
-    char symbol{static_cast<char>(event.text.unicode)};
+    char symbol{static_cast<char>(event->getIf<sf::Event::TextEntered>()->unicode)};
 
     if (symbol == kBackSpace && !newSize.empty()) {  // Backspace
         newSize.pop_back();
@@ -228,7 +234,7 @@ BrushColorDisplay::BrushColorDisplay(const sf::Vector2f& size) {
     palette_.SetScale(kPaletteScale, kPaletteScale);
 
     auto bounds = palette_.GetSprite().getGlobalBounds();
-    palette_.SetOrigin(bounds.width / 2, 0);
+    palette_.SetOrigin(bounds.size.x / 2, 0);
 }
 
 void BrushColorDisplay::SetColor(const sf::Color& color) {
@@ -237,18 +243,18 @@ void BrushColorDisplay::SetColor(const sf::Color& color) {
 }
 
 sf::Color BrushColorDisplay::GetPaletteColor(const sf::Vector2i& mousePosition) {
-    sf::Vector2f localPos = palette_.GetSprite().getInverseTransform().transformPoint(static_cast<sf::Vector2f>(mousePosition));
+    auto localPos = palette_.GetSprite().getInverseTransform().transformPoint(static_cast<sf::Vector2f>(mousePosition));
 
     const auto& paletteImage = palette_.GetImage();
 
-    unsigned pixelX = static_cast<unsigned>(std::clamp(localPos.x, 0.f, paletteImage.getSize().x - 1.0f));
-    unsigned pixelY = static_cast<unsigned>(std::clamp(localPos.y, 0.f, paletteImage.getSize().y - 1.0f));
+    uint pixelX = static_cast<unsigned>(std::clamp(localPos.x, 0.f, paletteImage.getSize().x - 1.0f));
+    uint pixelY = static_cast<unsigned>(std::clamp(localPos.y, 0.f, paletteImage.getSize().y - 1.0f));
 
-    return paletteImage.getPixel(pixelX, pixelY);
+    return paletteImage.getPixel({pixelX, pixelY});
 }
 
 void BrushColorDisplay::SetPosition(const float x, const float y) {
-    shape_.setPosition(x, y);
+    shape_.setPosition({x, y});
 }
 
 void BrushColorDisplay::SetPalettePosition(const float x, const float y) {

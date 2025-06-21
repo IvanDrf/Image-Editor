@@ -4,23 +4,22 @@
 
 size_t Button::activeButton = std::numeric_limits<size_t>::max();
 
-Button::Button(const float x, const float y, const std::string& name, const sf::Color& color, const sf::Font& font) {
-    text_.setFont(font);
+Button::Button(const float x, const float y, const std::string& name, const sf::Color& color, const sf::Font& font) : text_(font) {
     text_.setCharacterSize(kCharacterSize);
     text_.setFillColor(sf::Color::White);
     text_.setString(name);
 
-    float textWidth{text_.getGlobalBounds().width};
-    float textHeight{text_.getGlobalBounds().height};
+    float textWidth{text_.getGlobalBounds().size.x};
+    float textHeight{text_.getGlobalBounds().size.y};
 
-    text_.setOrigin(textWidth / 2, textHeight / 2);
-    text_.setPosition(x + kButtonWidth / 2, y + kButtonHeight / 2 - textHeight / 2);
+    text_.setOrigin(sf::Vector2f{textWidth / 2, textHeight / 2});
+    text_.setPosition(sf::Vector2f{x + kButtonWidth / 2, y + kButtonHeight / 2 - textHeight / 2});
 
     shape_.setSize(sf::Vector2f(kButtonWidth, kButtonHeight));
     shape_.setFillColor(color);
     shape_.setOutlineColor(sf::Color::Black);
     shape_.setOutlineThickness(kDefaultOutlineThickness);
-    shape_.setPosition(x, y);
+    shape_.setPosition(sf::Vector2f{x, y});
 }
 
 sf::Vector2f Button::GetPosition() const {
@@ -32,7 +31,7 @@ sf::Color Button::GetColor() const {
 }
 
 void Button::SetPosition(const float x, const float y) {
-    text_.setPosition(x + kButtonWidth / 2, y + kButtonHeight / 2 - text_.getGlobalBounds().height / 2);
+    text_.setPosition(sf::Vector2f{x + kButtonWidth / 2, y + kButtonHeight / 2 - text_.getGlobalBounds().size.y / 2});
     shape_.setPosition(sf::Vector2f(x, y));
 }
 

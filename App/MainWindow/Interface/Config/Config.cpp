@@ -3,7 +3,7 @@
 namespace Interface {
 sf::Font LoadMainFont() {
     sf::Font mainFont;
-    if (!mainFont.loadFromFile("../WindowFiles/Fonts/open-sans.ttf")) {
+    if (!mainFont.openFromFile("../WindowFiles/Fonts/open-sans.ttf")) {
         throw std::runtime_error("Font could not be uploaded");
     }
 
@@ -23,7 +23,7 @@ Zoom LoadZoomImages() {
     images.zoomIn->LoadImage("../WindowFiles/Images/zoomIn-image.png");
     images.zoomIn->SetScale(kZoomImageScale, kZoomImageScale);
 
-    float zoomInPosX{kZoomOutPosX + images.zoomOut->GetSpriteBound().width};
+    float zoomInPosX{kZoomOutPosX + images.zoomOut->GetSpriteBound().size.x};
     images.zoomIn->SetPosition(zoomInPosX, kZoomOutPosY);
 
     images.zoomBackground = std::make_unique<Image>();
@@ -50,15 +50,15 @@ std::tuple<IMAGES, ICONS> LoadButtonImages() {
 
     for (i = 0; i < icons.size(); ++i) {
         iconShapes.emplace_back(sf::Vector2f(kButtonWidth / 5.5f, kButtonWidth / 5.5f));
-        iconShapes[i].setOrigin(0, iconShapes[i].getGlobalBounds().height / 2);
-        iconShapes[i].setPosition(kSmallMenuWidth + kIconX + i * kButtonWidth, kButtonHeight / 2);
+        iconShapes[i].setOrigin({0, iconShapes[i].getGlobalBounds().size.y / 2});
+        iconShapes[i].setPosition({kSmallMenuWidth + kIconX + i * kButtonWidth, kButtonHeight / 2});
 
         iconShapes[i].setTexture(&icons[i]->GetTexture());
     }
 
-    iconShapes[Buttons::AddFile].setPosition(kSmallMenuWidth + kIconX * 1.5f, kButtonHeight / 2);
-    iconShapes[Buttons::Move].setPosition(5.55f * kButtonWidth, kButtonHeight / 2);
-    iconShapes[Buttons::Reset].setPosition(iconShapes[Buttons::Move].getPosition().x + kButtonWidth, kButtonHeight / 2);
+    iconShapes[Buttons::AddFile].setPosition({kSmallMenuWidth + kIconX * 1.5f, kButtonHeight / 2});
+    iconShapes[Buttons::Move].setPosition({5.55f * kButtonWidth, kButtonHeight / 2});
+    iconShapes[Buttons::Reset].setPosition({iconShapes[Buttons::Move].getPosition().x + kButtonWidth, kButtonHeight / 2});
 
     return {icons, iconShapes};
 }
@@ -84,7 +84,7 @@ sf::RectangleShape CreateBackground() {
     sf::RectangleShape background;
     background.setFillColor(kToolsColor);
     background.setSize(sf::Vector2f(kMainWindowWidth, kSmallMenuHeight));
-    background.setPosition(0, 0);
+    background.setPosition({0, 0});
 
     background.setOutlineColor(sf::Color::Black);
     background.setOutlineThickness(kDefaultOutlineThickness);
@@ -96,7 +96,7 @@ Image CreateMenuImage() {
     Image menuImage;
     menuImage.LoadImage("../WindowFiles/Images/smallMenu-image.png");
     menuImage.SetScale(kSmallMenuScale, kSmallMenuScale);
-    menuImage.SetOrigin(menuImage.GetSpriteBound().width / 2, 0);
+    menuImage.SetOrigin(menuImage.GetSpriteBound().size.x / 2, 0);
     menuImage.SetPosition(kSmallMenuIconPosition);
 
     return menuImage;

@@ -26,7 +26,7 @@ std::string Reset(NO_ARGS);
 }  // namespace Interface
 
 auto main(int, char**) -> int {
-    sf::RenderWindow mainWindow(sf::VideoMode(kMainWindowWidth, kMainWindowHeight), "Image Editor");
+    sf::RenderWindow mainWindow(sf::VideoMode({kMainWindowWidth, kMainWindowHeight}), "Image Editor");
     mainWindow.setFramerateLimit(FPS);
 
     auto mainFont{Interface::LoadMainFont()};
@@ -78,17 +78,18 @@ auto main(int, char**) -> int {
 
     // Main Loop
     while (mainWindow.isOpen()) {
-        sf::Event event;
-        while (mainWindow.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {  // Close window
+        while (auto event = mainWindow.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {  // Close window
                 mainWindow.close();
                 return 0;
             }
 
             // Press Buttons
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+            if (event->is<sf::Event::MouseButtonPressed>() && event->getIf<sf::Event::MouseButtonPressed>()->button == sf::Mouse::Button::Left) {
+                auto mousePos = event->getIf<sf::Event::MouseButtonPressed>();
+
                 for (size_t i = 0; i < buttonNames.size(); ++i) {
-                    if (buttons[i].AimButton({event.mouseButton.x, event.mouseButton.y})) {
+                    if (buttons[i].AimButton(mousePos->position)) {
                         // Front
                         buttonInputResult = buttonFunctions[i](pathsToFile, activeFile);  // Path to file
 
@@ -126,7 +127,7 @@ auto main(int, char**) -> int {
                 }
 
                 // If brush size field has been pressed -> change brush size
-                if (brushSizeField.ShapeClicked({event.mouseButton.x, event.mouseButton.y})) {
+                if (brushSizeField.ShapeClicked(mousePos->position)) {
                     brushSizeFieldPressed = true;
 
                     brush.SetRadius(0);
@@ -138,13 +139,11 @@ auto main(int, char**) -> int {
                 }
 
                 // Select active image by mouse
-
-                activeFile = fileField.GetActiveFile({event.mouseButton.x, event.mouseButton.y}, activeFile);
+                activeFile = fileField.GetActiveFile(mousePos->position, activeFile);
                 ActiveFile::SelectActiveImage(appData);
 
                 // Zoom In
-                const sf::Vector2i mousePosition{event.mouseButton.x, event.mouseButton.y};
-                if (image.HasImage() && zoomInImage->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                if (image.HasImage() && zoomInImage->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePos->position))) {
                     Zoom::ZoomIn(image);
                     currentZoom += kZoomStep;
 
@@ -154,7 +153,7 @@ auto main(int, char**) -> int {
                 }
 
                 // Zoom Out
-                if (image.HasImage() && zoomOutImage->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                if (image.HasImage() && zoomOutImage->GetSpriteBound().contains(static_cast<sf::Vector2f>(mousePos->position))) {
                     if (currentZoom - kZoomStep >= 0) {
                         Zoom::ZoomOut(image);
                         currentZoom = currentZoom - kZoomStep;
@@ -167,13 +166,13 @@ auto main(int, char**) -> int {
             }
 
             // Beginning of moving image
-            if (image.HasImage() && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left && (KEY_PRESSED(sf::Keyboard::Space) || isMoved)) {
+            if (image.HasImage() && event->is<sf::Event::MouseButtonPressed>() && event->getIf<sf::Event::MouseButtonPressed>()->button == sf::Mouse::Button::Left &&
+                (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) || isMoved)) {
                 isMoved = true;
 
                 brushPressed = false;
                 if (buttons[Buttons::SelectBrush].GetColor() == kActiveButtonColor) {
                     buttons[Buttons::SelectBrush].SetColor(kToolsColor);
-
                     statusBar.UpdateStatus("Brush is no longer selected");
                 }
 
@@ -181,81 +180,83 @@ auto main(int, char**) -> int {
             }
 
             // Ending of moving image
-            if (image.HasImage() && event.type == sf::Event::MouseButtonReleased && !isMoveButton) {
+            if (image.HasImage() && event->is<sf::Event::MouseButtonReleased>() && !isMoveButton) {
                 isMoved = false;
             }
 
             // Reset image postion -> default image position and zoom
-            if (!brushPressed && image.HasImage() && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::R) {
+            if (!brushPressed && image.HasImage() && event->is<sf::Event::KeyPressed>() && event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::R) {
                 Zoom::Reset(image, statusBar, brush, currentZoom);
             }
 
             // Select active image by key 'up'
-            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Up && activeFile != NONE) {
+            if (event->is<sf::Event::KeyPressed>() && event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Up && activeFile != NONE) {
                 ActiveFile::SelectUpperImage(appData);
             }
 
             // Select active image by key 'down'
-            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Down) {
+            if (event->is<sf::Event::KeyPressed>() && event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Down) {
                 ActiveFile::SelectLowerImage(appData);
             }
 
             // Brush drawing
-            if (brushPressed && !isPaletteOpen && event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            if (brushPressed && !isPaletteOpen && event->is<sf::Event::MouseMoved>() && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
                 Brush::DrawOnImage(appData, event);
             }
 
             // Change brush size
-            if (brushSizeFieldPressed && event.type == sf::Event::TextEntered) {
+            if (brushSizeFieldPressed && event->is<sf::Event::TextEntered>()) {
                 Brush::InputBrushSize(appData, event, brushSizeField);  // Input brush size in brush field
             }
 
             // Change brush size (Increase size)
-            if (brushPressed && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::RBracket) {
+            if (brushPressed && event->is<sf::Event::KeyPressed>() && event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::RBracket) {
                 Brush::IncreaseBrushSize(appData, brushSizeField);
             }
 
             // Change brush size (Decrease size)
-            if (brushPressed && event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::LBracket) {
+            if (brushPressed && event->is<sf::Event::KeyPressed>() && event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::LBracket) {
                 Brush::DecreaseBrushSize(appData, brushSizeField);
             }
 
             // Set Brush Color by hot key
-            if (brushPressed && event.type == sf::Event::KeyPressed) {
-                Brush::SetBrushColorKey(brush, brushColorField, KEY);
+            if (brushPressed && event->is<sf::Event::KeyPressed>()) {
+                Brush::SetBrushColorKey(brush, brushColorField, event->getIf<sf::Event::KeyPressed>()->code);
             }
 
             // Set Brush Color by Palette
-            if (isPaletteOpen && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                brushColorField.SetPaletteColor(brush, event.mouseButton.x, event.mouseButton.y);
+            if (isPaletteOpen && event->is<sf::Event::MouseButtonPressed>() && event->getIf<sf::Event::MouseButtonPressed>()->button == sf::Mouse::Button::Left) {
+                auto mousePos = event->getIf<sf::Event::MouseButtonPressed>()->position;
+                brushColorField.SetPaletteColor(brush, mousePos.x, mousePos.y);
             }
 
             // Open and close Palette
-            if (brushPressed && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                if (brushColorField.ShapeClicked({event.mouseButton.x, event.mouseButton.y})) {
+            if (brushPressed && event->is<sf::Event::MouseButtonPressed>() && event->getIf<sf::Event::MouseButtonPressed>()->button == sf::Mouse::Button::Left) {
+                auto mousePos = event->getIf<sf::Event::MouseButtonPressed>()->position;
+                if (brushColorField.ShapeClicked(mousePos)) {
                     isPaletteOpen = !isPaletteOpen;
                 }
             }
 
             // Return previous image (Ctrl+Z)
-            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Z && KEY_PRESSED(sf::Keyboard::LControl)) {
+            if (event->is<sf::Event::KeyPressed>() && event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Z && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
                 image.BackState(previousStatus);
             }
 
             // Add new image (Ctrl+N)
-            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::O && KEY_PRESSED(sf::Keyboard::LControl)) {
+            if (event->is<sf::Event::KeyPressed>() && event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::O && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
                 std::string result{Interface::AddFile(pathsToFile, activeFile)};
                 Back::ButtonsFunc(appData, Buttons::AddFile);
             }
 
             // Save image (Ctrl+S)
-            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::S && KEY_PRESSED(sf::Keyboard::LControl)) {
+            if (event->is<sf::Event::KeyPressed>() && event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::S && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
                 std::string result{Interface::SaveFile(pathsToFile, activeFile)};
                 Back::ButtonsFunc(appData, Buttons::SaveFile);
             }
 
             // Delete current file
-            if (event.type == sf::Event::KeyPressed && KEY == sf::Keyboard::Delete) {
+            if (event->is<sf::Event::KeyPressed>() && event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Delete) {
                 std::string result{Interface::DeleteFile(pathsToFile, activeFile)};
 
                 ActiveFile::ChangeActiveFileNumber(Buttons::DeleteFile, activeFile, pathsToFile.size());
@@ -264,7 +265,7 @@ auto main(int, char**) -> int {
         }
 
         // Moving image
-        if (image.HasImage() && isMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        if (image.HasImage() && isMoved && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
             sf::Vector2i lastMousePos{sf::Mouse::getPosition(mainWindow)};
 
             image.SetPosition(image.GetSprite().getPosition() + sf::Vector2f(lastMousePos - currentMousePos));

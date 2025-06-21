@@ -58,13 +58,13 @@ enum Buttons {
 // Constants
 
 namespace {  // Desktop Size
-const uint kDesktopWidth{sf::VideoMode::getDesktopMode().width};
-const uint kDesktopHeight{sf::VideoMode::getDesktopMode().height};
+const uint kDesktopWidth{sf::VideoMode::getDesktopMode().size.x};
+const uint kDesktopHeight{sf::VideoMode::getDesktopMode().size.y};
 }  // namespace
 
 namespace {  // Interface Size
-const float kMainWindowWidth{kDesktopWidth * 0.9f};
-const float kMainWindowHeight{kDesktopHeight * 0.8f};
+const uint kMainWindowWidth{static_cast<uint>(kDesktopWidth * 0.9f)};
+const uint kMainWindowHeight{static_cast<uint>(kDesktopHeight * 0.8f)};
 }  // namespace
 
 namespace {  // File Field
@@ -92,7 +92,7 @@ constexpr short kCharacterSize{20};
 }
 
 namespace {  // Button
-const float kButtonWidth{kMainWindowWidth / 10};
+const float kButtonWidth{static_cast<float>(kMainWindowWidth / 10)};
 const float kButtonHeight{kMainWindowHeight - kFileFieldHeight};
 constexpr short kDefaultOutlineThickness{2};
 

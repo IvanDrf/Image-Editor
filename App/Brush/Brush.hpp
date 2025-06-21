@@ -24,8 +24,8 @@ class Brush {
     int radius_;
     sf::Color color_;
 
-    sf::Texture brushCursorTexture;
-    sf::Sprite brushCursorSprite;
+    sf::Texture brushCursorTexture_;
+    sf::Sprite brushCursorSprite_;
 
  public:
     Brush();
@@ -44,9 +44,9 @@ class Brush {
 
     void Draw(sf::Image& image, const sf::Vector2f& position) const;
 
-    static void DrawOnImage(AppData& appData, const sf::Event& event);
+    static void DrawOnImage(AppData& appData, const std::optional<sf::Event>& event);
 
-    static void InputBrushSize(AppData& appData, sf::Event& event, BrushSizeDisplay& brushSizeField);
+    static void InputBrushSize(AppData& appData, std::optional<sf::Event>& event, BrushSizeDisplay& brushSizeField);
     static void IncreaseBrushSize(AppData& appData, BrushSizeDisplay& brushSizeField);
     static void DecreaseBrushSize(AppData& appData, BrushSizeDisplay& brushSizeField);
 
@@ -71,7 +71,7 @@ class BrushSizeDisplay {
     void SetPosition(const float x, const float y);
 
     bool ShapeClicked(const sf::Vector2i& mousePosition) const;
-    int InputSize(sf::Event& event);
+    int InputSize(const std::optional<sf::Event>& event);
 
     void Draw(sf::RenderWindow& window) const;
 };
