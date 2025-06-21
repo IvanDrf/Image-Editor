@@ -3,7 +3,6 @@ name: CI/CD
 on:
   push:
     branches: [develop, ref, main]
-
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
@@ -24,21 +23,17 @@ jobs:
         FILES=$(find . -type f -regex '.*\.\(cpp\|hpp\|h\)$' \
                 -not -path "./build/*" \
                 -not -path "./third_party/*")
-
         if [ -z "$FILES" ]; then
           echo "No C++ files found. Skipping."
           exit 0
         fi
-
         echo "Checking formatting for files:"
         echo "$FILES"
-
         clang-format --dry-run --Werror --style=file $FILES || \
           (echo "❌ Formatting errors found! Run 'clang-format -i YOUR_FILE' to fix."; exit 1)
 
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: archlinux
     steps:
     - uses: actions/checkout@v4
       with:
@@ -46,15 +41,13 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake libsfml-dev g++-10
-        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
+        sudo pacman -Sy --noconfirm cmake sfml gcc
 
     - name: Configure CMake
       run: |
         mkdir -p App/build
         cd App/build
-        cmake .. -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_BUILD_TYPE=Release
+        cmake .. -DCMAKE_BUILD_TYPE=Release
 
     - name: Build project
       working-directory: ./App/build
@@ -64,7 +57,7 @@ jobs:
       working-directory: ./App
       run: |
         if [ -f "./ImageEditor" ]; then
-          echo "✅ Executable built successfully"
+          echo "✅ Executable built successfully with SFML 3.0.1"
           ls -lh ./ImageEditor
         else
           echo "❌ Executable not found!"
